@@ -38,6 +38,14 @@
 ### INV-6: Детерминированный контекст
 Контекст агента формализован, версионируется, воспроизводим. Нет неявного состояния. Нет "магии".
 
+### INV-7: Pi-Native Integration
+Система реализуется как **pi extension**, а не как отдельный инструмент или standalone CLI.
+- Plan mode: брейншторм и генерация артефактов задачи через `/plan`.
+- Agent mode: работа по спекам через обычный agent loop pi.
+- Авто-переключение: plan mode → agent mode без разрыва сессии.
+- Единая сессия, единый контекст, единый агент — с разными system prompt и tools для каждого режима.
+- Никаких "других агентов", рисующих несовместимые планы. aide = режим работы pi.
+
 ## Контур публикации
 
 - **Delivery Unit 1**: `du/bootstrap-core-design`
@@ -65,3 +73,16 @@
 - Проанализированы 3 варианта: взять за базу, с нуля, гибрид.
 - Результат: рекомендован вариант 3 (гибрид) — сохранить архитектурные концепции task-centric-knowledge, переписать форматы под AI-native.
 - Артефакт: `artifacts/analysis-approaches.md`.
+
+### 2026-05-21 — Дизайн Pi Extension
+- Добавлен инвариант INV-7: Pi-Native Integration.
+- Изучена документация pi: extensions.md, skills.md, prompt-templates.md, README.md.
+- Разработан дизайн extension `aide-plan-mode`:
+  - Plan mode: `/plan` → брейншторм → `create_task`/`create_plan`/`create_sdd` → `finalize_plan`.
+  - Agent mode: авто-переключение после finalize_plan, работа по спекам.
+  - Единая сессия, единый агент — разные system prompt и tools для каждого режима.
+  - Heuristic routing: auto-определение режима по ключевым словам.
+  - Custom tools для управления knowledge/ (JSON primary, markdown derivative).
+  - TUI widgets: status line, task widget, custom UI для plan mode.
+  - State persistence через `pi.appendEntry()`.
+- Артефакт: `artifacts/pi-extension-design.md`.
