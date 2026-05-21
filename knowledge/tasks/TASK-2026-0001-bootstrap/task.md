@@ -59,3 +59,9 @@
 - Создан репозиторий.
 - Сформулирована задача.
 - Созданы `README.md`, `AGENTS.md`, начальная структура `knowledge/`.
+
+### 2026-05-21 — Анализ подходов
+- Изучены reference-файлы skill `task-centric-knowledge`: core-model.md, deployment.md, adoption.md, task-routing.md, upgrade-transition.md.
+- Проанализированы 3 варианта: взять за базу, с нуля, гибрид.
+- Результат: рекомендован вариант 3 (гибрид) — сохранить архитектурные концепции task-centric-knowledge, переписать форматы под AI-native.
+- Артефакт: `artifacts/analysis-approaches.md`.
