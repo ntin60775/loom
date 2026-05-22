@@ -1,4 +1,4 @@
-# AGENTS.md — Правила работы агентов в проекте aide
+# AGENTS.md — Правила работы агентов в проекте loom
 
 ## Identity
 
@@ -20,25 +20,33 @@
 - Избегать "красивого" markdown: no emoji, no decorative separators, no human-centric visual hierarchy.
 - Использовать machine-verifiable markers: `INVARIANT:`, `PRE:`, `POST:`, `CONTRACT:`, `BLOCK:`, `SCOPE:`, `EVIDENCE:`.
 
+## Pi-Native Integration
+
+loom — это pi extension. Plan mode и agent mode работают в рамках единой pi-сессии:
+- `/plan` — вход в plan mode (брейншторм, артефакты).
+- `finalize_plan` — авто-переключение в agent mode.
+- Субагенты запускаются в tmux windows текущего терминала.
+- Единый агент, разные system prompt и tools для каждого режима.
+
 ## Task Lifecycle
 
-1. Задача начинается с `task.md`.
-2. Если задача сложная — обязателен `plan.md`.
-3. Если задача архитектурно нетривиальная или меняет код — обязателен `sdd.md` и `artifacts/verification-matrix.md`.
+1. Задача начинается с `task.json`.
+2. Если задача сложная — обязателен `plan.json`.
+3. Если задача архитектурно нетривиальная — обязателен `sdd.json`.
 4. Все артефакты задачи — внутри `artifacts/` каталога задачи.
-5. Доказательные артефакты (скриншоты, логи, отчёты) — локально, со ссылками из `task.md`.
+5. Review проходит через git diff → `reviews/` в knowledge/.
 
 ## Code Ownership
 
 - Агент пишет код. Оператор практически не лезет в код.
-- Для человека — docs-as-code (rustdoc, pydoc, typedoc и т.д. в зависимости от стека).
-- Комментарии в коде — для агента, не для человека. Можно использовать "секретный трансформерский язык": `// INVARIANT: ...`, `// CONTRACT: ...`, `// AGENT_NOTE: ...`.
+- Для человека — docs-as-code (rustdoc, pydoc, typedoc и т.д.).
+- Комментарии в коде — для агента, не для человека. `// INVARIANT: ...`, `// CONTRACT: ...`, `// AGENT_NOTE: ...`.
 
 ## Knowledge Accumulation
 
 - Каждая задача оставляет след в `knowledge/tasks/`.
-- Проектная память накапливается в `knowledge/modules/` (module maps, dependency graphs, architecture decisions).
-- Cross-task inheritance: агент обязан читать закрытые задачи при работе над новыми, если они затрагиют ту же область.
+- Проектная память накапливается в `knowledge/project/`.
+- Cross-task inheritance: агент обязан читать закрытые задачи при работе над новыми.
 
 ## Decision Making
 
@@ -46,8 +54,9 @@
 - Если неоднозначность — STOP, явный вопрос оператору с вариантами `1/2/3` или `А/Б/В`.
 - Никаких "предположим по умолчанию".
 
-## Verification
+## Git Flow
 
-- Максимум автоматических проверок, которые реально исполнимы.
-- Все ручные проверки — в единый итоговый список на уровне задачи.
-- Задача не считается закрытой, пока verification matrix не подтверждён.
+- Worker делает task-scoped commits.
+- Reviewer анализирует git diff + файлы.
+- Executor: approve → next step, reject → correction (max 10 iter).
+- Human-in-the-loop только при reject+max_iter, timeout, ambiguity.

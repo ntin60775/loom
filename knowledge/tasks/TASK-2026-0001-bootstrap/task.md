@@ -4,7 +4,7 @@
 
 - **TASK-ID**: TASK-2026-0001-bootstrap
 - **Краткое имя**: bootstrap
-- **Человекочитаемое описание**: Спроектировать и реализовать ядро AI-Native Development Environment — системы разработки с помощью ИИ-агентов, оптимизированной под восприятие LLM, с накоплением знаний и артефактов.
+- **Человекочитаемое описание**: Спроектировать и реализовать ядро loom — AI-Native Development Environment для pi. Система разработки с помощью ИИ-агентов, оптимизированная под восприятие LLM, с накоплением знаний и артефактов.
 - **Ветка**: task/TASK-2026-0001-bootstrap
 - **Статус**: active
 - **Приоритет**: critical
@@ -97,3 +97,17 @@
   - Audit trail: structured JSON, не полная сессия.
   - Чистая сессия при переходе plan → agent.
 - Артефакт: `artifacts/analysis-stratum-v2.md`.
+
+### 2026-05-21 — Архитектурное обсуждение v3 (loom)
+- Название проекта: **loom**.
+- Упрощение графов: только базовая информация в JSON, агент грепает напрямую.
+- Универсальные worker/reviewer: не привязаны к коду, работают через prompt + model-config.
+- **Git-based review flow**: reviewer анализирует git diff/артефакты, пишет review.json.
+  - Worker делает task-scoped git commit.
+  - Reviewer: `git show` + `read` файлов → verdict в `knowledge/tasks/TASK-XXXX/reviews/`.
+  - Executor: approve → next step, reject → correction + iter+1, max 10.
+- Русификация: system prompt и артефакты на русском, machine markers на английском.
+- Tmux windows: субагенты в вкладках текущего терминала.
+- Параллелизм: plan mode — параллельно (max 4), agent mode — строго последовательно.
+- Human-in-the-loop: executor останавливается только при reject+max_iter, timeout, ambiguity.
+- Артефакт: `artifacts/loom-git-flow-design.md`.

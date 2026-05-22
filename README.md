@@ -1,12 +1,12 @@
-# aide — AI-Native Development Environment
+# loom — AI-Native Development Environment
 
 Система разработки программных проектов с помощью ИИ-агентов.
 
 ## Что это
 
-`aide` — это не IDE в традиционном смысле. Это **операционная система задач и знаний**, которая позволяет ИИ-агентам полностью вести разработку: от спецификации до поставки, от исследования до рефакторинга legacy-кода.
+`loom` — это не IDE в традиционном смысле. Это **операционная система задач и знаний**, которая позволяет ИИ-агентам полностью вести разработку: от спецификации до поставки, от исследования до рефакторинга legacy-кода.
 
-Человек — **оператор**. Агент — **исполнитель**. Человек задаёт намерение, агент делает всё остальное.
+Человек — **оператор**. Агент — **оркестратор и исполнитель**. Человек задаёт намерение, агент делает всё остальное.
 
 ## Принципы
 
@@ -16,6 +16,7 @@
 4. **Task-Centric** — Всё вращается вокруг задачи. Задача = атом работы. Задачи накапливают знания и артефакты.
 5. **Context as Code** — Контекст агента формализован и версионируется. Нет "магии" — всё явно, проверяемо, воспроизводимо.
 6. **Accumulative Knowledge** — Знания о проекте накапливаются и наследуются между задачами. Агент не начинает с чистого листа.
+7. **Pi-Native** — Реализован как pi extension. Plan mode и agent mode в рамках единой сессии pi.
 
 ## Архитектура (целевая)
 
@@ -24,19 +25,30 @@
 │         Human Operator Layer            │  ← CLI/TUI, docs-as-code, отчёты
 │         (read-only по коду)             │
 ├─────────────────────────────────────────┤
-│         Agent Execution Layer           │  ← ИИ-агент читает и пишет
-│    (specs, plans, code, artifacts)      │
+│         Plan Mode (Orchestrator)        │  ← /plan, брейншторм, артефакты
+│    Chief Architect: формирует задачу    │
 ├─────────────────────────────────────────┤
-│         Knowledge & Memory Core         │  ← task.md, plan.md, sdd.md,
-│         (AI-native formats)             │    verification-matrix, artifacts/
+│         Agent Mode (Executor)           │  ← исполнение по плану
+│    Supervisor: worker → review → commit │
 ├─────────────────────────────────────────┤
-│         Project Adaptation Layer        │  ← stack detection, legacy analysis
-│                                         │    module maps, dependency graphs
+│         Universal Subagents             │  ← tmux windows, чистый контекст
+│    scout | worker | reviewer | architect│
 ├─────────────────────────────────────────┤
-│         Retrieval & Context Engine      │  ← context windows, chunking,
-│                                         │    cross-task memory, embedding index
+│         Knowledge Core                  │  ← task.json, plan.json, sdd.json
+│         (JSON primary, markdown deriv)  │    rules/, architecture/, modules/
+├─────────────────────────────────────────┤
+│         Git Flow                        │  ← task/ branches, task-scoped commits
+│         (review через git diff)         │    reviews в knowledge/
 └─────────────────────────────────────────┘
 ```
+
+## Ключевые решения
+
+- **JSON primary** — machine-readable форматы первичны, markdown — производная.
+- **Git-based review** — reviewer анализирует git diff, не live session.
+- **Универсальные субагенты** — специализация через prompt + model-config.
+- **Минимум графов** — агент грепает исходники напрямую, не строит сложные графы.
+- **Русификация** — артефакты и UI на русском, machine markers на английском.
 
 ## Текущий статус
 
