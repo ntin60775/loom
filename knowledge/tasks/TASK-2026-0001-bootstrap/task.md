@@ -86,3 +86,14 @@
   - TUI widgets: status line, task widget, custom UI для plan mode.
   - State persistence через `pi.appendEntry()`.
 - Артефакт: `artifacts/pi-extension-design.md`.
+
+### 2026-05-21 — Архитектурное обсуждение v2
+- Обсуждены: название, формат правил, универсальные субагенты, executor как приёмщик, аудит без полных сессий.
+- Решения:
+  - Rules и Architecture — JSON primary, каталоги по темам.
+  - Субагенты универсальны: runtime pi + prompt от оркестратора + model config.
+  - Executor: запускает worker → review → accept/reject (max 10 iter, конфиг).
+  - Reviewer модели: конфигурируется, не хардкод (deepseek flash / kimi for 1c).
+  - Audit trail: structured JSON, не полная сессия.
+  - Чистая сессия при переходе plan → agent.
+- Артефакт: `artifacts/analysis-stratum-v2.md`.
