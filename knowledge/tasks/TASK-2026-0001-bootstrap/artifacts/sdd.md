@@ -290,12 +290,16 @@ interface ModelConfig {
     "reviewer": {"provider": "deepseek", "model": "deepseek-chat", "thinking": "xhigh"}
   },
   "overrides": {
-    "reviewer-1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"}
+    "reviewer-1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"},
+    "worker-1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"}
   },
   "auto_select_reviewer": [
-    {"extension": ".1s", "reviewer": "reviewer-1c"},
-    {"extension": ".py", "reviewer": "reviewer"},
+    {"extension": ".bsl", "reviewer": "reviewer-1c"},
     {"default": "reviewer"}
+  ],
+  "auto_select_worker": [
+    {"extension": ".bsl", "worker": "worker-1c"},
+    {"default": "worker"}
   ]
 }
 ```
@@ -520,8 +524,7 @@ Reviewer:
 
 По расширениям изменённых файлов:
 ```
-.1s, .os → reviewer-1c (kimi)
-.py, .rs, .ts → reviewer (deepseek)
+.bsl → reviewer-1c (kimi)
 * → reviewer (default)
 ```
 
@@ -975,7 +978,7 @@ Loom наследует концепции, но не код:
 | Upgrade Governance | loom-version.json + migration notes |
 | Cleanup Plan/Confirm | TCK migration pipeline (раздел 7.4) — cleanup после верификации |
 | Read Model | `/task-show`, `/task-status` |
-| Profiles (generic, 1c) | Subagent auto-select reviewer model |
+| Profiles (generic, 1c) | Subagent auto-select: `.bsl` → kimi for worker + reviewer |
 
 **Что loom делает иначе:**
 - JSON primary вместо markdown primary
