@@ -628,12 +628,14 @@ Reviewer:
 | `artifacts/verification-matrix.md` | Markdown | `artifacts/verification-matrix.json` | Распарсить строки матрицы |
 | `worklog.md`, `decisions.md`, `handoff.md` | Markdown | `worklog.json`, `decisions.json`, `handoff.json` | Перенести как есть + структурировать |
 
-#### 7.4.2 Что НЕ мигрируем
+#### 7.4.2 Что НЕ мигрируем (удаляется после верификации)
 
 - `⟦⟦BEGIN/END_TASK_KNOWLEDGE_SYSTEM⟧⟧` маркеры — заменяются на loom-совместимый AGENTS.md
 - Managed-блок TCK — заменяется на loom entry-point (раздел 7.3)
-- `AGENTS.task-centric-knowledge.<profile>.md` — удаляется после извлечения данных
+- `AGENTS.task-centric-knowledge.<profile>.md` — удаляется
 - `knowledge/MIGRATION-SUGGESTION.md` — удаляется
+- Все сконвертированные `.md` файлы задач — удаляются после успешной верификации
+- `_templates/` — удаляется
 
 #### 7.4.3 Pipeline миграции
 
@@ -659,24 +661,36 @@ Reviewer:
 ├─► Шаг 3: Миграция реестра
 │   - Распарсить registry.md → registry.json
 │
-├─► Шаг 4: Очистка TCK
-│   - Удалить managed-блок из AGENTS.md
-│   - Удалить _templates/
-│   - Удалить AGENTS.task-centric-knowledge.*.md
-│   - Удалить MIGRATION-SUGGESTION.md
+├─► Шаг 4: Верификация (reviewer subagent, tmux)
+│   - Для каждой задачи: сравнить ключевые поля .md ↔ .json
+│   - Проверить: все TASK-ID на месте, статусы корректны, инварианты не потеряны
+│   - Проверить: registry.json содержит все задачи из registry.md
+│   - Результат: verification_report.json
+│   - Если есть расхождения → STOP, показать оператору
 │
-├─► Шаг 5: Генерация loom AGENTS.md
+├─► Шаг 5: Очистка TCK
+│   - Если verification_report.status = "ok":
+│     - Удалить managed-блок из AGENTS.md
+│     - Удалить _templates/
+│     - Удалить AGENTS.task-centric-knowledge.*.md
+│     - Удалить MIGRATION-SUGGESTION.md
+│     - Удалить все сконвертированные .md файлы задач
+│       (task.md, plan.md, sdd.md, worklog.md, decisions.md, handoff.md, registry.md)
+│   - Если verification_report.status = "issues":
+│     - STOP, показать оператору расхождения
+│
+├─► Шаг 6: Генерация loom AGENTS.md
 │   - На основе извлечённых данных + раздел 7.3
 │
-├─► Шаг 6: Сводка для operator review
+├─► Шаг 7: Сводка для operator review
 │   - Сколько задач сконвертировано
 │   - Какие правила извлечены
-│   - Что будет удалено
+│   - Результат верификации
+│   - Что будет/было удалено
 │   - Operator: approve / edit / cancel
 │
-└─► Шаг 7: Фиксация
-    - git commit с migration-изменениями
-    - Старые .md файлы не удаляются — остаются рядом с .json для ручной верификации
+└─► Шаг 8: Фиксация
+    - git commit с migration-изменениями (новые .json + удалённые .md)
 ```
 
 #### 7.4.4 Пример конвертации: task.md → task.json
@@ -717,10 +731,10 @@ Reviewer:
 
 #### 7.4.5 Откат миграции
 
-- Старые .md файлы сохраняются рядом с .json
-- Оператор может вручную удалить .json и вернуть .md
-- Реестр TCK остаётся в registry.md (не удаляется) — можно восстановить
-- Обратной конвертации json→md не предусмотрено (лоом — целевая система)
+- Все изменения — в git-коммите миграции
+- Откат: `git revert <migration-commit>`
+- Старые .md файлы НЕ сохраняются — агент удаляет их после успешной верификации
+- Если верификация нашла проблемы — старые файлы не тронуты, оператор принимает решение
 
 ```
 knowledge/
