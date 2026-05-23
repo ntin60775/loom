@@ -141,8 +141,8 @@ interface Plan {
 
 interface PlanStep {
   step_number: number;
-  title: string;
-  description: string;
+  title: Localized;              // {ru: "..."}
+  description: Localized;        // {ru: "..."}
   expected_output: string;       // Что должно получиться
   constraints: string[];         // Инварианты и правила, применимые к шагу
   depends_on: number[];          // Номера шагов, от которых зависит
@@ -942,7 +942,13 @@ Restore при `session_start` через чтение `sessionManager.getEntrie
 - Russian localization
 - Reviewer model auto-selection
 - Subagent config editor
-- Verification matrix integration
+- Verification matrix integration: автоматическая проверка инвариантов после завершения всех шагов.
+  Executor читает `task.json` → `invariants[]` → для каждого со статусом `defined` запускает проверку:
+  - Инварианты кода: reviewer subagent с критериями из инвариантов
+  - Инварианты архитектуры: сравнение с `knowledge/project/architecture/`
+  - Инварианты процесса: проверка `worklog.json`, `reviews/`, `registry.json`
+  - Результат: `artifacts/verification-matrix.json` со статусом каждого инварианта (`verified` / `violated`)
+  - При `violated` → STOP, оператор решает
 
 ## 14. Технологический стек
 
@@ -967,7 +973,7 @@ Loom наследует концепции, но не код:
 | Registry | registry.json (навигационный кэш) |
 | Task Routing | Эвристики + явные /plan, /agent |
 | Upgrade Governance | loom-version.json + migration notes |
-| Cleanup Plan/Confirm | TBD в DU-3 |
+| Cleanup Plan/Confirm | TCK migration pipeline (раздел 7.4) — cleanup после верификации |
 | Read Model | `/task-show`, `/task-status` |
 | Profiles (generic, 1c) | Subagent auto-select reviewer model |
 
