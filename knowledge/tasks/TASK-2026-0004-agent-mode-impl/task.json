@@ -3,7 +3,7 @@
   "slug": "agent-mode-impl",
   "title": "DU-2: Реализация Agent Mode + Git-based review",
   "description": "Реализовать extension loom: Agent Mode, Executor loop, subagent spawner, worker/reviewer runtime, git-based review flow. Pi CLI верифицирован PoC (INV-14). Эта подзадача изолирована из TASK-2026-0001-bootstrap.",
-  "status": "in_progress",
+  "status": "completed",
   "priority": "critical",
   "branch": "task/task-2026-0004-agent-mode-impl",
   "parent_task_id": "TASK-2026-0001-bootstrap",
@@ -69,7 +69,7 @@
   "delivery_units": [
     {
       "id": "DU-2",
-      "status": "draft",
+      "status": "merged",
       "purpose": "Implementation: extension, Plan Mode, Agent Mode, subagent spawner, git review flow",
       "base_branch": "main"
     }
