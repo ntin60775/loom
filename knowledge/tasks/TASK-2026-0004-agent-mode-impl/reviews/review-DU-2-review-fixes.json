@@ -1,0 +1,75 @@
+{
+  "verdict": "approve",
+  "commit": "67b27be",
+  "step_number": 10,
+  "findings": [
+    {
+      "severity": "note",
+      "message": "B1 FIXED: loom_check_iteration теперь принимает параметр action ('reject'/'check'). Инкремент счётчика происходит только при action='reject'. Режим 'check' — read-only запрос текущего статуса без инкремента.",
+      "file_path": ".pi/extensions/loom/agent-mode/executor-loop.ts"
+    },
+    {
+      "severity": "note",
+      "message": "B2 CLARIFIED: --append-system-prompt подтверждён в pi CLI (pi --help). Флаг существует и документирован. Риск снят.",
+      "file_path": ".pi/extensions/loom/subagent/spawner.ts"
+    },
+    {
+      "severity": "note",
+      "message": "B3 FIXED: execution-config.json: max_retries_per_step синхронизирован с кодом (3→10). Код использует 10 как дефолт, конфиг приведён в соответствие.",
+      "file_path": "knowledge/project/configs/execution-config.json"
+    },
+    {
+      "severity": "note",
+      "message": "W4 FIXED: getPiInvocation() — добавлена проверка доступности 'pi' в PATH через command -v / which перед fallback.",
+      "file_path": ".pi/extensions/loom/subagent/spawner.ts"
+    },
+    {
+      "severity": "note",
+      "message": "W5 FIXED: loadPrompt() вынесен в shared/utils.ts. index.ts и agent-mode/tools.ts импортируют из единого источника. Пути теперь относительны extension root через resolveExtensionRoot().",
+      "file_path": ".pi/extensions/loom/shared/utils.ts"
+    },
+    {
+      "severity": "note",
+      "message": "W6 FIXED: getFinalOutput() вынесен в shared/utils.ts. Дубликаты в agent-mode/tools.ts и subagent/spawner.ts удалены.",
+      "file_path": ".pi/extensions/loom/shared/utils.ts"
+    },
+    {
+      "severity": "note",
+      "message": "W7 FIXED: loom_spawn_subagent (plan-mode) теперь проверяет stopReason ('error'/'aborted') в дополнение к exitCode — приведено к единообразию с agent-mode.",
+      "file_path": ".pi/extensions/loom/plan-mode/tools.ts"
+    },
+    {
+      "severity": "note",
+      "message": "W8 FIXED: reviewer.md — добавлена инструкция по определению du_id: читать task.json → parent_delivery_unit, fallback на step-{step_number}.",
+      "file_path": ".pi/extensions/loom/subagent/prompts/reviewer.md"
+    },
+    {
+      "severity": "note",
+      "message": "N1 FIXED: knowledge/io.ts — добавлены типизированные обёртки readTask(), readPlan(), readRegistry(), readReview() с автоматической валидацией через validate*Shape().",
+      "file_path": ".pi/extensions/loom/knowledge/io.ts"
+    },
+    {
+      "severity": "note",
+      "message": "N2 FIXED: progress.ts — динамические импорты (await import('node:fs')) заменены на статические. Функции readProgress/writeProgress стали синхронными.",
+      "file_path": ".pi/extensions/loom/subagent/progress.ts"
+    },
+    {
+      "severity": "note",
+      "message": "N3 CLARIFIED: TASK-2026-0002-loom-vnext имеет директорию и task.json — валидная draft-задача, не orphan.",
+      "file_path": "knowledge/tasks/registry.json"
+    },
+    {
+      "severity": "note",
+      "message": "N4 CLARIFIED: --no-session подтверждён в pi CLI (pi --help). Флаг существует и документирован.",
+      "file_path": ".pi/extensions/loom/subagent/spawner.ts"
+    },
+    {
+      "severity": "note",
+      "message": "agent-executor.md обновлён: документирован параметр action у loom_check_iteration.",
+      "file_path": ".pi/extensions/loom/prompts/agent-executor.md"
+    }
+  ],
+  "recommendations": "Все 12 находок комплексного ревью обработаны. 3 критических (B1-B3): 2 исправлены кодом, 1 снят (флаг подтверждён). 5 предупреждений (W4-W8): все исправлены. 6 замечаний (N1-N6): 2 исправлены кодом, 4 сняты/уточнены. Создан shared/utils.ts — единый источник для loadPrompt() и getFinalOutput(). Типизированные обёртки в io.ts готовы к использованию. Рекомендуется на следующей итерации заменить readJson<any>() вызовами readTask/readPlan/readRegistry во всех tools.",
+  "reviewed_by": "AI Agent (comprehensive review fixes — round 2)",
+  "reviewed_at": "2026-05-23T23:59:00Z"
+}

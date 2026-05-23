@@ -1,5 +1,11 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import {
+  validateTaskShape,
+  validatePlanShape,
+  validateRegistryShape,
+  validateReviewShape,
+} from "./schemas";
 
 export function readJson<T>(filePath: string, validator?: (data: unknown) => string | null): T | null {
   try {
@@ -29,4 +35,24 @@ export function findKnowledgeRoot(cwd: string): string | null {
   const knowledgePath = path.join(cwd, "knowledge");
   if (fs.existsSync(knowledgePath)) return knowledgePath;
   return null;
+}
+
+// ── Typed wrappers (with runtime validation) ─────────────────────────────
+// These provide type-safe access to common artifacts.
+// Callers should prefer these over readJson<any>() where possible.
+
+export function readTask(taskDir: string): Record<string, unknown> | null {
+  return readJson(path.join(taskDir, "task.json"), validateTaskShape);
+}
+
+export function readPlan(taskDir: string): Record<string, unknown> | null {
+  return readJson(path.join(taskDir, "plan.json"), validatePlanShape);
+}
+
+export function readRegistry(knowledgeRoot: string): Record<string, unknown> | null {
+  return readJson(path.join(knowledgeRoot, "tasks", "registry.json"), validateRegistryShape);
+}
+
+export function readReview(reviewPath: string): Record<string, unknown> | null {
+  return readJson(reviewPath, validateReviewShape);
 }

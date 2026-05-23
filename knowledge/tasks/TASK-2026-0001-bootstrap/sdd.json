@@ -79,25 +79,25 @@
       "responsibilities": ["Formulate task", "Brainstorm with operator", "Create artifacts (task/plan/sdd)", "Spawn scout/researcher/architect subagents"],
       "interfaces": ["create_task tool", "create_plan tool", "spawn_subagent tool", "finalize_plan tool"],
       "dependencies": ["COMP-knowledge-io", "COMP-spawner"],
-      "files": [".pi/extensions/loom/plan-mode/orchestrator-prompt.ts", ".pi/extensions/loom/plan-mode/plan-tools.ts"],
+      "files": [".pi/extensions/loom/plan-mode/orchestrator.ts", ".pi/extensions/loom/plan-mode/tools.ts"],
       "status": "verified"
     },
     {
       "id": "COMP-executor",
       "name": "Executor (Agent Mode)",
       "responsibilities": ["Execute plan step by step", "Spawn worker and reviewer", "Make approve/reject/escalate decisions", "Update task status"],
-      "interfaces": ["spawn_worker tool", "spawn_reviewer tool", "update_task_status tool", "read_artifact tool"],
+      "interfaces": ["get_next_step tool", "spawn_worker tool", "spawn_reviewer tool", "check_iteration tool", "update_task_status tool", "read_artifact tool"],
       "dependencies": ["COMP-spawner", "COMP-knowledge-io"],
-      "files": [".pi/extensions/loom/agent-mode/executor-prompt.ts", ".pi/extensions/loom/agent-mode/executor-loop.ts", ".pi/extensions/loom/agent-mode/agent-tools.ts"],
+      "files": [".pi/extensions/loom/agent-mode/executor.ts", ".pi/extensions/loom/agent-mode/executor-loop.ts", ".pi/extensions/loom/agent-mode/tools.ts"],
       "status": "verified"
     },
     {
       "id": "COMP-spawner",
       "name": "Subagent Spawner",
-      "responsibilities": ["Launch pi in tmux window with --mode json --system-prompt --model --session-dir", "Monitor progress via progress.json", "Enforce timeout"],
-      "interfaces": ["tmux new-window API", "pi CLI flags: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools", "progress.json polling"],
-      "dependencies": ["tmux", "pi CLI"],
-      "files": [".pi/extensions/loom/subagent/spawner.ts", ".pi/extensions/loom/subagent/progress.ts"],
+      "responsibilities": ["Launch pi via child_process.spawn with --mode json --no-context-files", "Resolve model via domain_rules from subagent-config.json", "Monitor progress via stdout JSON streaming"],
+      "interfaces": ["child_process.spawn API", "pi CLI flags: --mode json, --append-system-prompt, --model, --tools, --no-context-files", "resolveModelArg() for domain-aware model selection"],
+      "dependencies": ["pi CLI"],
+      "files": [".pi/extensions/loom/subagent/spawner.ts", ".pi/extensions/loom/subagent/progress.ts", ".pi/extensions/loom/subagent/model-resolver.ts"],
       "status": "verified"
     },
     {
@@ -161,7 +161,7 @@
       "steps": [
         "Executor reads plan.json",
         "For each step: form WorkerSpec",
-        "spawn_worker -> tmux -> worker writes code -> git commit -> summary.json",
+        "spawn_worker -> child_process -> worker writes code -> git commit -> summary.json",
         "Executor reads summary.json",
         "form ReviewerSpec -> spawn_reviewer -> review.json",
         "Executor reads review.json -> approve/reject/escalate",
@@ -212,7 +212,7 @@
     {
       "id": "DU-2",
       "name": "Agent Mode + Git-based review",
-      "status": "draft"
+      "status": "merged"
     },
     {
       "id": "DU-3",

@@ -1,10 +1,17 @@
-.pi/extensions/loom/package.json
-.pi/extensions/loom/index.ts
-.pi/extensions/loom/agent-mode/tools.ts
-.pi/extensions/loom/plan-mode/tools.ts
-.pi/extensions/loom/knowledge/io.ts
-.pi/extensions/loom/knowledge/schemas.ts
-.pi/extensions/loom/prompts/plan-orchestrator.md
-.pi/extensions/loom/prompts/agent-executor.md
-knowledge/tasks/TASK-2026-0004-agent-mode-impl/plan.json
-knowledge/tasks/TASK-2026-0004-agent-mode-impl/reviews/review-DU-2.json
+[
+  ".pi/extensions/loom/shared/utils.ts",
+  ".pi/extensions/loom/agent-mode/tools.ts",
+  ".pi/extensions/loom/index.ts",
+  ".pi/extensions/loom/subagent/spawner.ts",
+  ".pi/extensions/loom/agent-mode/executor-loop.ts",
+  ".pi/extensions/loom/plan-mode/tools.ts",
+  ".pi/extensions/loom/prompts/agent-executor.md",
+  ".pi/extensions/loom/subagent/prompts/reviewer.md",
+  ".pi/extensions/loom/knowledge/io.ts",
+  ".pi/extensions/loom/subagent/progress.ts",
+  "knowledge/project/configs/execution-config.json",
+  ".pi/extensions/loom/ui/subagent-widget.ts",
+  "knowledge/tasks/TASK-2026-0004-agent-mode-impl/artifacts/files-to-commit.json",
+  "knowledge/tasks/TASK-2026-0004-agent-mode-impl/reviews/review-DU-2-fixes.json",
+  "knowledge/tasks/TASK-2026-0004-agent-mode-impl/reviews/review-DU-2-review-fixes.json"
+]

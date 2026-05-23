@@ -15,6 +15,8 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
+import { resolveModelArg } from "../subagent/model-resolver";
+import { getFinalOutput } from "../shared/utils";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -289,26 +291,24 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
 
+      const scoutModel = params.model ?? resolveModelArg("scout", params.instruction, ctx.cwd);
+
       const spec: WorkerSpec = {
         name: `${params.task_id}-${params.name}`,
         systemPrompt: "You are a research/analysis subagent for loom Plan Mode. Analyze the given task and return structured findings.",
-        model: params.model ?? config?.scout?.model ?? config?.worker?.model ?? undefined,
+        model: scoutModel,
         tools: ["read", "bash", "grep", "find", "ls"],
         task: params.instruction,
         cwd: ctx.cwd,
       };
 
       const result = await spawnSubagent(spec, signal);
-      const output = result.messages
-        .filter(m => m.role === "assistant")
-        .flatMap(m => m.content.filter(c => c.type === "text" && c.text))
-        .map(c => c.text)
-        .join("\n");
+      const output = getFinalOutput(result.messages);
 
       return {
         content: [{ type: "text", text: output || "(no output)" }],
-        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model } },
-        isError: result.exitCode !== 0,
+        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
+        isError: result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted",
       };
     },
   });
