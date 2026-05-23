@@ -34,8 +34,8 @@
       "id": "INV-10",
       "text": "Модели конфигурируются: не хардкод",
       "marker": "INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
-      "status": "defined",
-      "verification_method": "Code review: all model references load from subagent-config.json"
+      "status": "verified",
+      "verification_method": "Code review: resolveModelArg reads subagent-config.json; domain_rules matching by file extension; no hardcoded model strings"
     },
     {
       "id": "INV-11",

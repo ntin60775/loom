@@ -14,6 +14,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
+import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 
 function taskDir(cwd: string, taskId: string): string {
@@ -65,7 +66,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
 
       const workerPrompt = loadPrompt("worker");
-      const model = config?.worker?.model;
+      const taskContext = `${task.title} ${step.title} ${step.expected_output} ${step.description}`;
+      const model = resolveModelArg("worker", taskContext, ctx.cwd);
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
 
       // INV-11: Block concurrent worker spawn
@@ -135,7 +137,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
 
       const reviewerPrompt = loadPrompt("reviewer");
-      const model = config?.reviewer?.model;
+      const reviewContext = `Review commit ${params.commit_hash}. Expected: ${step.expected_output}. Invariants: ${task.invariants.map((i: any) => i.id).join(", ")}`;
+      const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
       const spec: ReviewerSpec = {

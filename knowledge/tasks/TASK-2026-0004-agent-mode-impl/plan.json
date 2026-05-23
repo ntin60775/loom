@@ -14,8 +14,8 @@
     {
       "step_number": 2,
       "title": "Реализовать Plan Mode orchestrator",
-      "description": "Создать plan-mode/orchestrator-prompt.ts и plan-tools.ts. Tools: create_task, create_plan, add_invariant, add_delivery_unit, spawn_subagent, finalize_plan.",
-      "expected_output": ".pi/extensions/loom/plan-mode/orchestrator-prompt.ts, plan-tools.ts",
+      "description": "Создать plan-mode/orchestrator.ts и tools.ts. Tools: loom_create_task, loom_create_plan, loom_add_invariant, loom_add_delivery_unit, loom_spawn_subagent, loom_finalize_plan.",
+      "expected_output": ".pi/extensions/loom/plan-mode/orchestrator.ts, tools.ts",
       "constraints": ["INV-1", "INV-6", "INV-12"],
       "depends_on": [1],
       "estimated_effort": "medium",
@@ -24,8 +24,8 @@
     {
       "step_number": 3,
       "title": "Реализовать Agent Mode executor",
-      "description": "Создать agent-mode/executor-prompt.ts, executor-loop.ts, agent-tools.ts. Executor loop: step -> worker -> review -> decision. Tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact.",
-      "expected_output": ".pi/extensions/loom/agent-mode/executor-prompt.ts, executor-loop.ts, agent-tools.ts",
+      "description": "Создать agent-mode/executor.ts, executor-loop.ts, tools.ts. Executor loop: step -> worker -> review -> decision. Tools: loom_get_next_step, loom_spawn_worker, loom_spawn_reviewer, loom_check_iteration, loom_update_task, loom_read_artifact.",
+      "expected_output": ".pi/extensions/loom/agent-mode/executor.ts, executor-loop.ts, tools.ts",
       "constraints": ["INV-9", "INV-11", "INV-12"],
       "depends_on": [1],
       "estimated_effort": "medium",

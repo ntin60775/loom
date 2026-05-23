@@ -58,6 +58,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
   ];
   const AGENT_MODE_TOOLS = [
     "read", "bash", "grep", "find", "ls",
+    "loom_get_next_step", "loom_check_iteration",
     "loom_spawn_worker", "loom_spawn_reviewer",
     "loom_update_task", "loom_read_artifact",
   ];

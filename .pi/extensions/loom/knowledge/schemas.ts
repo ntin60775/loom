@@ -109,6 +109,45 @@ export const ReviewSchema = Type.Object({
   reviewed_at: Type.String(),
 });
 
+export const SubagentConfigSchema = Type.Object({
+  domains: Type.Record(
+    Type.String(),
+    Type.Object({
+      provider: Type.String(),
+      model: Type.String(),
+      thinking: Type.Optional(Type.String()),
+    }),
+  ),
+  reviewer: Type.Optional(
+    Type.Object({
+      thinking: Type.Optional(Type.String()),
+      domain_rules: Type.Array(
+        Type.Object({
+          extension: Type.Optional(Type.String()),
+          domain: Type.String(),
+          default: Type.Optional(Type.String()),
+        }),
+      ),
+    }),
+  ),
+  worker: Type.Optional(
+    Type.Object({
+      domain_rules: Type.Array(
+        Type.Object({
+          extension: Type.Optional(Type.String()),
+          domain: Type.String(),
+          default: Type.Optional(Type.String()),
+        }),
+      ),
+    }),
+  ),
+  scout: Type.Optional(
+    Type.Object({
+      thinking: Type.Optional(Type.String()),
+    }),
+  ),
+});
+
 // ── Runtime Validators ────────────────────────────────────────────────────
 // Simple structural checks without TypeGuard dependency
 
@@ -151,5 +190,18 @@ export function validateReviewShape(data: unknown): string | null {
   }
   if (!["approve", "reject", "needs_discussion"].includes(obj.verdict as string)) return "invalid verdict";
   if (!Array.isArray(obj.findings)) return "findings must be an array";
+  return null;
+}
+
+export function validateSubagentConfigShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  if (!("domains" in obj) || typeof obj.domains !== "object" || obj.domains === null) return "domains must be an object";
+  const domains = obj.domains as Record<string, unknown>;
+  for (const [key, val] of Object.entries(domains)) {
+    if (!val || typeof val !== "object") return `domain ${key} must be an object`;
+    const d = val as Record<string, unknown>;
+    if (!("provider" in d) || !("model" in d)) return `domain ${key} missing provider or model`;
+  }
   return null;
 }
