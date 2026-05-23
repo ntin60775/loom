@@ -1,0 +1,10 @@
+.pi/extensions/loom/package.json
+.pi/extensions/loom/index.ts
+.pi/extensions/loom/agent-mode/tools.ts
+.pi/extensions/loom/plan-mode/tools.ts
+.pi/extensions/loom/knowledge/io.ts
+.pi/extensions/loom/knowledge/schemas.ts
+.pi/extensions/loom/prompts/plan-orchestrator.md
+.pi/extensions/loom/prompts/agent-executor.md
+knowledge/tasks/TASK-2026-0004-agent-mode-impl/plan.json
+knowledge/tasks/TASK-2026-0004-agent-mode-impl/reviews/review-DU-2.json

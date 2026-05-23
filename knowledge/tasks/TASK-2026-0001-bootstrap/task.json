@@ -115,7 +115,7 @@
     },
     {
       "id": "DU-2",
-      "status": "draft",
+      "status": "merged",
       "purpose": "Implementation: extension, Plan Mode, Agent Mode, subagent spawner, git review flow",
       "base_branch": "main"
     },

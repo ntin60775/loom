@@ -37,7 +37,7 @@
       "task_id": "TASK-2026-0004-agent-mode-impl",
       "slug": "agent-mode-impl",
       "title": "DU-2: Agent Mode + Git review",
-      "status": "draft",
+      "status": "completed",
       "priority": "critical",
       "branch": "task/task-2026-0004-agent-mode-impl",
       "parent_task_id": "TASK-2026-0001-bootstrap",
