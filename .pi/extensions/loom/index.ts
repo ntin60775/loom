@@ -17,6 +17,7 @@ import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readJson } from "./knowledge/io";
 import { onboardProject } from "./knowledge/onboarding";
+import * as fs from "node:fs";
 import * as path from "node:path";
 
 interface LoomState {
@@ -53,6 +54,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "read", "bash", "grep", "find", "ls",
     "loom_create_task", "loom_create_plan", "loom_add_invariant",
     "loom_add_delivery_unit", "loom_finalize_plan",
+    "loom_spawn_subagent",
   ];
   const AGENT_MODE_TOOLS = [
     "read", "bash", "grep", "find", "ls",
@@ -189,54 +191,38 @@ export default function loomExtension(pi: ExtensionAPI): void {
     }
   });
 
+  function loadPromptFile(name: string): string {
+    const baseDir = typeof __dirname !== 'undefined'
+      ? __dirname
+      : typeof import.meta !== 'undefined' && import.meta.dirname
+        ? import.meta.dirname
+        : process.cwd();
+    const promptPath = path.join(baseDir, "prompts", `${name}.md`);
+    try {
+      return fs.readFileSync(promptPath, "utf-8");
+    } catch {
+      return `[LOAD ERROR: Prompt ${name} not found at ${promptPath}]`;
+    }
+  }
+
   pi.on("before_agent_start", async () => {
     if (state.mode === "plan") {
+      const prompt = loadPromptFile("plan-orchestrator");
       return {
         message: {
           customType: "loom-plan-context",
-          content: `[LOOM PLAN MODE ACTIVE]
-You are the Plan Mode orchestrator for loom — an AI-Native Development Environment.
-
-Your job:
-1. Understand the user's goal.
-2. Decompose it into delivery units and steps.
-3. Produce structured artifacts: task.json, plan.json, sdd.json (if needed).
-4. All artifacts go into knowledge/tasks/<TASK-ID>-<slug>/.
-5. Update knowledge/tasks/registry.json.
-6. When done, call finalize_plan to transition to Agent Mode.
-
-Rules:
-- JSON is primary; markdown is derivative.
-- Invariants are machine-readable markers (INVARIANT: ...).
-- Every task must have a task.json.
-- Use spawn_subagent for research or complex analysis if needed.
-`,
+          content: `[LOOM PLAN MODE ACTIVE]\n\n${prompt}`,
           display: false,
         },
       };
     }
 
     if (state.mode === "agent") {
+      const prompt = loadPromptFile("agent-executor");
       return {
         message: {
           customType: "loom-agent-context",
-          content: `[LOOM AGENT MODE ACTIVE]
-You are the Agent Mode executor for loom.
-
-Your job:
-1. Read the current task's plan.json and task.json.
-2. Execute the next pending step.
-3. Spawn a worker subagent for implementation.
-4. After worker completes, spawn a reviewer subagent.
-5. Based on review, approve (next step) or reject (correction loop, max 10 iterations).
-6. Use git diff for review; do not analyze live session.
-
-Rules:
-- Executor does NOT write code. Only orchestrates worker + reviewer.
-- Worker commits only files listed in files-to-commit.json.
-- One active worker at a time.
-- All models are configured in subagent-config.json; no hardcoded models.
-`,
+          content: `[LOOM AGENT MODE ACTIVE]\n\n${prompt}`,
           display: false,
         },
       };

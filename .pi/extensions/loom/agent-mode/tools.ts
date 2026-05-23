@@ -11,7 +11,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
+import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
@@ -21,13 +21,22 @@ function taskDir(cwd: string, taskId: string): string {
 }
 
 function loadPrompt(name: string): string {
-  const promptPath = path.join(__dirname, "..", "subagent", "prompts", `${name}.md`);
+  // Use import.meta.dirname (ESM) with __dirname fallback (CJS/jiti)
+  const baseDir = typeof __dirname !== 'undefined'
+    ? __dirname
+    : typeof import.meta !== 'undefined' && import.meta.dirname
+      ? import.meta.dirname
+      : process.cwd();
+  const promptPath = path.join(baseDir, "..", "subagent", "prompts", `${name}.md`);
   try {
     return fs.readFileSync(promptPath, "utf-8");
   } catch {
-    return `Prompt ${name} not found.`;
+    return `Prompt ${name} not found at ${promptPath}.`;
   }
 }
+
+// INV-11: Strictly sequential execution — state machine
+let activeWorkerId: string | null = null;
 
 export function registerAgentTools(pi: ExtensionAPI): void {
   pi.registerTool({
@@ -59,29 +68,44 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = config?.worker?.model;
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
 
-      const spec: WorkerSpec = {
-        name: `${params.task_id}-worker-step${params.step_number}`,
-        systemPrompt: workerPrompt,
-        model,
-        tools,
-        task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${params.additional_context ?? ""}`,
-        cwd: ctx.cwd,
-      };
+      // INV-11: Block concurrent worker spawn
+      if (activeWorkerId) {
+        return {
+          content: [{ type: "text", text: `Worker "${activeWorkerId}" is already active. Cannot spawn another worker until it completes. Sequential execution enforced (INV-11).` }],
+          isError: true,
+        };
+      }
 
-      const result = await spawnSubagent(spec, signal, (output) => {
-        if (onUpdate) {
-          onUpdate({ content: [{ type: "text", text: output }], details: { phase: "worker", step: params.step_number } });
-        }
-      });
+      const workerId = `${params.task_id}-worker-step${params.step_number}`;
+      activeWorkerId = workerId;
 
-      const output = getFinalOutput(result.messages);
-      const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+      try {
+        const spec: WorkerSpec = {
+          name: workerId,
+          systemPrompt: workerPrompt,
+          model,
+          tools,
+          task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${params.additional_context ?? ""}`,
+          cwd: ctx.cwd,
+        };
 
-      return {
-        content: [{ type: "text", text: output || "(no output)" }],
-        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
-        isError,
-      };
+        const result = await spawnSubagent(spec, signal, (output) => {
+          if (onUpdate) {
+            onUpdate({ content: [{ type: "text", text: output }], details: { phase: "worker", step: params.step_number } });
+          }
+        });
+
+        const output = getFinalOutput(result.messages);
+        const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+
+        return {
+          content: [{ type: "text", text: output || "(no output)" }],
+          details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
+          isError,
+        };
+      } finally {
+        activeWorkerId = null;
+      }
     },
   });
 

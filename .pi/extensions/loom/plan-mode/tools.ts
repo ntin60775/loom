@@ -12,8 +12,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
+import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
+import { spawnSubagent } from "../subagent/spawner";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -270,6 +271,44 @@ export function registerPlanTools(pi: ExtensionAPI): void {
           { type: "text", text: `Plan finalized for ${params.task_id}. Registry updated. Markdown derivatives generated.` },
         ],
         details: { task_id: params.task_id, registry_updated: true },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_spawn_subagent",
+    label: "Spawn Subagent",
+    description: "Spawn a research/analysis subagent during planning phase",
+    parameters: Type.Object({
+      task_id: Type.String({ description: "Task ID context" }),
+      name: Type.String({ description: "Subagent name" }),
+      instruction: Type.String({ description: "Task instruction for the subagent" }),
+      model: Type.Optional(Type.String({ description: "Override model" })),
+    }),
+
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
+
+      const spec: WorkerSpec = {
+        name: `${params.task_id}-${params.name}`,
+        systemPrompt: "You are a research/analysis subagent for loom Plan Mode. Analyze the given task and return structured findings.",
+        model: params.model ?? config?.scout?.model ?? config?.worker?.model ?? undefined,
+        tools: ["read", "bash", "grep", "find", "ls"],
+        task: params.instruction,
+        cwd: ctx.cwd,
+      };
+
+      const result = await spawnSubagent(spec, signal);
+      const output = result.messages
+        .filter(m => m.role === "assistant")
+        .flatMap(m => m.content.filter(c => c.type === "text" && c.text))
+        .map(c => c.text)
+        .join("\n");
+
+      return {
+        content: [{ type: "text", text: output || "(no output)" }],
+        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model } },
+        isError: result.exitCode !== 0,
       };
     },
   });

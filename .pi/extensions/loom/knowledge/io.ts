@@ -1,11 +1,20 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-export function readJson<T>(filePath: string): T | null {
+export function readJson<T>(filePath: string, validator?: (data: unknown) => string | null): T | null {
   try {
     const data = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(data) as T;
-  } catch {
+    const parsed = JSON.parse(data) as T;
+    if (validator) {
+      const error = validator(parsed);
+      if (error) {
+        console.error(`[loom] Validation error in ${filePath}: ${error}`);
+        return null;
+      }
+    }
+    return parsed;
+  } catch (err) {
+    console.error(`[loom] Failed to read ${filePath}:`, err);
     return null;
   }
 }

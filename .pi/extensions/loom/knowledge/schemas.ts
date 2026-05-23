@@ -4,7 +4,7 @@
  * Invariant: JSON primary, markdown derivative (INV-1)
  */
 
-import { Type } from "typebox";
+import { Type } from "@earendil-works/pi-ai";
 
 export const TaskSchema = Type.Object({
   task_id: Type.String(),
@@ -108,3 +108,48 @@ export const ReviewSchema = Type.Object({
   reviewer_model: Type.Optional(Type.String()),
   reviewed_at: Type.String(),
 });
+
+// ── Runtime Validators ────────────────────────────────────────────────────
+// Simple structural checks without TypeGuard dependency
+
+type ValidatorFn = (data: unknown) => string | null;
+
+export function validateTaskShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  const required = ["task_id", "slug", "title", "description", "status", "branch", "created_at", "updated_at"];
+  for (const key of required) {
+    if (!(key in obj)) return `missing required field: ${key}`;
+  }
+  if (typeof obj.task_id !== "string" || !obj.task_id.startsWith("TASK-")) return "invalid task_id";
+  if (!Array.isArray(obj.invariants)) return "invariants must be an array";
+  if (!Array.isArray(obj.delivery_units)) return "delivery_units must be an array";
+  return null;
+}
+
+export function validatePlanShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  if (!("task_id" in obj)) return "missing task_id";
+  if (!Array.isArray(obj.steps) || obj.steps.length === 0) return "steps must be a non-empty array";
+  return null;
+}
+
+export function validateRegistryShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  if (!("tasks" in obj) || !Array.isArray(obj.tasks)) return "tasks must be an array";
+  return null;
+}
+
+export function validateReviewShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  const required = ["verdict", "commit", "step_number", "findings", "reviewed_at"];
+  for (const key of required) {
+    if (!(key in obj)) return `missing required field: ${key}`;
+  }
+  if (!["approve", "reject", "needs_discussion"].includes(obj.verdict as string)) return "invalid verdict";
+  if (!Array.isArray(obj.findings)) return "findings must be an array";
+  return null;
+}
