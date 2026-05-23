@@ -84,8 +84,8 @@
 | **Orchestrator (Plan Mode)** | Формулировка задачи, брейншторм, артефакты (task/plan/sdd.json) | Кодом, исполнением |
 | **Executor (Agent Mode)** | Цикл исполнения: worker → review → decision | Написанием кода (это worker) |
 | **Spawner** | Запуск pi в tmux, progress monitoring, timeout | Бизнес-логикой subagent |
-| **Worker Subagent** | Один шаг плана: код/исследование/доку | Архитектурными решениями |
-| **Reviewer Subagent** | Проверка результата worker по инвариантам и правилам | Исправлениями (это worker) |
+| **Worker Subagent** | Один шаг плана: код/исследование/доку. Универсальный runtime, доменная специализация через prompt + модель от оркестратора | Архитектурными решениями, выбором модели |
+| **Reviewer Subagent** | Проверка результата worker по инвариантам и правилам. Универсальный runtime, доменная специализация через prompt + модель от оркестратора | Исправлениями (это worker), выбором модели |
 | **Knowledge I/O** | JSON ↔ Markdown, schema validation | Бизнес-логикой |
 
 ## 4. Модель данных (JSON Schemas)
@@ -280,27 +280,26 @@ interface ModelConfig {
 
 ### 4.7 Конфигурации
 
-**subagent-config.json** — маппинг ролей на модели:
+**subagent-config.json** — маппинг доменов на модели:
 ```json
 {
-  "defaults": {
-    "scout": {"provider": "deepseek", "model": "deepseek-chat", "thinking": "xhigh"},
-    "researcher": {"provider": "deepseek", "model": "deepseek-reasoner", "thinking": "xhigh"},
-    "worker": {"provider": "deepseek", "model": "deepseek-chat", "thinking": "medium"},
-    "reviewer": {"provider": "deepseek", "model": "deepseek-chat", "thinking": "xhigh"}
+  "domains": {
+    "1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"},
+    "general": {"provider": "deepseek", "model": "deepseek-chat", "thinking": "medium"}
   },
-  "overrides": {
-    "reviewer-1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"},
-    "worker-1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"}
+  "reviewer": {
+    "thinking": "xhigh",
+    "domain_rules": [
+      {"extension": ".bsl", "domain": "1c"},
+      {"default": "general"}
+    ]
   },
-  "auto_select_reviewer": [
-    {"extension": ".bsl", "reviewer": "reviewer-1c"},
-    {"default": "reviewer"}
-  ],
-  "auto_select_worker": [
-    {"extension": ".bsl", "worker": "worker-1c"},
-    {"default": "worker"}
-  ]
+  "worker": {
+    "domain_rules": [
+      {"extension": ".bsl", "domain": "1c"},
+      {"default": "general"}
+    ]
+  }
 }
 ```
 
@@ -485,15 +484,28 @@ Executor читает plan.json → шаг N
 
 ### 6.5 Worker Subagent — детали
 
+**Worker — универсальный.** Один runtime, динамическая доменная настройка через оркестратора.
+
 Worker получает через WorkerSpec:
 - Описание шага из plan.json
 - Ссылки на релевантные инварианты и правила
 - Контекст: какие файлы/модули затронуты
 - Ожидаемый результат
 
-Worker:
+**Оркестратор формирует специализацию:**
+- Определяет домен по затронутым файлам (`.bsl` → 1C, остальное → general)
+- Выбирает модель из `subagent-config.json` → `domains[domain]`
+- Формирует systemPrompt с доменно-специфичными инструкциями
+- Подключает релевантные skills и правила проекта
+
+**Что worker НЕ делает:**
+- Не принимает архитектурных решений (это plan mode)
+- Не меняет границы задачи (это operator)
+- Не выбирает себе модель (это оркестратор)
+
+**Worker:**
 - Работает в tmux-вкладке
-- Имеет tools: read, bash, write, edit, git (add, diff)
+- Имеет tools: read, bash, write, edit
 - Делает task-scoped commit: `git add -A && git commit -m "TASK-XXXX step-N: ..."`
 - Пишет `summary.json`:
   ```json
@@ -508,10 +520,13 @@ Worker:
 
 ### 6.6 Reviewer Subagent — детали
 
+**Reviewer — универсальный.** Тот же runtime, что у worker. Специализация через prompt и модель.
+
 Reviewer получает через ReviewerSpec:
 - Git commit hash для анализа
 - Список критериев (инварианты + правила + план)
 - Контекст задачи (task.json)
+- Домен (определяется оркестратором по затронутым файлам)
 
 Reviewer:
 - Работает в tmux-вкладке
@@ -520,15 +535,20 @@ Reviewer:
 - Сравнивает с критериями
 - Пишет `review.json` (формат в разделе 4.5)
 
-### 6.7 Авто-выбор модели reviewer
+### 6.7 Авто-выбор модели по домену
 
-По расширениям изменённых файлов:
+Оркестратор определяет домен по расширениям затронутых файлов и выбирает модель из `subagent-config.json`:
 ```
-.bsl → reviewer-1c (kimi)
-* → reviewer (default)
+.bsl → domain "1c" → kimi/kimi-for-coding:thinking
+* → domain "general" → deepseek/deepseek-chat:thinking
 ```
 
-Из `subagent-config.json`.
+Домен влияет на:
+- **Модель** (provider + model + thinking)
+- **System prompt** (доменно-специфичные инструкции: синтаксис, конвенции платформы)
+- **Skills** (1С: специфичные навыки, general: общие)
+
+Остальное (runtime, tools, output формат) — одинаково для всех доменов.
 
 ## 7. Flow: Onboarding (инициализация в непустом проекте)
 
@@ -978,7 +998,7 @@ Loom наследует концепции, но не код:
 | Upgrade Governance | loom-version.json + migration notes |
 | Cleanup Plan/Confirm | TCK migration pipeline (раздел 7.4) — cleanup после верификации |
 | Read Model | `/task-show`, `/task-status` |
-| Profiles (generic, 1c) | Subagent auto-select: `.bsl` → kimi for worker + reviewer |
+| Profiles (generic, 1c) | Домены в `subagent-config.json`: `.bsl` → 1C (kimi), остальное → general |
 
 **Что loom делает иначе:**
 - JSON primary вместо markdown primary
