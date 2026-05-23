@@ -40,7 +40,7 @@
 | INV-6 | Детерминированный контекст: нет неявного состояния | Subagents используют чистые сессии, не наследуют контекст |
 | INV-7 | Pi-Native: extension, не standalone tool | Весь код в `.pi/extensions/loom/` |
 | INV-8 | Git-based review: reviewer анализирует артефакты, не сессию | Review artefact ссылается на git commit |
-| INV-9 | Executor не пишет код: только оркестрирует worker + reviewer | Executor tools: spawn_worker, spawn_reviewer, git_commit, update_status. НЕТ write/edit в executor tools |
+| INV-9 | Executor не пишет код: только оркестрирует worker + reviewer | Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. НЕТ write/edit/commit в executor tools |
 | INV-10 | Модели конфигурируются: не хардкод | `subagent-config.json`, `execution-config.json` |
 | INV-11 | Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1. Никаких параллельных workers | Executor loop не умеет spawn >1 worker одновременно |
 
@@ -846,7 +846,7 @@ RULE-0005: All errors wrapped in Result
 
 1. Worker: `git add -A && git commit`
 2. Reviewer: `git show <commit>` → анализ diff → `review.json`
-3. Executor: читает `review.json` → approve → `git commit` (если amend/rebase), или reject → correction
+3. Executor: читает `review.json` → approve → update_status, или reject → correction
 4. Все review артефакты — в `knowledge/tasks/TASK-XXXX/reviews/`
 
 ### 9.4 Finalize задачи
@@ -946,7 +946,7 @@ Restore при `session_start` через чтение `sessionManager.getEntrie
 - Subagent spawner (tmux windows)
 - Git-based review flow: worker commit → reviewer → review.json
 - Executor loop: approve/reject с max_iterations
-- `update_task_status`, `git_commit` tools
+- `update_task_status` tools
 - Progress polling
 
 ### DU-3: Onboarding + Knowledge accumulation
