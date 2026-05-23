@@ -1,0 +1,142 @@
+{
+  "task_id": "TASK-2026-0004-agent-mode-impl",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Создать extension entry point",
+      "description": "Создать .pi/extensions/loom/index.ts — entry point с event hooks, commands, state init. Зарегистрировать команды /plan, /agent, /loom-init, /task-status.",
+      "expected_output": ".pi/extensions/loom/index.ts, .pi/extensions/loom/package.json",
+      "constraints": ["INV-7", "INV-12"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 2,
+      "title": "Реализовать Plan Mode orchestrator",
+      "description": "Создать plan-mode/orchestrator-prompt.ts и plan-tools.ts. Tools: create_task, create_plan, add_invariant, add_delivery_unit, spawn_subagent, finalize_plan.",
+      "expected_output": ".pi/extensions/loom/plan-mode/orchestrator-prompt.ts, plan-tools.ts",
+      "constraints": ["INV-1", "INV-6", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 3,
+      "title": "Реализовать Agent Mode executor",
+      "description": "Создать agent-mode/executor-prompt.ts, executor-loop.ts, agent-tools.ts. Executor loop: step -> worker -> review -> decision. Tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact.",
+      "expected_output": ".pi/extensions/loom/agent-mode/executor-prompt.ts, executor-loop.ts, agent-tools.ts",
+      "constraints": ["INV-9", "INV-11", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Реализовать Knowledge I/O",
+      "description": "Создать knowledge/io.ts (JSON read/write, markdown generator), knowledge/schemas.ts (TypeBox schemas), knowledge/onboarding.ts (init pipeline).",
+      "expected_output": ".pi/extensions/loom/knowledge/{io.ts, schemas.ts, onboarding.ts}",
+      "constraints": ["INV-1", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Реализовать Subagent Spawner",
+      "description": "Создать subagent/spawner.ts (tmux + pi CLI launch), subagent/progress.ts (progress.json polling), subagent/specs.ts (WorkerSpec, ReviewerSpec types). Подтвердить работу с реальным pi.",
+      "expected_output": ".pi/extensions/loom/subagent/{spawner.ts, progress.ts, specs.ts}",
+      "constraints": ["INV-6", "INV-10", "INV-14"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Реализовать Worker subagent prompt",
+      "description": "Создать subagent/prompts/worker.md — универсальный worker prompt. Инструкции: task-scoped commit, files-to-commit.json, summary.json, audit.json.",
+      "expected_output": ".pi/extensions/loom/subagent/prompts/worker.md",
+      "constraints": ["INV-9", "INV-13"],
+      "depends_on": [5],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 7,
+      "title": "Реализовать Reviewer subagent prompt",
+      "description": "Создать subagent/prompts/reviewer.md — универсальный reviewer prompt. Инструкции: git show, read files, compare with criteria, write review.json.",
+      "expected_output": ".pi/extensions/loom/subagent/prompts/reviewer.md",
+      "constraints": ["INV-8", "INV-12"],
+      "depends_on": [5],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 8,
+      "title": "Интегрировать TUI widgets",
+      "description": "Создать ui/mode-widget.ts ([PLAN]/[AGENT]), ui/task-widget.ts (step progress), ui/subagent-widget.ts (фаза 2).",
+      "expected_output": ".pi/extensions/loom/ui/{mode-widget.ts, task-widget.ts, subagent-widget.ts}",
+      "constraints": ["INV-5", "INV-12"],
+      "depends_on": [2, 3],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 9,
+      "title": "Интеграционный тест: Plan -> Agent flow",
+      "description": "End-to-end тест: /plan -> create_task -> create_plan -> finalize_plan -> auto-switch -> spawn_worker -> spawn_reviewer -> approve -> next step. Проверить на реальном проекте.",
+      "expected_output": "Integration test report, исправления багов",
+      "constraints": ["INV-6", "INV-8", "INV-11"],
+      "depends_on": [2, 3, 4, 5, 6, 7],
+      "estimated_effort": "large",
+      "status": "pending"
+    },
+    {
+      "step_number": 10,
+      "title": "Ревью и фиксация DU-2",
+      "description": "Провести review кода extension. Исправить замечания. Закоммитить. Обновить task.json DU-2 status -> completed.",
+      "expected_output": "review.json, git commit, обновленный task.json",
+      "constraints": ["INV-8", "INV-13"],
+      "depends_on": [9],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-DU2-1",
+      "description": "tmux window management может конфликтовать с текущей сессией пользователя",
+      "severity": "medium",
+      "mitigation": "Использовать именованные windows с префиксом loom:; fallback к background процессу если tmux не используется"
+    },
+    {
+      "id": "RISK-DU2-2",
+      "description": "pi CLI в JSON mode может требовать API key даже для --offline тестов",
+      "severity": "low",
+      "mitigation": "Worker/reviewer subagents требуют API key по design; offline используется только для scout"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-DU2-1",
+      "description": "Extension загружается без ошибок",
+      "after_step": 1,
+      "verification": "pi -e .pi/extensions/loom/index.ts --help | grep '/plan'"
+    },
+    {
+      "id": "CHK-DU2-2",
+      "description": "Plan Mode создает task.json и plan.json",
+      "after_step": 2,
+      "verification": "Пройти /plan -> create_task -> create_plan -> файлы созданы в knowledge/tasks/"
+    },
+    {
+      "id": "CHK-DU2-3",
+      "description": "Agent Mode выполняет worker -> review -> approve",
+      "after_step": 9,
+      "verification": "End-to-end тест: один шаг плана выполнен, review.json создан, статус updated"
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}

@@ -42,6 +42,17 @@
 | DU-3 | planned | Onboarding: scout, research, migration, rules catalog, architecture catalog |
 | DU-4 | planned | Полировка: TUI widgets, localization guard, verification matrix, subagent config editor |
 
+## Подзадачи (изолированные DU)
+
+Каждый DU изолирован в отдельную подзадачу со своим task.json и plan.json:
+
+| DU | Подзадача | Статус |
+|----|-----------|--------|
+| DU-1 | [TASK-2026-0003-core-design](../TASK-2026-0003-core-design/task.json) | completed |
+| DU-2 | [TASK-2026-0004-agent-mode-impl](../TASK-2026-0004-agent-mode-impl/task.json) | draft |
+| DU-3 | [TASK-2026-0005-onboarding-impl](../TASK-2026-0005-onboarding-impl/task.json) | draft |
+| DU-4 | [TASK-2026-0006-polish-impl](../TASK-2026-0006-polish-impl/task.json) | draft |
+
 ## Артефакты
 
 - `task.json` — **Primary**. Задача в machine-readable формате.
@@ -98,3 +109,12 @@
 - Коммит: `c8e8b04` — staged через files-to-commit.json (INV-13).
 - Review v2: `REV-2026-0001-step-2-iter-1.json` — verdict: approve, confidence 0.98.
 - PoC pi CLI: `artifacts/poc-pi-cli-report.md` — все флаги подтверждены (INV-14). RISK-1 mitigated.
+
+### 2026-05-23 — Изоляция DU в подзадачи
+- Созданы 4 подзадачи: TASK-2026-0003, 0004, 0005, 0006.
+- Каждая подзадача содержит task.json, plan.json, reviews/, artifacts/.
+- Registry.json обновлен: 6 задач.
+- DU-1 (core-design) — completed, изолирован.
+- DU-2 (agent-mode-impl) — draft, следующий для работы.
+- DU-3 (onboarding-impl) — draft.
+- DU-4 (polish-impl) — draft.

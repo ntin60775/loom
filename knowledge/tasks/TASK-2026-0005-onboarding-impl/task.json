@@ -1,0 +1,66 @@
+{
+  "task_id": "TASK-2026-0005-onboarding-impl",
+  "slug": "onboarding-impl",
+  "title": "DU-3: Реализация Onboarding + Knowledge accumulation",
+  "description": "Реализовать onboarding pipeline: scout subagent, research subagent, migration subagent, rules catalog, architecture catalog, AGENTS.md generator. Эта подзадача изолирована из TASK-2026-0001-bootstrap.",
+  "status": "draft",
+  "priority": "high",
+  "branch": "task/task-2026-0005-onboarding-impl",
+  "parent_task_id": "TASK-2026-0001-bootstrap",
+  "parent_delivery_unit": "DU-3",
+  "invariants": [
+    {
+      "id": "INV-2",
+      "text": "Stack-Agnostic: система не знает о языке/фреймворке",
+      "marker": "INVARIANT: No language-specific branching logic in extension code",
+      "status": "defined",
+      "verification_method": "Code review: no if (language === 'rust') in extension; domain detection via file extensions only"
+    },
+    {
+      "id": "INV-3",
+      "text": "Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте",
+      "marker": "INVARIANT: Onboarding pipeline must handle clean, partial, foreign_system, mixed_system, compatible states",
+      "status": "defined",
+      "verification_method": "Onboarding test on empty repo, repo with AGENTS.md, repo with task-centric-knowledge"
+    },
+    {
+      "id": "INV-4",
+      "text": "Task-Centric накопление: каждая задача = атом, знания наследуются",
+      "marker": "INVARIANT: Every task has task.json; registry.json is updated; closed tasks are read by agents",
+      "status": "defined",
+      "verification_method": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction"
+    },
+    {
+      "id": "INV-6",
+      "text": "Детерминированный контекст: нет неявного состояния",
+      "marker": "INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "status": "defined",
+      "verification_method": "Subagent spawner uses --no-context-files; context injected via inputArtifact only"
+    },
+    {
+      "id": "INV-7",
+      "text": "Pi-Native: extension, не standalone tool",
+      "marker": "INVARIANT: All code lives in .pi/extensions/loom/; single agent with different prompts per mode",
+      "status": "defined",
+      "verification_method": "File system check: extension files under .pi/extensions/loom/ only"
+    },
+    {
+      "id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "marker": "INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "status": "defined",
+      "verification_method": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts"
+    }
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-3",
+      "status": "draft",
+      "purpose": "Onboarding: scout, research, migration, rules catalog, architecture catalog",
+      "base_branch": "main"
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}

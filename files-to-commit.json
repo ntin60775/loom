@@ -1,7 +1,15 @@
 {
   "task_id": "TASK-2026-0001-bootstrap",
-  "step": "review-step-11",
+  "step": "isolate-du-into-subtasks",
   "files": [
-    "knowledge/tasks/TASK-2026-0001-bootstrap/reviews/REV-2026-0001-step-11-iter-1.json"
+    "knowledge/tasks/registry.json",
+    "knowledge/tasks/TASK-2026-0001-bootstrap/task.md",
+    "knowledge/tasks/TASK-2026-0003-core-design/task.json",
+    "knowledge/tasks/TASK-2026-0004-agent-mode-impl/task.json",
+    "knowledge/tasks/TASK-2026-0004-agent-mode-impl/plan.json",
+    "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json",
+    "knowledge/tasks/TASK-2026-0005-onboarding-impl/plan.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/task.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json"
   ]
 }

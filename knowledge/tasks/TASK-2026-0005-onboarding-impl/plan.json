@@ -1,0 +1,94 @@
+{
+  "task_id": "TASK-2026-0005-onboarding-impl",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Реализовать scout subagent",
+      "description": "Создать универсальный scout prompt и spawner integration. Scout исследует codebase, строит stack.json и modules/.",
+      "expected_output": "subagent/prompts/scout.md, stack.json generation",
+      "constraints": ["INV-2", "INV-3", "INV-6"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 2,
+      "title": "Реализовать research subagent",
+      "description": "Создать research subagent для анализа README, CI/CD, внешней документации. Output: context-research.json.",
+      "expected_output": "subagent/prompts/researcher.md, context-research.json generation",
+      "constraints": ["INV-6", "INV-12"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 3,
+      "title": "Реализовать migration subagent",
+      "description": "Создать migrator subagent для анализа foreign task systems (task-centric-knowledge и др.). Output: migration-analysis.json.",
+      "expected_output": "subagent/prompts/migrator.md, TCK migration pipeline",
+      "constraints": ["INV-3", "INV-4"],
+      "depends_on": [1, 2],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Реализовать rules catalog",
+      "description": "Команды /rule-add, /rule-list. Авто-экстракция правил из кода. Хранение: knowledge/project/rules/.",
+      "expected_output": "Rule management tools, auto-extraction logic",
+      "constraints": ["INV-1", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Реализовать architecture catalog",
+      "description": "Авто-детекция компонентов, ручное документирование. Хранение: knowledge/project/architecture/components/.",
+      "expected_output": "Architecture component catalog, auto-detection logic",
+      "constraints": ["INV-1", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Реализовать onboarding pipeline",
+      "description": "Объединить pre-check, scout, research, migration, rules, AGENTS.md generator в единый /loom-init flow.",
+      "expected_output": "Onboarding command handler, step-by-step wizard",
+      "constraints": ["INV-3", "INV-7", "INV-12"],
+      "depends_on": [1, 2, 3, 4, 5],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 7,
+      "title": "Ревью и фиксация DU-3",
+      "description": "Провести review. Исправить замечания. Закоммитить. Обновить task.json status -> completed.",
+      "expected_output": "review.json, git commit, обновленный task.json",
+      "constraints": ["INV-8", "INV-13"],
+      "depends_on": [6],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-DU3-1",
+      "description": "Onboarding pipeline может быть слишком длинным для одного DU",
+      "severity": "medium",
+      "mitigation": "Разбить на фазы: Phase 1 (scout+research), Phase 2 (rules+architecture), Phase 3 (migration)"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-DU3-1",
+      "description": "Scout корректно определяет стек пустого и непустого проекта",
+      "after_step": 1,
+      "verification": "Тест на empty repo и на repo с package.json/Cargo.toml"
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}

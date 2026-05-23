@@ -1,0 +1,84 @@
+{
+  "task_id": "TASK-2026-0006-polish-impl",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Реализовать task widget",
+      "description": "TUI widget для отображения текущей задачи, шагов, прогресса, статуса субагентов.",
+      "expected_output": "ui/task-widget.ts",
+      "constraints": ["INV-5", "INV-12"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 2,
+      "title": "Реализовать subagent widget (фаза 2)",
+      "description": "TUI widget со списком запущенных субагентов, статусами, моделями. Команды /subagents, /subagent-focus, /subagent-kill.",
+      "expected_output": "ui/subagent-widget.ts, commands",
+      "constraints": ["INV-5", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 3,
+      "title": "Интегрировать localization guard в review pipeline",
+      "description": "Executor автоматически запускает localization guard после worker commit. При fail — reject review с correction.",
+      "expected_output": "Localization guard integration in executor loop",
+      "constraints": ["INV-12", "INV-13"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Реализовать verification matrix",
+      "description": "Автоматическая проверка инвариантов после завершения всех шагов. Результат: artifacts/verification-matrix.json.",
+      "expected_output": "Verification matrix logic, verification-matrix.json schema",
+      "constraints": ["INV-1", "INV-12"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Реализовать subagent config editor",
+      "description": "Команда /loom-config для редактирования execution-config.json и subagent-config.json через TUI.",
+      "expected_output": "Config editor command, TUI form",
+      "constraints": ["INV-10", "INV-12"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Ревью и фиксация DU-4",
+      "description": "Провести review. Исправить замечания. Закоммитить. Обновить task.json status -> completed.",
+      "expected_output": "review.json, git commit, обновленный task.json",
+      "constraints": ["INV-8", "INV-13"],
+      "depends_on": [1, 2, 3, 4, 5],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-DU4-1",
+      "description": "TUI widgets могут конфликтовать с pi встроенными компонентами",
+      "severity": "low",
+      "mitigation": "Использовать ctx.ui.setWidget с уникальными id; тестировать в изолированной сессии"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-DU4-1",
+      "description": "Task widget корректно отображает прогресс",
+      "after_step": 1,
+      "verification": "Визуальная проверка в pi TUI"
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}

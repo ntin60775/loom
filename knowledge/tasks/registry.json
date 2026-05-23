@@ -20,6 +20,54 @@
       "branch": "task/task-2026-0002-loom-vnext",
       "created_at": "2026-05-23",
       "updated_at": "2026-05-23"
+    },
+    {
+      "task_id": "TASK-2026-0003-core-design",
+      "slug": "core-design",
+      "title": "DU-1: Core design",
+      "status": "completed",
+      "priority": "critical",
+      "branch": "task/task-2026-0003-core-design",
+      "parent_task_id": "TASK-2026-0001-bootstrap",
+      "parent_delivery_unit": "DU-1",
+      "created_at": "2026-05-23",
+      "updated_at": "2026-05-23"
+    },
+    {
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "slug": "agent-mode-impl",
+      "title": "DU-2: Agent Mode + Git review",
+      "status": "draft",
+      "priority": "critical",
+      "branch": "task/task-2026-0004-agent-mode-impl",
+      "parent_task_id": "TASK-2026-0001-bootstrap",
+      "parent_delivery_unit": "DU-2",
+      "created_at": "2026-05-23",
+      "updated_at": "2026-05-23"
+    },
+    {
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "slug": "onboarding-impl",
+      "title": "DU-3: Onboarding + Knowledge",
+      "status": "draft",
+      "priority": "high",
+      "branch": "task/task-2026-0005-onboarding-impl",
+      "parent_task_id": "TASK-2026-0001-bootstrap",
+      "parent_delivery_unit": "DU-3",
+      "created_at": "2026-05-23",
+      "updated_at": "2026-05-23"
+    },
+    {
+      "task_id": "TASK-2026-0006-polish-impl",
+      "slug": "polish-impl",
+      "title": "DU-4: Polish + TUI",
+      "status": "draft",
+      "priority": "medium",
+      "branch": "task/task-2026-0006-polish-impl",
+      "parent_task_id": "TASK-2026-0001-bootstrap",
+      "parent_delivery_unit": "DU-4",
+      "created_at": "2026-05-23",
+      "updated_at": "2026-05-23"
     }
   ]
 }

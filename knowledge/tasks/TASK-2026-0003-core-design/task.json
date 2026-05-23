@@ -1,0 +1,80 @@
+{
+  "task_id": "TASK-2026-0003-core-design",
+  "slug": "core-design",
+  "title": "DU-1: Core design — архитектура, модель данных, форматы",
+  "description": "Спроектировать архитектуру loom, модель данных, форматы артефактов, инварианты и JSON schemas. Результат: sdd.json + schemas/. Эта подзадача изолирована из TASK-2026-0001-bootstrap.",
+  "status": "completed",
+  "priority": "critical",
+  "branch": "task/task-2026-0003-core-design",
+  "parent_task_id": "TASK-2026-0001-bootstrap",
+  "parent_delivery_unit": "DU-1",
+  "invariants": [
+    {
+      "id": "INV-1",
+      "text": "AI-First: JSON primary, markdown derivative",
+      "marker": "INVARIANT: JSON must be primary format for all knowledge artifacts; markdown is auto-generated derivative",
+      "status": "verified",
+      "verification_method": "All knowledge files exist as JSON in knowledge/; markdown files are derivatives"
+    },
+    {
+      "id": "INV-2",
+      "text": "Stack-Agnostic: система не знает о языке/фреймворке",
+      "marker": "INVARIANT: No language-specific branching logic in extension code",
+      "status": "verified",
+      "verification_method": "Code review: no if (language === 'rust') in extension"
+    },
+    {
+      "id": "INV-4",
+      "text": "Task-Centric накопление: каждая задача = атом, знания наследуются",
+      "marker": "INVARIANT: Every task has task.json; registry.json is updated; closed tasks are read by agents",
+      "status": "verified",
+      "verification_method": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction"
+    },
+    {
+      "id": "INV-6",
+      "text": "Детерминированный контекст: нет неявного состояния",
+      "marker": "INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "status": "verified",
+      "verification_method": "Subagent spawner uses --no-context-files; context injected via inputArtifact only"
+    },
+    {
+      "id": "INV-7",
+      "text": "Pi-Native: extension, не standalone tool",
+      "marker": "INVARIANT: All code lives in .pi/extensions/loom/; single agent with different prompts per mode",
+      "status": "verified",
+      "verification_method": "File system check: extension files under .pi/extensions/loom/ only"
+    },
+    {
+      "id": "INV-10",
+      "text": "Модели конфигурируются: не хардкод",
+      "marker": "INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "status": "verified",
+      "verification_method": "Code review: all model references load from subagent-config.json"
+    },
+    {
+      "id": "INV-11",
+      "text": "Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1",
+      "marker": "INVARIANT: Executor loop cannot spawn more than one worker simultaneously",
+      "status": "verified",
+      "verification_method": "Executor loop state machine: single active_worker_id; new spawn blocked while active"
+    },
+    {
+      "id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "marker": "INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "status": "verified",
+      "verification_method": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts"
+    }
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-1",
+      "status": "merged",
+      "purpose": "Core design: architecture, data model, artifact formats, invariants, JSON schemas. Result: sdd.json + schemas/",
+      "base_branch": "main"
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}
