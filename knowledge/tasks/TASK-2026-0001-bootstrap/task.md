@@ -94,3 +94,5 @@
 - Интегрирован owned-text-localization-guard.
 - Добавлен recovery strategy и error schema.
 - Исправлены historical artifacts.
+- Коммит: `c8e8b04` — staged через files-to-commit.json (INV-13).
+- Review v2: `REV-2026-0001-step-2-iter-1.json` — verdict: approve, confidence 0.98.
