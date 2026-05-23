@@ -37,6 +37,47 @@ function ensureDir(dir: string): void {
   fs.mkdirSync(dir, { recursive: true });
 }
 
+// ── Onboarding Subagent Helper ────────────────────────────────────────────
+// DRY helper for scout/researcher/migrator subagent execution
+
+async function runOnboardingSubagent(
+  name: string,
+  promptPath: string,
+  taskDesc: string,
+  outputPath: string,
+  model: string | undefined,
+  cwd: string,
+  signal?: AbortSignal,
+): Promise<{ parsed: any; outputPath: string; result: any }> {
+  const prompt = loadPrompt(promptPath);
+  const spec: WorkerSpec = {
+    name,
+    systemPrompt: prompt,
+    model,
+    tools: ["read", "bash", "grep", "find", "ls"],
+    task: taskDesc,
+    cwd,
+  };
+
+  const result = await spawnSubagent(spec, signal);
+  const output = getFinalOutput(result.messages);
+
+  let parsed: any = null;
+  try {
+    const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
+    if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
+    else parsed = JSON.parse(output);
+  } catch {
+    parsed = null;
+  }
+
+  if (parsed) {
+    writeJson(outputPath, parsed);
+  }
+
+  return { parsed, outputPath, result };
+}
+
 export function registerPlanTools(pi: ExtensionAPI): void {
   pi.registerTool({
     name: "loom_create_task",
@@ -338,37 +379,19 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getStackJsonPath(ctx.cwd);
       const model = params.model ?? resolveModelArg("scout", "scout codebase analysis", ctx.cwd);
-      const prompt = loadPrompt("subagent/prompts/scout");
-
-      const spec: WorkerSpec = {
-        name: "loom-scout",
-        systemPrompt: prompt,
+      const { parsed, outputPath: out, result } = await runOnboardingSubagent(
+        "loom-scout",
+        "subagent/prompts/scout",
+        `Analyze the project at ${ctx.cwd}. Produce a stack.json artifact describing the technology stack and module map. Save the final JSON to ${outputPath}.`,
+        outputPath,
         model,
-        tools: ["read", "bash", "grep", "find", "ls"],
-        task: `Analyze the project at ${ctx.cwd}. Produce a stack.json artifact describing the technology stack and module map. Save the final JSON to ${outputPath}.`,
-        cwd: ctx.cwd,
-      };
-
-      const result = await spawnSubagent(spec, signal);
-      const output = getFinalOutput(result.messages);
-
-      let parsed: any = null;
-      try {
-        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
-        if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
-        else parsed = JSON.parse(output);
-      } catch {
-        parsed = null;
-      }
-
-      if (parsed) {
-        writeJson(outputPath, parsed);
-      }
-
+        ctx.cwd,
+        signal,
+      );
       return {
-        content: [{ type: "text", text: `Scout completed. Output saved to ${outputPath}.` }],
-        details: { outputPath, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
-        isError: !parsed && result.exitCode !== 0,
+        content: [{ type: "text", text: `Scout completed. Output saved to ${out}.` }],
+        details: { outputPath: out, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: !parsed || result.exitCode !== 0,
       };
     },
   });
@@ -385,37 +408,19 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getContextResearchPath(ctx.cwd);
       const model = params.model ?? resolveModelArg("scout", "documentation research", ctx.cwd);
-      const prompt = loadPrompt("subagent/prompts/researcher");
-
-      const spec: WorkerSpec = {
-        name: "loom-researcher",
-        systemPrompt: prompt,
+      const { parsed, outputPath: out, result } = await runOnboardingSubagent(
+        "loom-researcher",
+        "subagent/prompts/researcher",
+        `Analyze documentation and configuration in ${ctx.cwd}. Produce context-research.json. Save to ${outputPath}.`,
+        outputPath,
         model,
-        tools: ["read", "bash", "grep", "find", "ls"],
-        task: `Analyze documentation and configuration in ${ctx.cwd}. Produce context-research.json. Save to ${outputPath}.`,
-        cwd: ctx.cwd,
-      };
-
-      const result = await spawnSubagent(spec, signal);
-      const output = getFinalOutput(result.messages);
-
-      let parsed: any = null;
-      try {
-        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
-        if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
-        else parsed = JSON.parse(output);
-      } catch {
-        parsed = null;
-      }
-
-      if (parsed) {
-        writeJson(outputPath, parsed);
-      }
-
+        ctx.cwd,
+        signal,
+      );
       return {
-        content: [{ type: "text", text: `Researcher completed. Output saved to ${outputPath}.` }],
-        details: { outputPath, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
-        isError: !parsed && result.exitCode !== 0,
+        content: [{ type: "text", text: `Researcher completed. Output saved to ${out}.` }],
+        details: { outputPath: out, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: !parsed || result.exitCode !== 0,
       };
     },
   });
@@ -432,37 +437,19 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getMigrationAnalysisPath(ctx.cwd);
       const model = params.model ?? resolveModelArg("scout", "migration analysis", ctx.cwd);
-      const prompt = loadPrompt("subagent/prompts/migrator");
-
-      const spec: WorkerSpec = {
-        name: "loom-migrator",
-        systemPrompt: prompt,
+      const { parsed, outputPath: out, result } = await runOnboardingSubagent(
+        "loom-migrator",
+        "subagent/prompts/migrator",
+        `Analyze ${ctx.cwd} for foreign task/knowledge systems. Produce migration-analysis.json. Save to ${outputPath}.`,
+        outputPath,
         model,
-        tools: ["read", "bash", "grep", "find", "ls"],
-        task: `Analyze ${ctx.cwd} for foreign task/knowledge systems. Produce migration-analysis.json. Save to ${outputPath}.`,
-        cwd: ctx.cwd,
-      };
-
-      const result = await spawnSubagent(spec, signal);
-      const output = getFinalOutput(result.messages);
-
-      let parsed: any = null;
-      try {
-        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
-        if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
-        else parsed = JSON.parse(output);
-      } catch {
-        parsed = null;
-      }
-
-      if (parsed) {
-        writeJson(outputPath, parsed);
-      }
-
+        ctx.cwd,
+        signal,
+      );
       return {
-        content: [{ type: "text", text: `Migrator completed. Output saved to ${outputPath}.` }],
-        details: { outputPath, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
-        isError: !parsed && result.exitCode !== 0,
+        content: [{ type: "text", text: `Migrator completed. Output saved to ${out}.` }],
+        details: { outputPath: out, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: !parsed || result.exitCode !== 0,
       };
     },
   });
@@ -503,10 +490,12 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         version: 1,
       };
 
-      const filePath = writeRule(ctx.cwd, rule);
+      const safeId = params.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const sanitizedRule = { ...rule, id: safeId };
+      const filePath = writeRule(ctx.cwd, sanitizedRule);
       return {
-        content: [{ type: "text", text: `Rule ${params.id} added. File: ${filePath}` }],
-        details: { rule, filePath },
+        content: [{ type: "text", text: `Rule ${safeId} added. File: ${filePath}` }],
+        details: { rule: sanitizedRule, filePath },
       };
     },
   });
@@ -568,10 +557,12 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         },
       };
 
-      const filePath = writeArchitectureComponent(ctx.cwd, comp);
+      const safeId = params.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const sanitizedComp = { ...comp, id: safeId };
+      const filePath = writeArchitectureComponent(ctx.cwd, sanitizedComp);
       return {
-        content: [{ type: "text", text: `Component ${params.id} added. File: ${filePath}` }],
-        details: { component: comp, filePath },
+        content: [{ type: "text", text: `Component ${safeId} added. File: ${filePath}` }],
+        details: { component: sanitizedComp, filePath },
       };
     },
   });

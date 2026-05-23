@@ -1,3 +1,4 @@
 [
-  "knowledge/tasks/TASK-2026-0001-bootstrap/sdd.json"
+  ".pi/extensions/loom/index.ts",
+  ".pi/extensions/loom/plan-mode/tools.ts"
 ]

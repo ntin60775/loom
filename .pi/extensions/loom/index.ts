@@ -16,7 +16,7 @@ import { updateTaskWidget } from "./ui/task-widget";
 import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readJson } from "./knowledge/io";
-import { onboardProject, listRules, listArchitectureComponents, getStackJsonPath, getContextResearchPath, getMigrationAnalysisPath } from "./knowledge/onboarding";
+import { onboardProject, listRules, listArchitectureComponents } from "./knowledge/onboarding";
 import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
 
