@@ -15,7 +15,7 @@ import { updateModeWidget } from "./ui/mode-widget";
 import { updateTaskWidget } from "./ui/task-widget";
 import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
-import { findKnowledgeRoot, readJson } from "./knowledge/io";
+import { findKnowledgeRoot, readRegistryFile } from "./knowledge/io";
 import { onboardProject, listRules, listArchitectureComponents } from "./knowledge/onboarding";
 import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
@@ -76,8 +76,8 @@ export default function loomExtension(pi: ExtensionAPI): void {
       return;
     }
 
-    const registry = readJson<any>(path.join(knowledgeRoot, "tasks", "registry.json"));
-    const activeTask = registry?.tasks?.find((t: any) => t.status === "in_progress");
+    const registry = readRegistryFile(knowledgeRoot);
+    const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
 
     if (!activeTask) {
       ctx.ui.notify("Нет активной задачи in_progress. Создайте задачу через /plan или обновите registry.json.", "warning");
@@ -174,15 +174,15 @@ export default function loomExtension(pi: ExtensionAPI): void {
         return;
       }
 
-      const registry = readJson<any>(path.join(knowledgeRoot, "tasks", "registry.json"));
-      if (!registry || !registry.tasks || registry.tasks.length === 0) {
+      const registry = readRegistryFile(knowledgeRoot);
+      if (!registry || registry.tasks.length === 0) {
         ctx.ui.notify("Задачи не найдены.", "info");
         return;
       }
 
-      const active = registry.tasks.filter((t: any) => t.status === "in_progress");
-      const drafts = registry.tasks.filter((t: any) => t.status === "draft");
-      const completed = registry.tasks.filter((t: any) => t.status === "completed");
+      const active = registry.tasks.filter((t) => t.status === "in_progress");
+      const drafts = registry.tasks.filter((t) => t.status === "draft");
+      const completed = registry.tasks.filter((t) => t.status === "completed");
 
       const lines = [
         `📋 Всего задач: ${registry.tasks.length}`,
@@ -326,8 +326,8 @@ export default function loomExtension(pi: ExtensionAPI): void {
       if (state.mode === "idle") {
         await enterPlanMode(ctx);
       } else if (state.mode === "plan") {
-        const registry = readJson<any>(path.join(knowledgeRoot, "tasks", "registry.json"));
-        const activeTask = registry?.tasks?.find((t: any) => t.status === "in_progress");
+        const registry = readRegistryFile(knowledgeRoot);
+        const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
         if (activeTask) {
           await enterAgentMode(ctx);
         } else {

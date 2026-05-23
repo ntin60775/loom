@@ -45,13 +45,13 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         return { content: [{ type: "text", text: `Task or plan not found for ${params.task_id}` }], isError: true };
       }
 
-      const step = plan.steps.find((s: any) => s.step_number === params.step_number);
+      const step = plan.steps.find((s: PlanStepData) => s.step_number === params.step_number);
       if (!step) {
         return { content: [{ type: "text", text: `Step ${params.step_number} not found` }], isError: true };
       }
 
       const workerPrompt = loadPrompt("subagent/prompts/worker");
-      const taskContext = `${task.title} ${step.title} ${step.expected_output} ${step.description}`;
+      const taskContext = `${task.title} ${step.title} ${step.expected_output ?? ""} ${step.description}`;
       const model = resolveModelArg("worker", taskContext, ctx.cwd);
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
 
@@ -110,19 +110,20 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const dir = taskDir(ctx.cwd, params.task_id);
       const plan = readPlan(dir);
       const task = readTask(dir);
-      const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
+      const config = readSubagentConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
 
       if (!plan || !task) {
         return { content: [{ type: "text", text: `Task or plan not found for ${params.task_id}` }], isError: true };
       }
 
-      const step = plan.steps.find((s: any) => s.step_number === params.step_number);
+      const step = plan.steps.find((s: PlanStepData) => s.step_number === params.step_number);
       if (!step) {
         return { content: [{ type: "text", text: `Step ${params.step_number} not found` }], isError: true };
       }
 
       const reviewerPrompt = loadPrompt("subagent/prompts/reviewer");
-      const reviewContext = `Review commit ${params.commit_hash}. Expected: ${step.expected_output}. Invariants: ${task.invariants.map((i: any) => i.id).join(", ")}`;
+      const invariantsStr = task.invariants.map((i: InvariantData) => i.id).join(", ");
+      const reviewContext = `Review commit ${params.commit_hash}. Expected: ${step.expected_output}. Invariants: ${invariantsStr}`;
       const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
@@ -131,14 +132,14 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         systemPrompt: reviewerPrompt,
         model,
         tools,
-        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output}\nInvariants: ${task.invariants.map((i: any) => i.id).join(", ")}`,
+        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output ?? ""}\nInvariants: ${invariantsStr}`,
         targetCommit: params.commit_hash,
         planJsonPath: path.join(dir, "plan.json"),
         stepNumber: params.step_number,
         cwd: ctx.cwd,
       };
 
-      const result = await spawnSubagent(spec as any, signal, (output) => {
+      const result = await spawnSubagent(spec, signal, (output) => {
         if (onUpdate) {
           onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
         }
@@ -148,7 +149,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
 
       // Attempt to parse review JSON from output
-      let reviewJson: any = null;
+      let reviewJson: Record<string, unknown> | null = null;
       try {
         const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
         if (jsonMatch) reviewJson = JSON.parse(jsonMatch[1]);
@@ -183,7 +184,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const registryPath = path.join(ctx.cwd, "knowledge", "tasks", "registry.json");
 
       if (params.task_status) {
-        const task = readJson<any>(taskPath);
+        const task = readTask(dir);
         if (task) {
           task.status = params.task_status;
           task.updated_at = new Date().toISOString().split("T")[0];
@@ -191,21 +192,21 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         }
 
         const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
-        const registry = knowledgeRoot ? readRegistry(knowledgeRoot) : null;
+        const registry = knowledgeRoot ? readRegistryFile(knowledgeRoot) : null;
         if (registry) {
-          const entry = (registry as any).tasks.find((t: any) => t.task_id === params.task_id);
+          const entry = registry.tasks.find((t) => t.task_id === params.task_id);
           if (entry) {
             entry.status = params.task_status;
-            entry.updated_at = task?.updated_at;
+            entry.updated_at = task?.updated_at ?? new Date().toISOString().split("T")[0];
             writeJson(registryPath, registry);
           }
         }
       }
 
       if (params.step_number && params.step_status) {
-        const plan = readJson<any>(planPath);
+        const plan = readPlan(dir);
         if (plan) {
-          const step = plan.steps.find((s: any) => s.step_number === params.step_number);
+          const step = plan.steps.find((s: PlanStepData) => s.step_number === params.step_number);
           if (step) {
             step.status = params.step_status;
             writeJson(planPath, plan);
@@ -231,7 +232,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const filePath = path.join(taskDir(ctx.cwd, params.task_id), params.artifact_path);
-      const data = readJson<any>(filePath);
+      const data = readJson<Record<string, unknown>>(filePath);
       if (data === null) {
         return { content: [{ type: "text", text: `Artifact not found: ${params.artifact_path}` }], isError: true };
       }

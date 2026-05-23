@@ -6,6 +6,14 @@ import {
   validateRegistryShape,
   validateReviewShape,
 } from "./schemas";
+import type {
+  TaskData,
+  PlanData,
+  RegistryData,
+  ReviewData,
+  ExecutionConfigData,
+  SubagentConfigData,
+} from "./types";
 
 export function readJson<T>(filePath: string, validator?: (data: unknown) => string | null): T | null {
   try {
@@ -38,21 +46,27 @@ export function findKnowledgeRoot(cwd: string): string | null {
 }
 
 // ── Typed wrappers (with runtime validation) ─────────────────────────────
-// These provide type-safe access to common artifacts.
-// Callers should prefer these over readJson<any>() where possible.
 
-export function readTask(taskDir: string): Record<string, unknown> | null {
-  return readJson(path.join(taskDir, "task.json"), validateTaskShape);
+export function readTask(taskDir: string): TaskData | null {
+  return readJson<TaskData>(path.join(taskDir, "task.json"), validateTaskShape);
 }
 
-export function readPlan(taskDir: string): Record<string, unknown> | null {
-  return readJson(path.join(taskDir, "plan.json"), validatePlanShape);
+export function readPlan(taskDir: string): PlanData | null {
+  return readJson<PlanData>(path.join(taskDir, "plan.json"), validatePlanShape);
 }
 
-export function readRegistry(knowledgeRoot: string): Record<string, unknown> | null {
-  return readJson(path.join(knowledgeRoot, "tasks", "registry.json"), validateRegistryShape);
+export function readRegistryFile(knowledgeRoot: string): RegistryData | null {
+  return readJson<RegistryData>(path.join(knowledgeRoot, "tasks", "registry.json"), validateRegistryShape);
 }
 
-export function readReview(reviewPath: string): Record<string, unknown> | null {
-  return readJson(reviewPath, validateReviewShape);
+export function readReview(reviewPath: string): ReviewData | null {
+  return readJson<ReviewData>(reviewPath, validateReviewShape);
+}
+
+export function readSubagentConfig(configPath: string): SubagentConfigData | null {
+  return readJson<SubagentConfigData>(configPath);
+}
+
+export function readExecutionConfig(configPath: string): ExecutionConfigData | null {
+  return readJson<ExecutionConfigData>(configPath);
 }

@@ -5,7 +5,8 @@
  */
 
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { readJson } from "../knowledge/io";
+import { readTask, readPlan } from "../knowledge/io";
+import type { PlanStepData } from "../knowledge/types";
 import * as path from "node:path";
 
 export interface TaskWidgetData {
@@ -23,8 +24,8 @@ export function updateTaskWidget(ctx: ExtensionContext, taskId: string | null, c
   }
 
   const dir = path.join(cwd, "knowledge", "tasks", taskId);
-  const task = readJson<any>(path.join(dir, "task.json"));
-  const plan = readJson<any>(path.join(dir, "plan.json"));
+  const task = readTask(dir);
+  const plan = readPlan(dir);
 
   if (!task) {
     ctx.ui.setWidget("loom-task", undefined);
@@ -32,8 +33,8 @@ export function updateTaskWidget(ctx: ExtensionContext, taskId: string | null, c
   }
 
   const totalSteps = plan?.steps?.length ?? 0;
-  const doneSteps = plan?.steps?.filter((s: any) => s.status === "done").length ?? 0;
-  const currentStep = plan?.steps?.find((s: any) => s.status === "in_progress");
+  const doneSteps = plan?.steps?.filter((s: PlanStepData) => s.status === "done").length ?? 0;
+  const currentStep = plan?.steps?.find((s: PlanStepData) => s.status === "in_progress");
 
   const lines = [
     `📌 ${task.title} [${task.status}]`,

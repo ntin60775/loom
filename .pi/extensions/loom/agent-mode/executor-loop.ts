@@ -14,7 +14,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson } from "../knowledge/io";
+import { readPlan, readTask, writeJson, readExecutionConfig } from "../knowledge/io";
+import type { PlanStepData } from "../knowledge/types";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
 
@@ -75,13 +76,13 @@ function taskDir(cwd: string, taskId: string): string {
  */
 export function getNextPendingStep(taskId: string, cwd: string): StepInfo | null {
   const dir = taskDir(cwd, taskId);
-  const plan = readJson<any>(path.join(dir, "plan.json"));
-  const task = readJson<any>(path.join(dir, "task.json"));
+  const plan = readPlan(dir);
+  const task = readTask(dir);
 
-  if (!plan || !task || !plan.steps || plan.steps.length === 0) return null;
+  if (!plan || !task || plan.steps.length === 0) return null;
 
   const totalSteps = plan.steps.length;
-  const doneSteps = plan.steps.filter((s: any) => s.status === "done").length;
+  const doneSteps = plan.steps.filter((s: PlanStepData) => s.status === "done").length;
 
   for (const step of plan.steps) {
     if (step.status !== "pending") continue;
@@ -89,14 +90,14 @@ export function getNextPendingStep(taskId: string, cwd: string): StepInfo | null
     // Check dependencies: all depends_on steps must be done
     const deps = step.depends_on ?? [];
     const depsSatisfied = deps.every((depNum: number) => {
-      const dep = plan.steps.find((s: any) => s.step_number === depNum);
-      return dep && dep.status === "done";
+      const dep = plan.steps.find((s: PlanStepData) => s.step_number === depNum);
+      return dep !== undefined && dep.status === "done";
     });
 
     if (!depsSatisfied) continue;
 
     // Build WorkerSpec for this step
-    const taskContext = `${task.title} ${step.title} ${step.expected_output} ${step.description}`;
+    const taskContext = `${task.title} ${step.title} ${step.expected_output ?? ""} ${step.description}`;
     const model = resolveModelArg("worker", taskContext, cwd);
 
     const workerSpec: WorkerSpec = {
@@ -104,7 +105,8 @@ export function getNextPendingStep(taskId: string, cwd: string): StepInfo | null
       systemPrompt: "", // Will be filled by loom_spawn_worker
       model,
       tools: ["read", "bash", "edit", "write"],
-      task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${(step.constraints ?? []).join(", ") || "none"}`,
+      task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output ?? ""}\nConstraints: ${(step.constraints ?? []).join(", ") || "none"}`,
+      cwd,
       cwd,
     };
 
@@ -131,9 +133,9 @@ export function getNextPendingStep(taskId: string, cwd: string): StepInfo | null
  */
 export function isPlanComplete(taskId: string, cwd: string): boolean {
   const dir = taskDir(cwd, taskId);
-  const plan = readJson<any>(path.join(dir, "plan.json"));
-  if (!plan || !plan.steps) return true;
-  return plan.steps.every((s: any) => s.status === "done");
+  const plan = readPlan(dir);
+  if (!plan || plan.steps.length === 0) return true;
+  return plan.steps.every((s: PlanStepData) => s.status === "done");
 }
 
 /**
@@ -167,10 +169,10 @@ export function resetIteration(taskId: string): void {
 export function markStepInProgress(taskId: string, stepNumber: number, cwd: string): boolean {
   const dir = taskDir(cwd, taskId);
   const planPath = path.join(dir, "plan.json");
-  const plan = readJson<any>(planPath);
+  const plan = readPlan(dir);
   if (!plan) return false;
 
-  const step = plan.steps.find((s: any) => s.step_number === stepNumber);
+  const step = plan.steps.find((s: PlanStepData) => s.step_number === stepNumber);
   if (step) {
     step.status = "in_progress";
     writeJson(planPath, plan);
@@ -254,7 +256,7 @@ export function registerExecutorLoopTools(pi: ExtensionAPI): void {
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       // Read max_iterations from execution config
       const configPath = path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json");
-      const execConfig = readJson<any>(configPath);
+      const execConfig = readExecutionConfig(configPath);
       const maxIterations = execConfig?.recovery?.max_retries_per_step ?? 10;
 
       let iteration: number;

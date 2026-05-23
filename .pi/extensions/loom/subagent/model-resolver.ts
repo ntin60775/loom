@@ -6,7 +6,7 @@
  */
 
 import * as path from "node:path";
-import { readJson } from "../knowledge/io";
+import { readSubagentConfig } from "../knowledge/io";
 
 interface DomainConfig {
   provider: string;
@@ -63,11 +63,11 @@ export function resolveModel(
   cwd: string,
 ): ResolvedModel | null {
   const configPath = path.join(cwd, "knowledge", "project", "configs", "subagent-config.json");
-  const config = readJson<any>(configPath);
+  const config = readSubagentConfig(configPath);
 
   if (!config || !config.domains) return null;
 
-  const domains = config.domains as Record<string, DomainConfig>;
+  const domains = config.domains;
   const domainKeys = Object.keys(domains);
   if (domainKeys.length === 0) return null;
 

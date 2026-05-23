@@ -48,7 +48,7 @@ export async function runOnboardingSubagent(
   model: string | undefined,
   cwd: string,
   signal?: AbortSignal,
-): Promise<{ parsed: any; outputPath: string; result: any }> {
+): Promise<{ parsed: unknown; outputPath: string; result: import("../subagent/specs").SubagentResult }> {
   const prompt = loadPrompt(promptPath);
   const spec: WorkerSpec = {
     name,
@@ -62,7 +62,7 @@ export async function runOnboardingSubagent(
   const result = await spawnSubagent(spec, signal);
   const output = getFinalOutput(result.messages);
 
-  let parsed: any = null;
+  let parsed: unknown = null;
   try {
     const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
     if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
@@ -204,8 +204,9 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     }),
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-      const filePath = path.join(taskDir(ctx.cwd, params.task_id), "task.json");
-      const task = readJson<any>(filePath);
+      const dir = taskDir(ctx.cwd, params.task_id);
+      const filePath = path.join(dir, "task.json");
+      const task = readTask(dir);
       if (!task) {
         return { content: [{ type: "text", text: `Task ${params.task_id} not found` }], isError: true };
       }
@@ -239,8 +240,9 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     }),
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-      const filePath = path.join(taskDir(ctx.cwd, params.task_id), "task.json");
-      const task = readJson<any>(filePath);
+      const dir = taskDir(ctx.cwd, params.task_id);
+      const filePath = path.join(dir, "task.json");
+      const task = readTask(dir);
       if (!task) {
         return { content: [{ type: "text", text: `Task ${params.task_id} not found` }], isError: true };
       }
@@ -292,7 +294,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       // Update registry
       const registryPath = path.join(ctx.cwd, "knowledge", "tasks", "registry.json");
       const registry = readJson<any>(registryPath) ?? { schema_version: "1.0.0", tasks: [] };
-      const existingIndex = registry.tasks.findIndex((t: any) => t.task_id === params.task_id);
+      const existingIndex = registry.tasks.findIndex((t) => t.task_id === params.task_id);
       const entry = {
         task_id: params.task_id,
         slug: task.slug,
@@ -314,10 +316,10 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       writeJson(registryPath, registry);
 
       // Generate derivative markdown (basic)
-      const taskMd = `# ${task.title}\n\n**Task ID:** ${task.task_id}\n\n**Status:** ${task.status}\n**Priority:** ${task.priority}\n**Branch:** ${task.branch}\n\n## Description\n\n${task.description}\n\n## Invariants\n\n${task.invariants.map((i: any) => `- **${i.id}**: ${i.text}`).join("\n")}\n\n## Delivery Units\n\n${task.delivery_units.map((d: any) => `- **${d.id}**: ${d.purpose} (status: ${d.status})`).join("\n")}\n\n---\n\n*Generated from task.json*\n`;
+      const taskMd = `# ${task.title}\n\n**Task ID:** ${task.task_id}\n\n**Status:** ${task.status}\n**Priority:** ${task.priority}\n**Branch:** ${task.branch}\n\n## Description\n\n${task.description}\n\n## Invariants\n\n${task.invariants.map((i) => `- **${i.id}**: ${i.text}`).join("\n")}\n\n## Delivery Units\n\n${task.delivery_units.map((d) => `- **${d.id}**: ${d.purpose} (status: ${d.status})`).join("\n")}\n\n---\n\n*Generated from task.json*\n`;
       fs.writeFileSync(path.join(dir, "task.md"), taskMd, "utf-8");
 
-      const planMd = `# Plan: ${task.title}\n\n**Task ID:** ${task.task_id}\n\n## Steps\n\n${plan.steps.map((s: any) => `${s.step_number}. **${s.title}** — ${s.description}\n   - Expected: ${s.expected_output}\n   - Effort: ${s.estimated_effort}\n   - Status: ${s.status}`).join("\n\n")}\n\n---\n\n*Generated from plan.json*\n`;
+      const planMd = `# Plan: ${task.title}\n\n**Task ID:** ${task.task_id}\n\n## Steps\n\n${plan.steps.map((s) => `${s.step_number}. **${s.title}** — ${s.description}\n   - Expected: ${s.expected_output}\n   - Effort: ${s.estimated_effort}\n   - Status: ${s.status}`).join("\n\n")}\n\n---\n\n*Generated from plan.json*\n`;
       fs.writeFileSync(path.join(dir, "plan.md"), planMd, "utf-8");
 
       return {
@@ -341,7 +343,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     }),
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
-      const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
+      const config = readSubagentConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
 
       const scoutModel = params.model ?? resolveModelArg("scout", params.instruction, ctx.cwd);
 
@@ -595,11 +597,11 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     }),
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-      const stack = readJson(getStackJsonPath(ctx.cwd));
-      const research = readJson(getContextResearchPath(ctx.cwd));
+      const stack = readJson<Record<string, unknown>>(getStackJsonPath(ctx.cwd));
+      const research = readJson<Record<string, unknown>>(getContextResearchPath(ctx.cwd));
       const rulesRaw = listRules(ctx.cwd);
       const compsRaw = listArchitectureComponents(ctx.cwd);
-      const registry = readJson<{ schema_version: string; tasks: Array<Record<string, unknown>> }>(path.join(ctx.cwd, "knowledge", "tasks", "registry.json"));
+      const registry = readRegistryFile(ctx.cwd);
 
       const rules = rulesRaw.map((r) => {
         const full = readJson(path.join(ctx.cwd, "knowledge", "project", "rules", `${r.id}.json`));
@@ -616,7 +618,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         research,
         rules,
         components,
-        tasks: registry?.tasks?.map((t: any) => ({
+        tasks: registry?.tasks?.map((t) => ({
           task_id: t.task_id,
           title: t.title,
           status: t.status,
