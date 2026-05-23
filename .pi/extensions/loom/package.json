@@ -1,0 +1,11 @@
+{
+  "name": "loom-extension",
+  "version": "0.1.0",
+  "description": "AI-Native Development Environment for pi — loom extension",
+  "private": true,
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  }
+}
