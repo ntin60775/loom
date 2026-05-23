@@ -49,7 +49,7 @@
       "task_id": "TASK-2026-0005-onboarding-impl",
       "slug": "onboarding-impl",
       "title": "DU-3: Onboarding + Knowledge",
-      "status": "in_progress",
+      "status": "completed",
       "priority": "high",
       "branch": "task/task-2026-0005-onboarding-impl",
       "parent_task_id": "TASK-2026-0001-bootstrap",

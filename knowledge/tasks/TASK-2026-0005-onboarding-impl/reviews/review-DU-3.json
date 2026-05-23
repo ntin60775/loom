@@ -1,0 +1,80 @@
+{
+  "review_id": "REV-2026-0005-DU-3",
+  "target": {
+    "type": "git-commit",
+    "commit": "c985889cbcbd46996e7f36fb2b7f402e99c38f43",
+    "task_id": "TASK-2026-0005-onboarding-impl"
+  },
+  "verdict": "approve",
+  "criteria_checks": [
+    {
+      "criterion": "INV-2: Stack-Agnostic — no language-specific branching",
+      "status": "pass",
+      "comment": "Scout detects technologies by file extensions and config files only. No hardcoded language logic."
+    },
+    {
+      "criterion": "INV-3: Legacy/Greenfield parity — handles all project states",
+      "status": "pass",
+      "comment": "onboardProject pre-check classifies projects as clean, partial, foreign_system, mixed_system, compatible. Wizard offers onboarding for non-clean states."
+    },
+    {
+      "criterion": "INV-4: Task-Centric accumulation",
+      "status": "pass",
+      "comment": "Task registry updated. Artifacts stored in task directory."
+    },
+    {
+      "criterion": "INV-6: Deterministic context — no implicit state",
+      "status": "pass",
+      "comment": "Subagents use clean sessions with --no-context-files. Context injected via task instruction."
+    },
+    {
+      "criterion": "INV-7: Pi-Native — extension only",
+      "status": "pass",
+      "comment": "All new code lives under .pi/extensions/loom/."
+    },
+    {
+      "criterion": "INV-12: Localization — Russian UI, English system docs",
+      "status": "pass",
+      "comment": "All operator-facing commands and notifications in Russian. System prompts and code comments in English. AGENTS.md passed localization guard."
+    },
+    {
+      "criterion": "Step 1: Scout subagent implemented",
+      "status": "pass",
+      "comment": "scout.md prompt created. loom_run_scout tool spawns subagent and persists stack.json."
+    },
+    {
+      "criterion": "Step 2: Research subagent implemented",
+      "status": "pass",
+      "comment": "researcher.md prompt created. loom_run_researcher tool spawns subagent and persists context-research.json."
+    },
+    {
+      "criterion": "Step 3: Migration subagent implemented",
+      "status": "pass",
+      "comment": "migrator.md prompt created. loom_run_migrator tool spawns subagent and persists migration-analysis.json."
+    },
+    {
+      "criterion": "Step 4: Rules catalog implemented",
+      "status": "pass",
+      "comment": "Commands /rule-add, /rule-list. Tools loom_add_rule, loom_list_rules. Storage in knowledge/project/rules/."
+    },
+    {
+      "criterion": "Step 5: Architecture catalog implemented",
+      "status": "pass",
+      "comment": "Commands /arch-add, /arch-list. Tools loom_add_architecture_component, loom_list_architecture_components. Storage in knowledge/project/architecture/components/."
+    },
+    {
+      "criterion": "Step 6: Onboarding pipeline implemented",
+      "status": "pass",
+      "comment": "/loom-init expanded with pre-check, classification, and wizard. AGENTS.md generator tool added."
+    }
+  ],
+  "general_comments": [
+    "DU-3 implementation is complete and covers all 6 implementation steps from plan.json.",
+    "Onboarding pipeline correctly handles greenfield and legacy projects.",
+    "All new schemas have runtime validators."
+  ],
+  "corrections": [],
+  "confidence": 0.95,
+  "reviewer_model": "self-review",
+  "created_at": "2026-05-24T00:00:00Z"
+}
