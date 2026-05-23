@@ -57,9 +57,12 @@
 
 ## Артефакты задачи
 
-См. `artifacts/`:
-- `artifacts/sdd.md` — Software Design Document (появится при переходе к DU-2).
-- `artifacts/verification-matrix.md` — матрица верификации инвариантов.
+- `artifacts/sdd.md` — **Финальный SDD** ядра loom. Канонический source of truth для реализации.
+- `artifacts/analysis-approaches.md` — исторический: анализ 3 вариантов подхода.
+- `artifacts/pi-extension-design.md` — исторический: первая итерация дизайна pi extension.
+- `artifacts/analysis-stratum-v2.md` — исторический: субагенты, правила, JSON schema.
+- `artifacts/loom-git-flow-design.md` — исторический: git-based review flow.
+- `artifacts/verification-matrix.md` — матрица верификации инвариантов (TBD).
 
 ## Рабочий журнал
 
@@ -103,11 +106,18 @@
 - Упрощение графов: только базовая информация в JSON, агент грепает напрямую.
 - Универсальные worker/reviewer: не привязаны к коду, работают через prompt + model-config.
 - **Git-based review flow**: reviewer анализирует git diff/артефакты, пишет review.json.
-  - Worker делает task-scoped git commit.
-  - Reviewer: `git show` + `read` файлов → verdict в `knowledge/tasks/TASK-XXXX/reviews/`.
-  - Executor: approve → next step, reject → correction + iter+1, max 10.
 - Русификация: system prompt и артефакты на русском, machine markers на английском.
 - Tmux windows: субагенты в вкладках текущего терминала.
 - Параллелизм: plan mode — параллельно (max 4), agent mode — строго последовательно.
 - Human-in-the-loop: executor останавливается только при reject+max_iter, timeout, ambiguity.
 - Артефакт: `artifacts/loom-git-flow-design.md`.
+
+### 2026-05-23 — Финализация архитектуры (SDD)
+- Все обсуждения синтезированы в единый SDD.
+- Зафиксировано 10 архитектурных инвариантов.
+- Определены компоненты: Orchestrator, Executor, Spawner, Worker, Reviewer, Knowledge I/O.
+- Full JSON schemas: task, plan, rule, architecture, review, subagent.
+- Onboarding pipeline: pre-check → AGENTS.md analysis → scout → research → migration → rules → operator review.
+- MVP scope: 4 Delivery Units (Core, Agent+Review, Onboarding, Polish).
+- Статус архитектурной фазы: завершена. Следующий шаг — реализация DU-1.
+- Артефакт: `artifacts/sdd.md` (канонический).
