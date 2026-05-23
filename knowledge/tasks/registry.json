@@ -1,19 +1,22 @@
 {
+  "schema_version": "1.0.0",
   "tasks": [
     {
       "task_id": "TASK-2026-0001-bootstrap",
       "slug": "bootstrap",
-      "title": {"ru": "Ядро loom — bootstrap"},
-      "status": "в_работе",
-      "branch": "main",
+      "title": "Ядро loom — bootstrap",
+      "status": "in_progress",
+      "priority": "critical",
+      "branch": "task/task-2026-0001-bootstrap",
       "created_at": "2026-05-21",
       "updated_at": "2026-05-23"
     },
     {
       "task_id": "TASK-2026-0002-loom-vnext",
       "slug": "loom-vnext",
-      "title": {"ru": "Когнитивные слои loom v2"},
-      "status": "черновик",
+      "title": "Когнитивные слои loom v2",
+      "status": "draft",
+      "priority": "medium",
       "branch": "task/task-2026-0002-loom-vnext",
       "created_at": "2026-05-23",
       "updated_at": "2026-05-23"

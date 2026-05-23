@@ -1,126 +1,96 @@
 # TASK-2026-0001-bootstrap
 
+> Сгенерировано из `task.json`. Не редактировать вручную. Править `task.json` и перегенерировать.
+
 ## Сводка
 
 - **TASK-ID**: TASK-2026-0001-bootstrap
 - **Краткое имя**: bootstrap
-- **Человекочитаемое описание**: Спроектировать и реализовать ядро loom — AI-Native Development Environment для pi. Система разработки с помощью ИИ-агентов, оптимизированная под восприятие LLM, с накоплением знаний и артефактов.
-- **Ветка**: task/TASK-2026-0001-bootstrap
-- **Статус**: active
+- **Статус**: в работе
 - **Приоритет**: critical
-- **Создана**: 2026-05-21
+- **Ветка**: task/TASK-2026-0001-bootstrap
 
-## Контекст
+## Описание
 
-Требуется система, которая позволяет ИИ-агенту полностью вести разработку программных проектов: создание спецификаций, написание кода, рефакторинг, исследование, сопровождение legacy.
-
-Человек — оператор, задающий намерение. Агент — исполнитель. Оператор практически не лезет в код.
+Спроектировать и реализовать ядро loom — AI-Native Development Environment для pi. Система разработки с помощью ИИ-агентов, оптимизированная под восприятие LLM, с накоплением знаний и артефактов.
 
 ## Инварианты задачи
 
-### INV-1: AI-First спецификация
-Все спецификации, планы, контракты и документация внутри `knowledge/` оптимизированы для восприятия LLM, а не человека. Человекочитаемый слой — производная, генерируется автоматически.
+| ID | Инвариант | Статус |
+|----|-----------|--------|
+| INV-1 | AI-First: JSON primary, markdown derivative | verified |
+| INV-2 | Stack-Agnostic: система не знает о языке/фреймворке | verified |
+| INV-3 | Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте | defined |
+| INV-4 | Task-Centric накопление: каждая задача = атом, знания наследуются | verified |
+| INV-5 | Operator слои: read-only TUI, docs-as-code | defined |
+| INV-6 | Детерминированный контекст: нет неявного состояния | verified |
+| INV-7 | Pi-Native: extension, не standalone tool | defined |
+| INV-8 | Git-based review: reviewer анализирует артефакты, не сессию | verified |
+| INV-9 | Executor не пишет код: только оркестрирует worker + reviewer | verified |
+| INV-10 | Модели конфигурируются: не хардкод | verified |
+| INV-11 | Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1 | verified |
+| INV-12 | Локализация: UI и пользовательские артефакты — русский; AI-документация — английский | defined |
+| INV-13 | Git commit safety: staged по списку, не git add -A | defined |
 
-### INV-2: Stack-Agnostic
-Система не зависит от языка программирования, фреймворка, платформы или типа задачи. Код, инфраструктура, данные, исследование — всё это задачи.
+## Единицы поставки
 
-### INV-3: Legacy & Greenfield parity
-Система одинаково хорошо работает для:
-- Legacy-проектов: обратная инженерия, код-археология, накопление знаний о существующей системе.
-- Greenfield-проектов: генерация с нуля, проектирование архитектуры, bootstrap.
+| ID | Статус | Назначение |
+|----|--------|------------|
+| DU-1 | merged | Core design: архитектура, модель данных, форматы артефактов, инварианты, JSON schemas |
+| DU-2 | draft | Реализация: extension, Plan Mode, Agent Mode, subagent spawner, git review flow |
+| DU-3 | planned | Onboarding: scout, research, migration, rules catalog, architecture catalog |
+| DU-4 | planned | Полировка: TUI widgets, localization guard, verification matrix, subagent config editor |
 
-### INV-4: Task-Centric накопление знаний
-Каждая задача = атом работы. Задачи создают артефакты. Артефакты накапливаются. Знания наследуются между задачами. Агент не начинает с чистого листа.
+## Артефакты
 
-### INV-5: Human Operator Layer
-Оператор взаимодействует через CLI/TUI и read-only отчёты. Оператор не редактирует код вручную. Документация для человека — docs-as-code (rustdoc, pydoc, typedoc и т.д.), генерируется из AI-native спеков.
-
-### INV-6: Детерминированный контекст
-Контекст агента формализован, версионируется, воспроизводим. Нет неявного состояния. Нет "магии".
-
-### INV-7: Pi-Native Integration
-Система реализуется как **pi extension**, а не как отдельный инструмент или standalone CLI.
-- Plan mode: брейншторм и генерация артефактов задачи через `/plan`.
-- Agent mode: работа по спекам через обычный agent loop pi.
-- Авто-переключение: plan mode → agent mode без разрыва сессии.
-- Единая сессия, единый контекст, единый агент — с разными system prompt и tools для каждого режима.
-- Никаких "других агентов", рисующих несовместимые планы. loom = режим работы pi.
-
-## Контур публикации
-
-- **Delivery Unit 1**: `du/bootstrap-core-design`
-  - Статус: complete
-  - Содержание: Архитектурный дизайн ядра, модель данных, форматы артефактов, инварианты. Результат — `artifacts/sdd.md`.
-- **Delivery Unit 2**: `du/bootstrap-impl-v1`
-  - Статус: open
-  - Содержание: Реализация ядра: extension, Plan Mode, Agent Mode, subagent spawner, git review flow.
-- **Deferred to v2**: когнитивные слои → `TASK-2026-0002-loom-vnext`
-
-## Артефакты задачи
-
-- `artifacts/sdd.md` — **Финальный SDD** ядра loom. Канонический source of truth для реализации.
-- `artifacts/analysis-approaches.md` — исторический: анализ 3 вариантов подхода.
-- `artifacts/pi-extension-design.md` — исторический: первая итерация дизайна pi extension.
-- `artifacts/analysis-stratum-v2.md` — исторический: субагенты, правила, JSON schema.
-- `artifacts/loom-git-flow-design.md` — исторический: git-based review flow.
-- `artifacts/verification-matrix.md` — матрица верификации инвариантов (TBD).
+- `task.json` — **Primary**. Задача в machine-readable формате.
+- `plan.json` — **Primary**. План исполнения.
+- `sdd.json` — **Primary**. Software Design Document в machine-readable формате.
+- `artifacts/sdd.md` — Derivative. Человекочитаемый SDD.
+- `artifacts/review-report.md` — Historical. Ревью v1.
+- `artifacts/review-report-v2.md` — Ревью v2 (текущее).
+- `artifacts/analysis-approaches.md` — Historical. Анализ подходов.
+- `artifacts/pi-extension-design.md` — Historical. Первая итерация дизайна extension.
+- `artifacts/analysis-stratum-v2.md` — Historical. Обсуждение субагентов и правил.
+- `artifacts/loom-git-flow-design.md` — Исторический. Git-based review flow.
 
 ## Рабочий журнал
 
 ### 2026-05-21 — Инициализация
 - Создан репозиторий.
 - Сформулирована задача.
-- Созданы `README.md`, `AGENTS.md`, начальная структура `knowledge/`.
+- Созданы README.md, AGENTS.md, начальная структура knowledge/.
 
 ### 2026-05-21 — Анализ подходов
-- Изучены reference-файлы skill `task-centric-knowledge`: core-model.md, deployment.md, adoption.md, task-routing.md, upgrade-transition.md.
-- Проанализированы 3 варианта: взять за базу, с нуля, гибрид.
-- Результат: рекомендован вариант 3 (гибрид) — сохранить архитектурные концепции task-centric-knowledge, переписать форматы под AI-native.
-- Артефакт: `artifacts/analysis-approaches.md`.
+- Изучены reference-файлы task-centric-knowledge.
+- Проанализированы 3 варианта: за базу, с нуля, гибрид.
+- Результат: гибрид.
+- Артефакт: artifacts/analysis-approaches.md.
 
 ### 2026-05-21 — Дизайн Pi Extension
 - Добавлен инвариант INV-7: Pi-Native Integration.
-- Изучена документация pi: extensions.md, skills.md, prompt-templates.md, README.md.
-- Разработан дизайн extension `aide-plan-mode`:
-  - Plan mode: `/plan` → брейншторм → `create_task`/`create_plan`/`create_sdd` → `finalize_plan`.
-  - Agent mode: авто-переключение после finalize_plan, работа по спекам.
-  - Единая сессия, единый агент — разные system prompt и tools для каждого режима.
-  - Heuristic routing: auto-определение режима по ключевым словам.
-  - Custom tools для управления knowledge/ (JSON primary, markdown derivative).
-  - TUI widgets: status line, task widget, custom UI для plan mode.
-  - State persistence через `pi.appendEntry()`.
-- Артефакт: `artifacts/pi-extension-design.md`.
+- Артефакт: artifacts/pi-extension-design.md.
 
 ### 2026-05-21 — Архитектурное обсуждение v2
-- Обсуждены: название, формат правил, универсальные субагенты, executor как приёмщик, аудит без полных сессий.
-- Решения:
-  - Rules и Architecture — JSON primary, каталоги по темам.
-  - Субагенты универсальны: runtime pi + prompt от оркестратора + model config.
-  - Executor: запускает worker → review → accept/reject (max 10 iter, конфиг).
-  - Reviewer модели: конфигурируется, не хардкод (deepseek flash / kimi for 1c).
-  - Audit trail: structured JSON, не полная сессия.
-  - Чистая сессия при переходе plan → agent.
-- Артефакт: `artifacts/analysis-stratum-v2.md`.
+- Правила, архитектура — JSON primary.
+- Универсальные субагенты.
+- Executor как приёмщик.
+- Артефакт: artifacts/analysis-stratum-v2.md.
 
 ### 2026-05-21 — Архитектурное обсуждение v3 (loom)
-- Название проекта: **loom**.
-- Упрощение графов: только базовая информация в JSON, агент грепает напрямую.
-- Универсальные worker/reviewer: не привязаны к коду, работают через prompt + model-config.
-- **Git-based review flow**: reviewer анализирует git diff/артефакты, пишет review.json.
-- Русификация: system prompt и артефакты на русском, machine markers на английском.
-- Tmux windows: субагенты в вкладках текущего терминала.
-- Параллелизм: plan mode — параллельно (max 4), agent mode — строго последовательно.
-- Human-in-the-loop: executor останавливается только при reject+max_iter, timeout, ambiguity.
-- Артефакт: `artifacts/loom-git-flow-design.md`.
+- Название проекта: loom.
+- Ревью через git diff.
+- Tmux windows.
+- Артефакт: artifacts/loom-git-flow-design.md.
 
 ### 2026-05-23 — Финализация архитектуры (SDD)
 - Все обсуждения синтезированы в единый SDD.
-- Зафиксировано 10 архитектурных инвариантов.
-- Определены компоненты: Orchestrator, Executor, Spawner, Worker, Reviewer, Knowledge I/O.
-- Full JSON schemas: task, plan, rule, architecture, review, subagent.
-- Onboarding pipeline: pre-check → AGENTS.md analysis → scout → research → migration → rules → operator review.
-- MVP scope: 4 Delivery Units (Core, Agent+Review, Onboarding, Polish).
-- Раздел 16: Memory layer, retrieval через scout (не эмбеддинги), multi-agent coordination — отложены.
-- Раздел 7.4: Добавлен детальный план миграции с task-centric-knowledge на loom.
-- Статус архитектурной фазы: завершена. Следующий шаг — реализация DU-1.
-- Артефакт: `artifacts/sdd.md` (канонический).
+- Артефакт: artifacts/sdd.md.
+
+### 2026-05-23 — Устранение замечаний ревью v1
+- Созданы JSON schemas.
+- Созданы primary JSON-артефакты: task.json, plan.json, sdd.json.
+- Обновлены derivative markdown.
+- Интегрирован owned-text-localization-guard.
+- Добавлен recovery strategy и error schema.
+- Исправлены historical artifacts.

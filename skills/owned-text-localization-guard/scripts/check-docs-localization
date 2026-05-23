@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_path="${BASH_SOURCE[0]}"
+if command -v readlink >/dev/null 2>&1; then
+  resolved_path="$(readlink -f "$script_path" 2>/dev/null || true)"
+  if [[ -n "$resolved_path" ]]; then
+    script_path="$resolved_path"
+  fi
+fi
+
+script_dir="$(cd "$(dirname "$script_path")" && pwd)"
+exec python3 "$script_dir/markdown_localization_guard.py" "$@"

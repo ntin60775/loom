@@ -1,0 +1,142 @@
+{
+  "task_id": "TASK-2026-0001-bootstrap",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Создать JSON schemas",
+      "description": "Вынести все JSON schemas из SDD markdown в отдельные файлы в knowledge/project/schemas/. Схемы на английском.",
+      "expected_output": "task.schema.json, plan.schema.json, sdd.schema.json, review.schema.json, rule.schema.json, architecture-component.schema.json, subagent-spec.schema.json, error.schema.json",
+      "constraints": ["INV-1", "INV-12"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "done"
+    },
+    {
+      "step_number": 2,
+      "title": "Создать primary JSON-артефакты bootstrap",
+      "description": "Создать task.json, plan.json, sdd.json для TASK-2026-0001-bootstrap из существующих markdown-артефактов. Статусы — machine-readable английские enum.",
+      "expected_output": "knowledge/tasks/TASK-2026-0001-bootstrap/{task,plan,sdd}.json",
+      "constraints": ["INV-1", "INV-4", "INV-12"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "in_progress"
+    },
+    {
+      "step_number": 3,
+      "title": "Обновить derivative markdown",
+      "description": "Сгенерировать task.md, plan.md, sdd.md как derivative из JSON. Добавить заголовок 'Generated from task.json'. Исправить 'aide' на 'loom'.",
+      "expected_output": "Обновленные derivative markdown в knowledge/tasks/TASK-2026-0001-bootstrap/",
+      "constraints": ["INV-1", "INV-12"],
+      "depends_on": [2],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Обновить registry.json и AGENTS.md",
+      "description": "Привести registry.json к единому формату. Обновить AGENTS.md: минимальный entry point + localization guard integration + routing commands.",
+      "expected_output": "registry.json, AGENTS.md",
+      "constraints": ["INV-4", "INV-12"],
+      "depends_on": [2],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Интегрировать owned-text-localization-guard",
+      "description": "Скопировать навык локально в skills/owned-text-localization-guard/. Создать .localization-guard.yml и обертку scripts/check-docs-localization.sh.",
+      "expected_output": "skills/owned-text-localization-guard/, .localization-guard.yml, scripts/check-docs-localization.sh",
+      "constraints": ["INV-12"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Добавить recovery strategy и error schema",
+      "description": "Создать error.schema.json. Документировать поведение при crash worker, timeout reviewer, missing outputArtifact.",
+      "expected_output": "error.schema.json, recovery section in execution-config.json",
+      "constraints": ["INV-6", "INV-13"],
+      "depends_on": [1],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 7,
+      "title": "Обновить execution-config и subagent-config",
+      "description": "Создать machine-readable configs: execution-config.json (с recovery, git safety, localization guard) и subagent-config.json.",
+      "expected_output": "knowledge/project/configs/{execution-config,subagent-config}.json",
+      "constraints": ["INV-10", "INV-13"],
+      "depends_on": [1],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 8,
+      "title": "Обновить historical artifacts — disclaimers",
+      "description": "Добавить в analysis-approaches.md, pi-extension-design.md, loom-git-flow-design.md, analysis-stratum-v2.md дисклеймер: 'Historical artifact, names aide/stratum outdated'.",
+      "expected_output": "Обновленные historical artifacts с disclaimers",
+      "constraints": ["INV-1"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 9,
+      "title": "Провести внешнее ревью v2",
+      "description": "Создать review-report-v2.md с явным списком 'исправлено / не исправлено' по каждому замечанию первого ревью.",
+      "expected_output": "artifacts/review-report-v2.md",
+      "constraints": ["INV-8", "INV-12"],
+      "depends_on": [3,4,5,6,7,8],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 10,
+      "title": "Обновить README.md",
+      "description": "Обновить README.md для пользователя на русском. Отразить текущий статус и архитектуру.",
+      "expected_output": "README.md",
+      "constraints": ["INV-12"],
+      "depends_on": [9],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-1",
+      "description": "pi CLI не поддерживает флаги --mode json, --system-prompt-file, --model, --session-dir",
+      "severity": "high",
+      "mitigation": "Verify через PoC запуска до начала DU-2"
+    },
+    {
+      "id": "RISK-2",
+      "description": "Owned-text-localization-guard требует Python/PyYAML, может не работать в чистой среде",
+      "severity": "medium",
+      "mitigation": "Проверить зависимости; fallback на mtime-режим"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-1",
+      "description": "Все JSON schemas созданы и валидны",
+      "after_step": 1,
+      "verification": "python3 -m json.tool knowledge/project/schemas/*.schema.json"
+    },
+    {
+      "id": "CHK-2",
+      "description": "Primary JSON artifacts exist for bootstrap task",
+      "after_step": 2,
+      "verification": "ls knowledge/tasks/TASK-2026-0001-bootstrap/{task,plan,sdd}.json"
+    },
+    {
+      "id": "CHK-3",
+      "description": "No markdown file is primary artifact for bootstrap",
+      "after_step": 3,
+      "verification": "task.md contains 'Generated from task.json' header"
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}

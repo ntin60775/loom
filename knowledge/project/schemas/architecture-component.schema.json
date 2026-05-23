@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://loom.dev/schemas/architecture-component.schema.json",
+  "title": "ArchitectureComponent",
+  "description": "Architecture component catalog entry.",
+  "type": "object",
+  "required": ["id", "name", "layer", "responsibilities", "interfaces", "dependencies", "files", "status", "source"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^COMP-[a-z0-9-]+$" },
+    "name": { "type": "string", "description": "Human-readable name in Russian" },
+    "layer": { "type": "string", "enum": ["domain", "application", "infrastructure", "presentation", "external"] },
+    "responsibilities": { "type": "array", "items": { "type": "string" } },
+    "interfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "contract", "consumers"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["api", "event", "db", "file", "cli"] },
+          "contract": { "type": "string" },
+          "consumers": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "files": { "type": "array", "items": { "type": "string" } },
+    "invariants": { "type": "array", "items": { "type": "string" } },
+    "status": { "type": "string", "enum": ["discovered", "verified", "deprecated"] },
+    "source": {
+      "type": "object",
+      "required": ["type", "ref"],
+      "properties": {
+        "type": { "type": "string", "enum": ["auto-detected", "agent-documented", "operator-defined"] },
+        "ref": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,3 +1,5 @@
+> **HISTORICAL ARTIFACT.** First iteration of extension design. Names "aide" and "aide-plan-mode" are outdated. Current project name is **loom**. For canonical architecture, see `../sdd.json` and `../sdd.md`.
+
 # Дизайн Pi Extension: aide-plan-mode
 
 ## Контекст

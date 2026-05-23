@@ -1,3 +1,5 @@
+> **HISTORICAL ARTIFACT.** Architecture v2 discussion artifact. Names "stratum" are outdated. Current project name is **loom**. Consolidated into canonical SDD (`../sdd.json`).
+
 # Анализ архитектуры v2 — обсуждение требований
 
 ## 1. Название — дополнительные варианты

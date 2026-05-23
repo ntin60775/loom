@@ -1,0 +1,45 @@
+{
+  "review": {
+    "enabled": true,
+    "max_iterations": 10,
+    "auto_select_reviewer": {
+      "enabled": true,
+      "domain_rules": [
+        {"extension": ".bsl", "domain": "1c"},
+        {"extension": ".1s", "domain": "1c"},
+        {"default": "general"}
+      ]
+    }
+  },
+  "parallelism": {
+    "plan_mode_max_subagents": 4
+  },
+  "timeout": {
+    "worker": 3600,
+    "reviewer": 1800,
+    "scout": 600
+  },
+  "session_retention_days": 7,
+  "human_in_the_loop": {
+    "on_reject_max_iterations": true,
+    "on_timeout": true,
+    "on_ambiguity": true,
+    "on_worker_blocker": true
+  },
+  "recovery": {
+    "default_strategy": "retry_with_correction",
+    "max_retries_per_step": 3,
+    "escalate_after_total_failures": 5
+  },
+  "localization_guard": {
+    "enabled": true,
+    "check_on_review": true,
+    "check_on_finalize": true,
+    "script_path": "scripts/check-docs-localization.sh"
+  },
+  "git": {
+    "commit_mode": "staged",
+    "commit_message_template": "TASK-{task_id} step-{step}: {summary}\n\nINVARIANT: {invariant_markers}\nRULE: {rule_ids}",
+    "require_clean_worktree": false
+  }
+}

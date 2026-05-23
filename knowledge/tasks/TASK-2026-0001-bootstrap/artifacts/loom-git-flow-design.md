@@ -1,3 +1,5 @@
+> **HISTORICAL ARTIFACT.** Architecture v3 discussion artifact. Consolidated into canonical SDD (`../sdd.json`). This file preserves the reasoning process.
+
 # Loom — архитектура v3: git-based review, упрощённые графы, универсальные роли
 
 ## 1. Название: loom

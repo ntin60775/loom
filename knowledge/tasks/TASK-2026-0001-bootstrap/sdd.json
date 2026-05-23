@@ -1,0 +1,243 @@
+{
+  "task_id": "TASK-2026-0001-bootstrap",
+  "invariant_set": [
+    {
+      "id": "INV-1",
+      "text": "AI-First: JSON primary, markdown derivative",
+      "verification": "All knowledge files exist as JSON; markdown is auto-generated derivative"
+    },
+    {
+      "id": "INV-2",
+      "text": "Stack-Agnostic: system does not know language/framework",
+      "verification": "No language-specific branching in extension code"
+    },
+    {
+      "id": "INV-3",
+      "text": "Legacy/Greenfield parity: onboarding works in empty and non-empty projects",
+      "verification": "Onboarding pipeline handles clean, partial, foreign_system, mixed_system, compatible states"
+    },
+    {
+      "id": "INV-4",
+      "text": "Task-Centric accumulation: each task is an atom, knowledge inherits",
+      "verification": "Every task has task.json; registry updated; closed tasks read by agents"
+    },
+    {
+      "id": "INV-5",
+      "text": "Operator layers: read-only TUI, docs-as-code",
+      "verification": "TUI widgets do not allow code editing; docs generated from code"
+    },
+    {
+      "id": "INV-6",
+      "text": "Deterministic context: no implicit state",
+      "verification": "Subagents use clean sessions; context assembled from explicit files"
+    },
+    {
+      "id": "INV-7",
+      "text": "Pi-Native: extension, not standalone tool",
+      "verification": "All code in .pi/extensions/loom/; single agent with different prompts per mode"
+    },
+    {
+      "id": "INV-8",
+      "text": "Git-based review: reviewer analyzes artifacts, not session",
+      "verification": "Review artifact references git commit hash; reviewer analyzes git diff"
+    },
+    {
+      "id": "INV-9",
+      "text": "Executor does not write code: only orchestrates worker + reviewer",
+      "verification": "Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. NO write/edit/commit"
+    },
+    {
+      "id": "INV-10",
+      "text": "Models are configurable: no hardcode",
+      "verification": "Model config in subagent-config.json; no hardcoded model strings in extension code"
+    },
+    {
+      "id": "INV-11",
+      "text": "Strictly sequential execution: step N -> worker -> reviewer -> step N+1",
+      "verification": "Executor loop cannot spawn more than one worker simultaneously"
+    },
+    {
+      "id": "INV-12",
+      "text": "Localization: UI and user artifacts in Russian; AI documentation in English",
+      "verification": "System prompts, JSON schemas, code comments in English; operator text in Russian; machine markers in English"
+    },
+    {
+      "id": "INV-13",
+      "text": "Git commit safety: staged list, not git add -A",
+      "verification": "Worker commits only files listed in files-to-commit.json"
+    }
+  ],
+  "components": [
+    {
+      "id": "COMP-orchestrator",
+      "name": "Orchestrator (Plan Mode)",
+      "responsibilities": ["Formulate task", "Brainstorm with operator", "Create artifacts (task/plan/sdd)", "Spawn scout/researcher/architect subagents"],
+      "interfaces": ["create_task tool", "create_plan tool", "spawn_subagent tool", "finalize_plan tool"],
+      "dependencies": ["COMP-knowledge-io", "COMP-spawner"],
+      "files": [".pi/extensions/loom/plan-mode/orchestrator-prompt.ts", ".pi/extensions/loom/plan-mode/plan-tools.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-executor",
+      "name": "Executor (Agent Mode)",
+      "responsibilities": ["Execute plan step by step", "Spawn worker and reviewer", "Make approve/reject/escalate decisions", "Update task status"],
+      "interfaces": ["spawn_worker tool", "spawn_reviewer tool", "update_task_status tool", "read_artifact tool"],
+      "dependencies": ["COMP-spawner", "COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/agent-mode/executor-prompt.ts", ".pi/extensions/loom/agent-mode/executor-loop.ts", ".pi/extensions/loom/agent-mode/agent-tools.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-spawner",
+      "name": "Subagent Spawner",
+      "responsibilities": ["Launch pi in tmux window", "Monitor progress via progress.json", "Enforce timeout"],
+      "interfaces": ["tmux new-window API", "progress.json polling"],
+      "dependencies": ["tmux", "pi CLI"],
+      "files": [".pi/extensions/loom/subagent/spawner.ts", ".pi/extensions/loom/subagent/progress.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-knowledge-io",
+      "name": "Knowledge I/O",
+      "responsibilities": ["JSON read/write", "Markdown generation", "Schema validation"],
+      "interfaces": ["read_json", "write_json", "generate_markdown", "validate_schema"],
+      "dependencies": [],
+      "files": [".pi/extensions/loom/knowledge/io.ts", ".pi/extensions/loom/knowledge/schemas.ts", ".pi/extensions/loom/knowledge/onboarding.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-worker",
+      "name": "Worker Subagent",
+      "responsibilities": ["Execute one plan step", "Write code/docs/configs", "Make task-scoped git commit", "Write summary.json and audit.json"],
+      "interfaces": ["read", "bash", "write", "edit", "git commit", "summary.json", "audit.json"],
+      "dependencies": ["COMP-spawner"],
+      "files": [".pi/extensions/loom/subagent/prompts/worker.md"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-reviewer",
+      "name": "Reviewer Subagent",
+      "responsibilities": ["Check worker result against invariants and rules", "Analyze git diff", "Write review.json"],
+      "interfaces": ["git show", "read", "write review.json"],
+      "dependencies": ["COMP-spawner"],
+      "files": [".pi/extensions/loom/subagent/prompts/reviewer.md"],
+      "status": "verified"
+    }
+  ],
+  "data_model_refs": [
+    "knowledge/project/schemas/task.schema.json",
+    "knowledge/project/schemas/plan.schema.json",
+    "knowledge/project/schemas/sdd.schema.json",
+    "knowledge/project/schemas/review.schema.json",
+    "knowledge/project/schemas/rule.schema.json",
+    "knowledge/project/schemas/architecture-component.schema.json",
+    "knowledge/project/schemas/subagent-spec.schema.json",
+    "knowledge/project/schemas/error.schema.json",
+    "knowledge/project/configs/execution-config.json",
+    "knowledge/project/configs/subagent-config.json"
+  ],
+  "flows": [
+    {
+      "id": "FLOW-plan",
+      "name": "Plan Mode",
+      "type": "plan_mode",
+      "steps": [
+        "Operator: /plan [description]",
+        "Orchestrator brainstorms with operator",
+        "Spawn scout/researcher/architect subagents (parallel, max 4)",
+        "create_task -> task.json",
+        "create_plan -> plan.json",
+        "finalize_plan -> save artifacts, propose clean session"
+      ]
+    },
+    {
+      "id": "FLOW-agent",
+      "name": "Agent Mode",
+      "type": "agent_mode",
+      "steps": [
+        "Executor reads plan.json",
+        "For each step: form WorkerSpec",
+        "spawn_worker -> tmux -> worker writes code -> git commit -> summary.json",
+        "Executor reads summary.json",
+        "form ReviewerSpec -> spawn_reviewer -> review.json",
+        "Executor reads review.json -> approve/reject/escalate",
+        "If reject -> correction WorkerSpec -> iter+1",
+        "If iter > max_iterations -> STOP, ask operator"
+      ]
+    },
+    {
+      "id": "FLOW-onboarding",
+      "name": "Onboarding",
+      "type": "onboarding",
+      "steps": [
+        "Operator: /loom-init",
+        "Pre-check: git repo? AGENTS.md? knowledge/? Classification.",
+        "Analyze AGENTS.md (if exists)",
+        "Code archaeology (scout subagent)",
+        "Context research (research subagent)",
+        "Migration analysis (if foreign_system)",
+        "Propose initial rules",
+        "Generate minimal AGENTS.md",
+        "Operator review and approval",
+        "Git commit"
+      ]
+    },
+    {
+      "id": "FLOW-tck-migration",
+      "name": "Task-Centric Knowledge Migration",
+      "type": "migration",
+      "steps": [
+        "Detect TCK managed block",
+        "Extract from AGENTS.md",
+        "Migrate tasks: task.md -> task.json, plan.md -> plan.json, sdd.md -> sdd.json",
+        "Migrate registry.md -> registry.json",
+        "Verification reviewer subagent",
+        "If verification ok -> cleanup TCK artifacts",
+        "Generate loom AGENTS.md",
+        "Operator review",
+        "Git commit"
+      ]
+    }
+  ],
+  "mvp_scope": [
+    {
+      "id": "DU-1",
+      "name": "Core: Plan Mode + basic artifacts",
+      "status": "merged"
+    },
+    {
+      "id": "DU-2",
+      "name": "Agent Mode + Git-based review",
+      "status": "draft"
+    },
+    {
+      "id": "DU-3",
+      "name": "Onboarding + Knowledge accumulation",
+      "status": "planned"
+    },
+    {
+      "id": "DU-4",
+      "name": "Polish: TUI, localization, verification matrix",
+      "status": "planned"
+    }
+  ],
+  "deferred_scope": [
+    {
+      "id": "DEF-1",
+      "name": "Memory Layer (session/episodic/semantic/procedural)",
+      "rationale": "Requires mature base core. v1 stores knowledge passively. Active management needs ranking, summarization, retention. Threshold: 50+ closed tasks."
+    },
+    {
+      "id": "DEF-2",
+      "name": "Scout Retrieval (search_knowledge tool)",
+      "rationale": "v1 uses manual reading. Scout subagent search is sufficient until ~50 tasks."
+    },
+    {
+      "id": "DEF-3",
+      "name": "Parallel workers in agent mode",
+      "rationale": "Intentionally excluded. Sequential execution prevents git conflicts, ensures consistency, simplifies review and rollback."
+    }
+  ],
+  "created_at": "2026-05-21",
+  "updated_at": "2026-05-23",
+  "schema_version": "1.0.0"
+}

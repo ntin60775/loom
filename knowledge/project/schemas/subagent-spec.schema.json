@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://loom.dev/schemas/subagent-spec.schema.json",
+  "title": "SubagentSpec",
+  "description": "Specification for spawning a subagent via tmux + pi CLI.",
+  "type": "object",
+  "required": ["id", "role", "model", "system_prompt", "tools", "input_artifact", "output_artifact", "audit_artifact", "progress_artifact", "timeout", "cwd"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^SUB-[0-9]{4}-[0-9]+$" },
+    "role": { "type": "string", "enum": ["scout", "worker", "reviewer", "researcher", "architect", "migrator"] },
+    "model": {
+      "type": "object",
+      "required": ["provider", "model", "thinking"],
+      "properties": {
+        "provider": { "type": "string" },
+        "model": { "type": "string" },
+        "thinking": { "type": "string", "enum": ["off", "minimal", "low", "medium", "high", "xhigh"] }
+      }
+    },
+    "system_prompt": { "type": "string" },
+    "skills": { "type": "array", "items": { "type": "string" } },
+    "tools": { "type": "array", "items": { "type": "string" } },
+    "input_artifact": { "type": "string" },
+    "output_artifact": { "type": "string" },
+    "audit_artifact": { "type": "string" },
+    "progress_artifact": { "type": "string" },
+    "timeout": { "type": "integer", "minimum": 1 },
+    "max_tokens": { "type": "integer" },
+    "cwd": { "type": "string" }
+  }
+}

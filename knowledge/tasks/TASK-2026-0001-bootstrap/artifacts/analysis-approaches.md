@@ -1,3 +1,5 @@
+> **HISTORICAL ARTIFACT.** Generated during early exploration. Names "aide" and "stratum" are outdated. Current project name is **loom**. For canonical architecture, see `../sdd.json` and `../sdd.md`.
+
 # Анализ подходов к реализации aide
 
 ## Постановка

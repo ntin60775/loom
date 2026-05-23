@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://loom.dev/schemas/task.schema.json",
+  "title": "Task",
+  "description": "Primary machine-readable artifact for a loom task. All human-readable derivatives are generated from this file.",
+  "type": "object",
+  "required": ["task_id", "slug", "title", "description", "status", "priority", "branch", "invariants", "delivery_units", "created_at", "updated_at"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^TASK-[0-9]{4}-[0-9]+-[a-z0-9-]+$",
+      "description": "Unique task identifier, e.g. TASK-2026-0001-bootstrap"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "URL-safe short name"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable title in Russian (for operator). Machine consumption: plain string."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description in Russian (for operator). Machine consumption: plain string."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "ready", "in_progress", "in_review", "waiting_user", "blocked", "completed", "cancelled"],
+      "description": "Machine-readable task status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"]
+    },
+    "branch": {
+      "type": "string",
+      "description": "Git branch for this task, e.g. task/TASK-2026-0001-bootstrap"
+    },
+    "invariants": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/invariant" }
+    },
+    "delivery_units": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/delivery_unit" }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "schema_version": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "Schema version for migration tracking"
+    }
+  },
+  "definitions": {
+    "invariant": {
+      "type": "object",
+      "required": ["id", "text", "marker", "status"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^INV-[0-9]+$" },
+        "text": { "type": "string", "description": "Human-readable invariant text in Russian" },
+        "marker": { "type": "string", "description": "Machine-verifiable marker in English, e.g. INVARIANT: ..." },
+        "status": { "type": "string", "enum": ["defined", "verified", "violated"] },
+        "verification_method": { "type": "string" }
+      }
+    },
+    "delivery_unit": {
+      "type": "object",
+      "required": ["id", "status", "purpose", "base_branch"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^DU-[0-9]+$" },
+        "status": { "type": "string", "enum": ["planned", "local", "draft", "review", "merged", "closed"] },
+        "purpose": { "type": "string" },
+        "base_branch": { "type": "string" }
+      }
+    }
+  }
+}

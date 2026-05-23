@@ -17,6 +17,7 @@
 5. **Context as Code** — Контекст агента формализован и версионируется. Нет "магии" — всё явно, проверяемо, воспроизводимо.
 6. **Accumulative Knowledge** — Знания о проекте накапливаются и наследуются между задачами. Агент не начинает с чистого листа.
 7. **Pi-Native** — Реализован как pi extension. Plan mode и agent mode в рамках единой сессии pi.
+8. **Bilingual** — AI-документация (system prompts, schemas, code) на английском. UI и пользовательские артефакты на русском. Machine markers на английском.
 
 ## Архитектура (целевая)
 
@@ -26,7 +27,7 @@
 │         (read-only по коду)             │
 ├─────────────────────────────────────────┤
 │         Plan Mode (Orchestrator)        │  ← /plan, брейншторм, артефакты
-│    Chief Architect: формирует задачу    │
+│    Chief Architect: формулирует задачу  │
 ├─────────────────────────────────────────┤
 │         Agent Mode (Executor)           │  ← исполнение по плану
 │    Supervisor: worker → review → commit │
@@ -35,9 +36,9 @@
 │    scout | worker | reviewer | architect│
 ├─────────────────────────────────────────┤
 │         Knowledge Core                  │  ← task.json, plan.json, sdd.json
-│         (JSON primary, markdown deriv)  │    rules/, architecture/, modules/
+│         (JSON primary, markdown derivative)│    правила/, архитектура/, схемы/
 ├─────────────────────────────────────────┤
-│         Git Flow                        │  ← task/ branches, task-scoped commits
+│         Git Flow                        │  ← ветки task/, staged-коммиты
 │         (review через git diff)         │    reviews в knowledge/
 └─────────────────────────────────────────┘
 ```
@@ -48,10 +49,16 @@
 - **Git-based review** — reviewer анализирует git diff, не live session.
 - **Универсальные субагенты** — специализация через prompt + model-config.
 - **Минимум графов** — агент грепает исходники напрямую, не строит сложные графы.
-- **Русификация** — артефакты и UI на русском, machine markers на английском.
+- **Staged commits** — worker коммитит только files-to-commit.json, не `git add -A`.
+- **Локализация** — русский для пользователя, английский для AI.
 
 ## Текущий статус
 
 Этот репозиторий — **bootstrap**. Первая задача: спроектировать и реализовать ядро системы.
 
-См. `knowledge/tasks/TASK-2026-0001-bootstrap/task.md`
+- DU-1 (Core design) — **merged**. Архитектура, модель данных, форматы, инварианты.
+- DU-2 (Реализация) — **draft**. Extension, Plan Mode, Agent Mode.
+- DU-3 (Onboarding) — **запланирован**.
+- DU-4 (Полировка) — **planned**.
+
+См. `knowledge/tasks/TASK-2026-0001-bootstrap/task.json`

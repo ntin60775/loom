@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://loom.dev/schemas/sdd.schema.json",
+  "title": "SoftwareDesignDocument",
+  "description": "Machine-readable SDD. Human-readable derivative (sdd.md) is auto-generated.",
+  "type": "object",
+  "required": ["task_id", "invariant_set", "components", "data_model_refs", "flows", "mvp_scope", "deferred_scope", "created_at", "updated_at"],
+  "properties": {
+    "task_id": { "type": "string", "pattern": "^TASK-[0-9]{4}-[0-9]+-[a-z0-9-]+$" },
+    "invariant_set": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/invariant_entry" }
+    },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/component_entry" }
+    },
+    "data_model_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Paths to JSON schema files, e.g. knowledge/project/schemas/task.schema.json"
+    },
+    "flows": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/flow_entry" }
+    },
+    "mvp_scope": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/delivery_unit_entry" }
+    },
+    "deferred_scope": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/deferred_entry" }
+    },
+    "created_at": { "type": "string", "format": "date" },
+    "updated_at": { "type": "string", "format": "date" },
+    "schema_version": { "type": "string", "default": "1.0.0" }
+  },
+  "definitions": {
+    "invariant_entry": {
+      "type": "object",
+      "required": ["id", "text", "verification"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^INV-[0-9]+$" },
+        "text": { "type": "string", "description": "Invariant text in Russian" },
+        "verification": { "type": "string", "description": "How to verify this invariant" }
+      }
+    },
+    "component_entry": {
+      "type": "object",
+      "required": ["id", "name", "responsibilities", "interfaces", "dependencies", "files", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "description": "Component name in Russian" },
+        "responsibilities": { "type": "array", "items": { "type": "string" } },
+        "interfaces": { "type": "array", "items": { "type": "string" } },
+        "dependencies": { "type": "array", "items": { "type": "string" } },
+        "files": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["discovered", "verified", "deprecated"] }
+      }
+    },
+    "flow_entry": {
+      "type": "object",
+      "required": ["id", "name", "type", "steps"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["plan_mode", "agent_mode", "onboarding", "migration"] },
+        "steps": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "delivery_unit_entry": {
+      "type": "object",
+      "required": ["id", "name", "status"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^DU-[0-9]+$" },
+        "name": { "type": "string" },
+        "status": { "type": "string", "enum": ["planned", "local", "draft", "review", "merged", "closed"] }
+      }
+    },
+    "deferred_entry": {
+      "type": "object",
+      "required": ["id", "name", "rationale"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "rationale": { "type": "string" }
+      }
+    }
+  }
+}

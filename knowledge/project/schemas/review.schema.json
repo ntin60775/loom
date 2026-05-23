@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://loom.dev/schemas/review.schema.json",
+  "title": "Review",
+  "description": "Git-based review artifact. Machine-readable evidence of review.",
+  "type": "object",
+  "required": ["review_id", "target", "verdict", "criteria_checks", "general_comments", "corrections", "confidence", "reviewer_model", "created_at"],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^REV-[0-9]{4}-[0-9]+-.+$" },
+    "target": {
+      "type": "object",
+      "required": ["type", "task_id"],
+      "properties": {
+        "type": { "type": "string", "enum": ["git-commit", "artifact-file"] },
+        "commit": { "type": "string" },
+        "file": { "type": "string" },
+        "task_id": { "type": "string" }
+      }
+    },
+    "verdict": { "type": "string", "enum": ["approve", "reject"] },
+    "criteria_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "status", "comment"],
+        "properties": {
+          "criterion": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "fail", "partial"] },
+          "comment": { "type": "string" }
+        }
+      }
+    },
+    "general_comments": { "type": "array", "items": { "type": "string" } },
+    "corrections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "description"],
+        "properties": {
+          "file": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reviewer_model": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

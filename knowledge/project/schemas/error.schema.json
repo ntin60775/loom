@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://loom.dev/schemas/error.schema.json",
+  "title": "ErrorArtifact",
+  "description": "Structured error / failure artifact for recovery and retry logic.",
+  "type": "object",
+  "required": ["error_id", "task_id", "step_number", "error_type", "severity", "description", "timestamp"],
+  "properties": {
+    "error_id": { "type": "string", "pattern": "^ERR-[0-9]{4}-[0-9]+-.+$" },
+    "task_id": { "type": "string" },
+    "step_number": { "type": "integer" },
+    "iteration": { "type": "integer", "minimum": 1 },
+    "error_type": { "type": "string", "enum": ["worker_crash", "reviewer_timeout", "worker_timeout", "output_missing", "review_ambiguous", "git_failure", "schema_violation", "unknown"] },
+    "severity": { "type": "string", "enum": ["fatal", "retryable", "warning"] },
+    "description": { "type": "string" },
+    "context": {
+      "type": "object",
+      "properties": {
+        "subagent_id": { "type": "string" },
+        "commit_hash": { "type": "string" },
+        "files_affected": { "type": "array", "items": { "type": "string" } },
+        "last_tool_call": { "type": "string" }
+      }
+    },
+    "recovery_strategy": { "type": "string", "enum": ["retry_same", "retry_with_correction", "escalate_operator", "skip_step", "abort_task"] },
+    "timestamp": { "type": "string", "format": "date-time" }
+  }
+}

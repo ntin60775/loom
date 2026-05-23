@@ -1,3 +1,5 @@
+> **HISTORICAL ARTIFACT.** Review v1 (self-review). Superseded by `review-report-v2.md`. Kept for audit trail.
+
 # Ревью итоговой документации loom
 
 **Дата:** 2026-05-23
