@@ -1,6 +1,6 @@
 {
   "verdict": "approve",
-  "commit": null,
+  "commit": "67b27be",
   "step_number": 10,
   "findings": [
     {

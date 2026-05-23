@@ -11,7 +11,7 @@
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistry, findKnowledgeRoot } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
@@ -37,8 +37,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
       const dir = taskDir(ctx.cwd, params.task_id);
-      const plan = readJson<any>(path.join(dir, "plan.json"));
-      const task = readJson<any>(path.join(dir, "task.json"));
+      const plan = readPlan(dir);
+      const task = readTask(dir);
       const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
 
       if (!plan || !task) {
@@ -108,8 +108,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
       const dir = taskDir(ctx.cwd, params.task_id);
-      const plan = readJson<any>(path.join(dir, "plan.json"));
-      const task = readJson<any>(path.join(dir, "task.json"));
+      const plan = readPlan(dir);
+      const task = readTask(dir);
       const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
 
       if (!plan || !task) {
@@ -190,9 +190,10 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           writeJson(taskPath, task);
         }
 
-        const registry = readJson<any>(registryPath);
+        const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+        const registry = knowledgeRoot ? readRegistry(knowledgeRoot) : null;
         if (registry) {
-          const entry = registry.tasks.find((t: any) => t.task_id === params.task_id);
+          const entry = (registry as any).tasks.find((t: any) => t.task_id === params.task_id);
           if (entry) {
             entry.status = params.task_status;
             entry.updated_at = task?.updated_at;

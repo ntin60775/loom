@@ -14,7 +14,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson } from "../knowledge/io";
+import { readJson, writeJson } from "../knowledge/io";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
 
@@ -173,7 +173,7 @@ export function markStepInProgress(taskId: string, stepNumber: number, cwd: stri
   const step = plan.steps.find((s: any) => s.step_number === stepNumber);
   if (step) {
     step.status = "in_progress";
-    fs.writeFileSync(planPath, JSON.stringify(plan, null, 2), "utf-8");
+    writeJson(planPath, plan);
 
     const state = getLoopState(taskId);
     state.current_step = stepNumber;

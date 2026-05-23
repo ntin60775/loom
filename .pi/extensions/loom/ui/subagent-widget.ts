@@ -2,6 +2,7 @@
  * Subagent Widget (Phase 2) — list running subagents, status, models
  *
  * Invariant: INV-5 (read-only TUI)
+ * TODO: Integrate into index.ts to display active subagents during executor loop.
  */
 
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";

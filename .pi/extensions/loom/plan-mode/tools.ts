@@ -16,6 +16,7 @@ import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
+import { getFinalOutput } from "../shared/utils";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -302,11 +303,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       };
 
       const result = await spawnSubagent(spec, signal);
-      const output = result.messages
-        .filter(m => m.role === "assistant")
-        .flatMap(m => m.content.filter(c => c.type === "text" && c.text))
-        .map(c => c.text)
-        .join("\n");
+      const output = getFinalOutput(result.messages);
 
       return {
         content: [{ type: "text", text: output || "(no output)" }],

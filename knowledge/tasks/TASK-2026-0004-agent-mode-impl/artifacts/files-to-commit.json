@@ -10,6 +10,8 @@
   ".pi/extensions/loom/knowledge/io.ts",
   ".pi/extensions/loom/subagent/progress.ts",
   "knowledge/project/configs/execution-config.json",
+  ".pi/extensions/loom/ui/subagent-widget.ts",
   "knowledge/tasks/TASK-2026-0004-agent-mode-impl/artifacts/files-to-commit.json",
+  "knowledge/tasks/TASK-2026-0004-agent-mode-impl/reviews/review-DU-2-fixes.json",
   "knowledge/tasks/TASK-2026-0004-agent-mode-impl/reviews/review-DU-2-review-fixes.json"
 ]

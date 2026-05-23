@@ -39,8 +39,7 @@ function getPiInvocation(): { command: string; args: string[] } {
     // command not found — fall through
   }
 
-  // Last resort: use current runtime as generic launcher
-  return { command: "pi", args: [] };
+  throw new Error("pi CLI not found in PATH and no suitable runtime detected");
 }
 
 async function writePromptToTempFile(name: string, prompt: string): Promise<{ dir: string; filePath: string }> {
