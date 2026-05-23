@@ -1,5 +1,6 @@
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { registerPlanTools } from "./tools";
 
 export function registerPlanMode(pi: ExtensionAPI): void {
-  // TODO: implement Plan Mode orchestrator (Step 2)
+  registerPlanTools(pi);
 }
