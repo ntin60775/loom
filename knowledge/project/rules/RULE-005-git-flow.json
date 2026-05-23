@@ -1,0 +1,16 @@
+{
+  "id": "RULE-005-git-flow",
+  "category": "git",
+  "title": "Git Flow: task-scoped commits, staged список, review перед merge",
+  "body": "Worker делает task-scoped commits по staged-списку (files-to-commit.json). Reviewer анализирует git diff + файлы. Executor: approve → следующий шаг, reject → доработка (макс 10 iter). Human-in-the-loop только при reject+max_iter, timeout, ambiguity. После approve — merge в base-ветку.",
+  "scope": ["*"],
+  "source": {
+    "type": "operator",
+    "ref": "AGENTS.md"
+  },
+  "status": "active",
+  "evidence": ["AGENTS.md: Git Flow"],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "version": 1
+}

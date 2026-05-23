@@ -1,0 +1,16 @@
+{
+  "id": "RULE-004-knowledge-accumulation",
+  "category": "documentation",
+  "title": "Накопление знаний: каждая задача оставляет след",
+  "body": "Каждая задача — атом знаний. После завершения задачи все артефакты сохраняются в knowledge/tasks/<TASK-ID>/. Project-level память накапливается в knowledge/project/. Cross-task inheritance: агент обязан читать закрытые задачи при работе над новыми.",
+  "scope": ["knowledge/**"],
+  "source": {
+    "type": "operator",
+    "ref": "AGENTS.md"
+  },
+  "status": "active",
+  "evidence": ["AGENTS.md: Накопление знаний"],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "version": 1
+}

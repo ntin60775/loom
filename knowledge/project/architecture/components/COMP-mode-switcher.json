@@ -1,0 +1,37 @@
+{
+  "id": "COMP-mode-switcher",
+  "name": "Mode Switcher",
+  "layer": "presentation",
+  "responsibilities": [
+    "Switch between idle/plan/agent modes",
+    "Provide keyboard shortcut ctrl+shift+m",
+    "Persist and restore mode across sessions"
+  ],
+  "interfaces": [
+    {
+      "name": "/plan command",
+      "type": "cli",
+      "contract": "enterPlanMode(ctx, args) → mode=plan, notify operator",
+      "consumers": ["operator"]
+    },
+    {
+      "name": "/agent command",
+      "type": "cli",
+      "contract": "enterAgentMode(ctx) → mode=agent, load active task",
+      "consumers": ["operator"]
+    },
+    {
+      "name": "ctrl+shift+m shortcut",
+      "type": "cli",
+      "contract": "idle→plan→agent→idle cyclic switch",
+      "consumers": ["operator"]
+    }
+  ],
+  "dependencies": ["COMP-orchestrator", "COMP-executor"],
+  "files": [".pi/extensions/loom/index.ts"],
+  "status": "verified",
+  "source": {
+    "type": "agent-documented",
+    "ref": "sdd.json"
+  }
+}

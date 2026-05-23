@@ -1,0 +1,31 @@
+{
+  "id": "COMP-migrator",
+  "name": "Migration Subagent",
+  "layer": "application",
+  "responsibilities": [
+    "Detect foreign task/knowledge systems",
+    "Analyze migration feasibility",
+    "Produce migration-analysis.json"
+  ],
+  "interfaces": [
+    {
+      "name": "loom_run_migrator tool",
+      "type": "api",
+      "contract": "spawn subagent with migrator.md prompt → migration-analysis.json",
+      "consumers": ["COMP-onboarding"]
+    },
+    {
+      "name": "migrator.md prompt",
+      "type": "file",
+      "contract": "system prompt for migration subagent",
+      "consumers": ["COMP-spawner"]
+    }
+  ],
+  "dependencies": ["COMP-spawner"],
+  "files": [".pi/extensions/loom/subagent/prompts/migrator.md", ".pi/extensions/loom/subagent/specs.ts"],
+  "status": "verified",
+  "source": {
+    "type": "agent-documented",
+    "ref": "sdd.json"
+  }
+}

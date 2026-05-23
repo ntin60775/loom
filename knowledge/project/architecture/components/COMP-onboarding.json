@@ -1,0 +1,39 @@
+{
+  "id": "COMP-onboarding",
+  "name": "Onboarding Pipeline",
+  "layer": "application",
+  "responsibilities": [
+    "Pre-check project state",
+    "Classify as clean/partial/foreign/mixed/compatible",
+    "Initialize knowledge structure",
+    "Generate AGENTS.md",
+    "Run onboarding wizard"
+  ],
+  "interfaces": [
+    {
+      "name": "/loom-init command",
+      "type": "cli",
+      "contract": "onboardProject() → OnboardingResult",
+      "consumers": ["operator"]
+    },
+    {
+      "name": "onboardProject()",
+      "type": "api",
+      "contract": "preCheck() + ensureKnowledgeStructure() + detectClassification() → OnboardingResult",
+      "consumers": ["COMP-index"]
+    },
+    {
+      "name": "generateAgentsMd()",
+      "type": "api",
+      "contract": "AgentsMdInput → markdown string",
+      "consumers": ["COMP-catalogs"]
+    }
+  ],
+  "dependencies": ["COMP-knowledge-io", "COMP-scout", "COMP-researcher", "COMP-migrator"],
+  "files": [".pi/extensions/loom/knowledge/onboarding.ts"],
+  "status": "verified",
+  "source": {
+    "type": "agent-documented",
+    "ref": "sdd.json"
+  }
+}

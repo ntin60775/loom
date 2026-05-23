@@ -1,0 +1,16 @@
+{
+  "id": "RULE-002-localization",
+  "category": "localization",
+  "title": "Локализация: русский для оператора, английский для машин",
+  "body": "System prompts, JSON schemas, code comments, machine-маркеры — только на английском. UI, команды, уведомления оператору, markdown-артефакты — на русском. Команды, пути, ID — exempt. Все markdown-артефакты проходят localization guard перед finalize.",
+  "scope": [".pi/extensions/loom/**", "knowledge/**", "AGENTS.md"],
+  "source": {
+    "type": "operator",
+    "ref": "AGENTS.md"
+  },
+  "status": "active",
+  "evidence": ["AGENTS.md: AI-Native формат", "AGENTS.md: Проверка локализации"],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "version": 1
+}

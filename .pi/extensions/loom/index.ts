@@ -359,7 +359,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     }
   });
 
-  // ── Register sub-modules (stubs for now) ───────────────────────────────
+  // ── Register sub-modules ────────────────────────────────────────────────
 
   registerPlanMode(pi);
   registerAgentMode(pi);

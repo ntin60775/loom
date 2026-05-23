@@ -40,7 +40,7 @@ function ensureDir(dir: string): void {
 // ── Onboarding Subagent Helper ────────────────────────────────────────────
 // DRY helper for scout/researcher/migrator subagent execution
 
-async function runOnboardingSubagent(
+export async function runOnboardingSubagent(
   name: string,
   promptPath: string,
   taskDesc: string,
@@ -599,6 +599,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       const research = readJson(getContextResearchPath(ctx.cwd));
       const rulesRaw = listRules(ctx.cwd);
       const compsRaw = listArchitectureComponents(ctx.cwd);
+      const registry = readJson<{ schema_version: string; tasks: Array<Record<string, unknown>> }>(path.join(ctx.cwd, "knowledge", "tasks", "registry.json"));
 
       const rules = rulesRaw.map((r) => {
         const full = readJson(path.join(ctx.cwd, "knowledge", "project", "rules", `${r.id}.json`));
@@ -615,6 +616,13 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         research,
         rules,
         components,
+        tasks: registry?.tasks?.map((t: any) => ({
+          task_id: t.task_id,
+          title: t.title,
+          status: t.status,
+          priority: t.priority,
+          branch: t.branch,
+        })) ?? undefined,
       });
 
       const outPath = getGeneratedAgentsMdPath(ctx.cwd);
@@ -622,7 +630,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
       return {
         content: [{ type: "text", text: `AGENTS.md generated at ${outPath}` }],
-        details: { path: outPath },
+        details: { path: outPath, tasks_included: registry?.tasks?.length ?? 0 },
       };
     },
   });

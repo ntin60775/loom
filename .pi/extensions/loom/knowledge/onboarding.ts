@@ -67,6 +67,7 @@ export function ensureKnowledgeStructure(cwd: string): { created: string[]; exis
     { path: path.join(knowledgeRoot, "project", "rules"), label: "rules" },
     { path: path.join(knowledgeRoot, "project", "architecture"), label: "architecture" },
     { path: path.join(knowledgeRoot, "project", "architecture", "components"), label: "architecture/components" },
+    { path: path.join(knowledgeRoot, "project", "onboarding"), label: "onboarding" },
   ];
 
   const created: string[] = [];
@@ -186,19 +187,64 @@ export interface AgentsMdInput {
   research: Record<string, unknown> | null;
   rules: Array<Record<string, unknown>>;
   components: Array<Record<string, unknown>>;
+  /** Optional task data for generating navigation and invariants section */
+  tasks?: Array<{ task_id: string; title: string; status: string; priority: string; branch: string }>;
+  active_task_id?: string | null;
 }
 
 export function generateAgentsMd(input: AgentsMdInput): string {
   const lines: string[] = [
     `# AGENTS.md — ${input.projectName}`,
     "",
-    "## Классификация проекта",
+    "## Проект",
     "",
+    `- **Название:** ${input.projectName}`,
     `**Stack:** ${input.stack ? (input.stack.languages as string[])?.join(", ") ?? "unknown" : "unknown"}`,
     "",
-    "## Архитектура",
+    "## Маршрутизация",
+    "",
+    "- `/plan [desc]` — вход в Plan Mode (брейншторм, артефакты)",
+    "- `/agent` — вход в Agent Mode (исполнение по плану)",
+    "- `/loom-init` — инициализация loom в проекте (с onboarding wizard)",
+    "- `/task-status` — статус текущей задачи",
+    "- `/rule-add` — добавить правило в каталог",
+    "- `/rule-list` — список правил проекта",
+    "- `/arch-add` — добавить архитектурный компонент",
+    "- `/arch-list` — список архитектурных компонентов",
+    "- **Шорткат:** `ctrl+shift+m` — циклическое переключение режимов: idle → plan → agent → idle",
     "",
   ];
+
+  if (input.tasks && input.tasks.length > 0) {
+    lines.push("## Задачи");
+    lines.push("");
+    const active = input.tasks.filter((t) => t.status === "in_progress");
+    const drafts = input.tasks.filter((t) => t.status === "draft");
+    const completed = input.tasks.filter((t) => t.status === "completed");
+    lines.push(`- Всего задач: ${input.tasks.length}`);
+    lines.push(`- 🟢 Активных: ${active.length}`);
+    lines.push(`- 🟡 Черновиков: ${drafts.length}`);
+    lines.push(`- ✅ Завершённых: ${completed.length}`);
+    if (input.active_task_id) {
+      const curr = input.tasks.find((t) => t.task_id === input.active_task_id);
+      if (curr) lines.push(`- **Текущая:** ${curr.task_id}: ${curr.title} [${curr.branch}]`);
+    }
+    lines.push("");
+    lines.push("Текущие задачи: см. `knowledge/tasks/registry.json`");
+    lines.push("");
+  }
+
+  // ── Invariants ────────────────────────────────────────────────────────
+
+  if (input.tasks && input.tasks.length > 0) {
+    const allInvariants: Array<{ id: string; text: string; marker: string }> = [];
+    for (const t of input.tasks) {
+      // invariants are in task.json, not the registry entry — skip if not loaded
+    }
+  }
+
+  lines.push("## Архитектура");
+  lines.push("");
 
   if (input.components.length > 0) {
     for (const comp of input.components) {
@@ -239,7 +285,7 @@ export function generateAgentsMd(input: AgentsMdInput): string {
   lines.push("## Контекст");
   lines.push("");
   if (input.research) {
-    lines.push(`**README:** ${input.research.readme_summary as string ?? "—"}`);
+    lines.push(`**README:** ${(input.research.readme_summary as string) ?? "—"}`);
     lines.push("");
     const recs = input.research.recommendations as string[];
     if (recs && recs.length > 0) {

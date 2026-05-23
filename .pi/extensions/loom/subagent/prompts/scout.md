@@ -39,14 +39,14 @@ Return a single JSON object:
       "type": "source | test | config | asset | doc",
       "language": "primary language or mixed",
       "entry_points": ["relative paths"],
-      "description": "short description in Russian"
+      "description": "short description"
     }
   ],
   "entry_points": [
     {
       "path": "relative path",
       "type": "cli | web | lib | test",
-      "description": "short description in Russian"
+      "description": "short description"
     }
   ],
   "confidence": "high | medium | low"

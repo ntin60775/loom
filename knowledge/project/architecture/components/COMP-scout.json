@@ -1,0 +1,30 @@
+{
+  "id": "COMP-scout",
+  "name": "Scout Subagent",
+  "layer": "application",
+  "responsibilities": [
+    "Analyze codebase by file extensions and config files",
+    "Produce stack.json with technology stack and module map"
+  ],
+  "interfaces": [
+    {
+      "name": "loom_run_scout tool",
+      "type": "api",
+      "contract": "spawn subagent with scout.md prompt → stack.json",
+      "consumers": ["COMP-onboarding"]
+    },
+    {
+      "name": "scout.md prompt",
+      "type": "file",
+      "contract": "system prompt for scout subagent",
+      "consumers": ["COMP-spawner"]
+    }
+  ],
+  "dependencies": ["COMP-spawner"],
+  "files": [".pi/extensions/loom/subagent/prompts/scout.md", ".pi/extensions/loom/subagent/specs.ts"],
+  "status": "verified",
+  "source": {
+    "type": "agent-documented",
+    "ref": "sdd.json"
+  }
+}

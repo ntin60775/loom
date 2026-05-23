@@ -1,0 +1,43 @@
+{
+  "id": "COMP-catalogs",
+  "name": "Rules + Architecture Catalogs",
+  "layer": "infrastructure",
+  "responsibilities": [
+    "Store and manage project rules",
+    "Store and manage architecture components",
+    "Provide list/add operations"
+  ],
+  "interfaces": [
+    {
+      "name": "/rule-add, /rule-list commands",
+      "type": "cli",
+      "contract": "operator command → rule CRUD",
+      "consumers": ["operator"]
+    },
+    {
+      "name": "/arch-add, /arch-list commands",
+      "type": "cli",
+      "contract": "operator command → architecture component CRUD",
+      "consumers": ["operator"]
+    },
+    {
+      "name": "loom_add_rule, loom_list_rules tools",
+      "type": "api",
+      "contract": "tool call → rule.json in knowledge/project/rules/",
+      "consumers": ["agent"]
+    },
+    {
+      "name": "loom_add_architecture_component, loom_list_architecture_components tools",
+      "type": "api",
+      "contract": "tool call → component.json in knowledge/project/architecture/components/",
+      "consumers": ["agent"]
+    }
+  ],
+  "dependencies": ["COMP-knowledge-io"],
+  "files": [".pi/extensions/loom/plan-mode/tools.ts", ".pi/extensions/loom/knowledge/onboarding.ts"],
+  "status": "verified",
+  "source": {
+    "type": "agent-documented",
+    "ref": "sdd.json"
+  }
+}

@@ -86,6 +86,18 @@
       "description": "Scout корректно определяет стек пустого и непустого проекта",
       "after_step": 1,
       "verification": "Тест на empty repo и на repo с package.json/Cargo.toml"
+    },
+    {
+      "id": "CHK-DU3-2",
+      "description": "Rules catalog: команды /rule-add и /rule-list работают, данные сохраняются в knowledge/project/rules/",
+      "after_step": 4,
+      "verification": "Запустить loom_add_rule, затем loom_list_rules — проверить, что правило отображается"
+    },
+    {
+      "id": "CHK-DU3-3",
+      "description": "Onboarding pipeline: pre-check классифицирует проект корректно для всех состояний (clean, partial, foreign_system, mixed_system, compatible)",
+      "after_step": 6,
+      "verification": "Вызвать onboardProject() на тестовых директориях с разными комбинациями .git, AGENTS.md, knowledge/"
     }
   ],
   "created_at": "2026-05-23",

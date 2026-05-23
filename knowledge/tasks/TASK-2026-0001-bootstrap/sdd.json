@@ -192,7 +192,11 @@
     "knowledge/project/schemas/subagent-spec.schema.json",
     "knowledge/project/schemas/error.schema.json",
     "knowledge/project/configs/execution-config.json",
-    "knowledge/project/configs/subagent-config.json"
+    "knowledge/project/configs/subagent-config.json",
+    ".pi/extensions/loom/subagent/specs.ts (ScoutSpec)",
+    ".pi/extensions/loom/subagent/specs.ts (ResearcherSpec)",
+    ".pi/extensions/loom/subagent/specs.ts (MigratorSpec)",
+    ".pi/extensions/loom/subagent/specs.ts (OnboardingSubagentSpec)"
   ],
   "flows": [
     {

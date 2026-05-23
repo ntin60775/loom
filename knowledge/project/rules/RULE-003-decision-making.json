@@ -1,0 +1,16 @@
+{
+  "id": "RULE-003-decision-making",
+  "category": "other",
+  "title": "Decision Making: STOP при неоднозначности, варианты 1/2/3 или А/Б/В",
+  "body": "Агент принимает решения автономно, если контекст однозначен. При неоднозначности — STOP, явный вопрос оператору с вариантами (только цифры 1/2/3 или кириллица А/Б/В). Никаких 'предположим по умолчанию'.",
+  "scope": ["*"],
+  "source": {
+    "type": "operator",
+    "ref": "AGENTS.md"
+  },
+  "status": "active",
+  "evidence": ["AGENTS.md: Decision Making"],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "version": 1
+}

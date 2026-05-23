@@ -1,0 +1,16 @@
+{
+  "id": "RULE-001-ai-native-format",
+  "category": "documentation",
+  "title": "AI-Native формат: JSON primary, markdown derivative",
+  "body": "Все артефакты loom хранятся в JSON как source of truth. Markdown-производные генерируются из JSON и не должны редактироваться вручную. Машинные маркеры (INVARIANT:, PRE:, POST:, CONTRACT:, BLOCK:, SCOPE:, EVIDENCE:) — на английском.",
+  "scope": ["knowledge/tasks/**"],
+  "source": {
+    "type": "operator",
+    "ref": "AGENTS.md"
+  },
+  "status": "active",
+  "evidence": ["AGENTS.md: AI-Native формат"],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "version": 1
+}
