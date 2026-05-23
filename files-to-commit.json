@@ -1,10 +1,11 @@
 {
   "task_id": "TASK-2026-0001-bootstrap",
-  "step": "review-and-plan-update",
+  "step": "poc-pi-cli-verification",
   "files": [
-    "knowledge/tasks/TASK-2026-0001-bootstrap/reviews/REV-2026-0001-step-2-iter-1.json",
-    "knowledge/tasks/TASK-2026-0001-bootstrap/plan.json",
     "knowledge/tasks/TASK-2026-0001-bootstrap/task.json",
-    "knowledge/tasks/TASK-2026-0001-bootstrap/task.md"
+    "knowledge/tasks/TASK-2026-0001-bootstrap/task.md",
+    "knowledge/tasks/TASK-2026-0001-bootstrap/plan.json",
+    "knowledge/tasks/TASK-2026-0001-bootstrap/sdd.json",
+    "knowledge/tasks/TASK-2026-0001-bootstrap/artifacts/poc-pi-cli-report.md"
   ]
 }

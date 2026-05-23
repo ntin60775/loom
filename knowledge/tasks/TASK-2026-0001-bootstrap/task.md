@@ -31,6 +31,7 @@
 | INV-11 | Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1 | verified |
 | INV-12 | Локализация: UI и пользовательские артефакты — русский; AI-документация — английский | defined |
 | INV-13 | Git commit safety: staged по списку, не git add -A | defined |
+| INV-14 | Pi CLI верифицирован: все флаги для subagent spawner подтверждены PoC | verified |
 
 ## Единицы поставки
 
@@ -96,3 +97,4 @@
 - Исправлены historical artifacts.
 - Коммит: `c8e8b04` — staged через files-to-commit.json (INV-13).
 - Review v2: `REV-2026-0001-step-2-iter-1.json` — verdict: approve, confidence 0.98.
+- PoC pi CLI: `artifacts/poc-pi-cli-report.md` — все флаги подтверждены (INV-14). RISK-1 mitigated.

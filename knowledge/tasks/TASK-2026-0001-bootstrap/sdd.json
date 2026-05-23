@@ -65,6 +65,11 @@
       "id": "INV-13",
       "text": "Git commit safety: staged list, not git add -A",
       "verification": "Worker commits only files listed in files-to-commit.json"
+    },
+    {
+      "id": "INV-14",
+      "text": "Pi CLI verified: all flags for subagent spawner confirmed by PoC",
+      "verification": "PoC report confirms --mode json, --system-prompt, --model, --session-dir, --tools work. --system-prompt-file replaced by shell substitution."
     }
   ],
   "components": [
@@ -89,8 +94,8 @@
     {
       "id": "COMP-spawner",
       "name": "Subagent Spawner",
-      "responsibilities": ["Launch pi in tmux window", "Monitor progress via progress.json", "Enforce timeout"],
-      "interfaces": ["tmux new-window API", "progress.json polling"],
+      "responsibilities": ["Launch pi in tmux window with --mode json --system-prompt --model --session-dir", "Monitor progress via progress.json", "Enforce timeout"],
+      "interfaces": ["tmux new-window API", "pi CLI flags: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools", "progress.json polling"],
       "dependencies": ["tmux", "pi CLI"],
       "files": [".pi/extensions/loom/subagent/spawner.ts", ".pi/extensions/loom/subagent/progress.ts"],
       "status": "verified"

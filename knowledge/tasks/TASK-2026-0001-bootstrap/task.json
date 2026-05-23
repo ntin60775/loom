@@ -97,6 +97,13 @@
       "marker": "INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
       "status": "defined",
       "verification_method": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output"
+    },
+    {
+      "id": "INV-14",
+      "text": "Pi CLI верифицирован: все флаги для subagent spawner подтверждены PoC",
+      "marker": "INVARIANT: pi CLI supports --mode json, --system-prompt, --model, --session-dir, --tools; subagent spawner is feasible",
+      "status": "verified",
+      "verification_method": "PoC report: artifacts/poc-pi-cli-report.md; flags tested: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools, --no-context-files"
     }
   ],
   "delivery_units": [

@@ -100,6 +100,16 @@
       "depends_on": [9],
       "estimated_effort": "small",
       "status": "done"
+    },
+    {
+      "step_number": 11,
+      "title": "Провести PoC верификацию pi CLI",
+      "description": "Проверить реальное наличие флагов pi CLI: --mode json, --system-prompt, --model, --session-dir, --tools. Создать PoC report.",
+      "expected_output": "artifacts/poc-pi-cli-report.md — подтверждение работоспособности всех флагов",
+      "constraints": ["INV-6", "INV-10"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "done"
     }
   ],
   "risks": [
@@ -107,7 +117,7 @@
       "id": "RISK-1",
       "description": "pi CLI не поддерживает флаги --mode json, --system-prompt-file, --model, --session-dir",
       "severity": "high",
-      "mitigation": "Verify через PoC запуска до начала DU-2"
+      "mitigation": "MITIGATED: PoC подтвердил --mode json, --model, --session-dir, --tools, --system-prompt (via $(cat file)). --system-prompt-file заменен на shell substitution. Архитектура subagent spawner реализуема."
     },
     {
       "id": "RISK-2",
