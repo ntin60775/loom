@@ -119,5 +119,6 @@
 - Full JSON schemas: task, plan, rule, architecture, review, subagent.
 - Onboarding pipeline: pre-check → AGENTS.md analysis → scout → research → migration → rules → operator review.
 - MVP scope: 4 Delivery Units (Core, Agent+Review, Onboarding, Polish).
+- Раздел 16: Memory layer, retrieval через scout (не эмбеддинги), multi-agent coordination — отложены.
 - Статус архитектурной фазы: завершена. Следующий шаг — реализация DU-1.
 - Артефакт: `artifacts/sdd.md` (канонический).
