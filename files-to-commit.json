@@ -1,4 +1,7 @@
 [
-  "knowledge/tasks/TASK-2026-0005-onboarding-impl/reviews/review-DU-3-v2.json",
-  "knowledge/tasks/TASK-2026-0005-onboarding-impl/plan.json"
+  ".pi/extensions/loom/index.ts",
+  ".pi/extensions/loom/subagent/specs.ts",
+  "AGENTS.md",
+  "knowledge/tasks/TASK-2026-0001-bootstrap/sdd.json",
+  "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json"
 ]

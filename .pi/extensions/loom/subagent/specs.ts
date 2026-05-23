@@ -1,8 +1,10 @@
 /**
- * Subagent Specifications — Worker and Reviewer runtime contracts
+ * Subagent Specifications — runtime contracts for all subagent roles
+ *
+ * Roles: worker, reviewer, scout, researcher, migrator
  */
 
-export interface WorkerSpec {
+export interface BaseSpec {
   name: string;
   systemPrompt: string;
   model?: string;
@@ -12,18 +14,27 @@ export interface WorkerSpec {
   sessionDir?: string;
 }
 
-export interface ReviewerSpec {
-  name: string;
-  systemPrompt: string;
-  model?: string;
-  tools?: string[];
-  task: string;
+export interface WorkerSpec extends BaseSpec {}
+
+export interface ReviewerSpec extends BaseSpec {
   targetCommit: string;
   planJsonPath: string;
   stepNumber: number;
-  cwd?: string;
-  sessionDir?: string;
 }
+
+export interface ScoutSpec extends BaseSpec {
+  outputArtifact: string; // path to stack.json
+}
+
+export interface ResearcherSpec extends BaseSpec {
+  outputArtifact: string; // path to context-research.json
+}
+
+export interface MigratorSpec extends BaseSpec {
+  outputArtifact: string; // path to migration-analysis.json
+}
+
+export type OnboardingSubagentSpec = ScoutSpec | ResearcherSpec | MigratorSpec;
 
 export interface SubagentResult {
   exitCode: number;

@@ -48,6 +48,61 @@ function saveState(pi: ExtensionAPI, state: LoomState): void {
 export default function loomExtension(pi: ExtensionAPI): void {
   let state: LoomState = { mode: "idle", currentTaskId: null };
 
+  // ── Mode Switch Helpers (DRY) ─────────────────────────────────────────
+
+  async function enterPlanMode(ctx: ExtensionContext, args?: string): Promise<void> {
+    const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+    if (!knowledgeRoot) {
+      ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
+      return;
+    }
+
+    state.mode = "plan";
+    state.currentTaskId = null;
+    saveState(pi, state);
+    pi.setActiveTools(PLAN_MODE_TOOLS);
+    updateModeWidget(ctx, "plan");
+    ctx.ui.notify("[PLAN] Режим планирования активирован. Опишите задачу или начните декомпозицию.", "info");
+
+    if (args && args.trim()) {
+      pi.sendUserMessage(args.trim());
+    }
+  }
+
+  async function enterAgentMode(ctx: ExtensionContext): Promise<void> {
+    const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+    if (!knowledgeRoot) {
+      ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
+      return;
+    }
+
+    const registry = readJson<any>(path.join(knowledgeRoot, "tasks", "registry.json"));
+    const activeTask = registry?.tasks?.find((t: any) => t.status === "in_progress");
+
+    if (!activeTask) {
+      ctx.ui.notify("Нет активной задачи in_progress. Создайте задачу через /plan или обновите registry.json.", "warning");
+      return;
+    }
+
+    state.mode = "agent";
+    state.currentTaskId = activeTask.task_id;
+    saveState(pi, state);
+    pi.setActiveTools(AGENT_MODE_TOOLS);
+    updateModeWidget(ctx, "agent");
+    updateTaskWidget(ctx, activeTask.task_id, ctx.cwd);
+    ctx.ui.notify(`[AGENT] Режим исполнения активирован. Задача: ${activeTask.title}`, "info");
+  }
+
+  async function enterIdleMode(ctx: ExtensionContext): Promise<void> {
+    state.mode = "idle";
+    state.currentTaskId = null;
+    saveState(pi, state);
+    pi.setActiveTools(NORMAL_MODE_TOOLS);
+    updateModeWidget(ctx, "idle");
+    updateTaskWidget(ctx, null, ctx.cwd);
+    ctx.ui.notify("[IDLE] Режим сброшен. Используйте /plan или /agent для входа в режим.", "info");
+  }
+
   // ── Commands ───────────────────────────────────────────────────────────
 
   const PLAN_MODE_TOOLS = [
@@ -75,52 +130,12 @@ export default function loomExtension(pi: ExtensionAPI): void {
 
   pi.registerCommand("plan", {
     description: "Войти в Plan Mode — брейншторм, артефакты, декомпозиция",
-    handler: async (args, ctx) => {
-      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
-      if (!knowledgeRoot) {
-        ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
-        return;
-      }
-
-      state.mode = "plan";
-      state.currentTaskId = null;
-      saveState(pi, state);
-      pi.setActiveTools(PLAN_MODE_TOOLS);
-      updateModeWidget(ctx, "plan");
-      ctx.ui.notify("[PLAN] Режим планирования активирован. Опишите задачу или начните декомпозицию.", "info");
-
-      if (args && args.trim()) {
-        pi.sendUserMessage(args.trim());
-      }
-    },
+    handler: async (args, ctx) => enterPlanMode(ctx, args),
   });
 
   pi.registerCommand("agent", {
     description: "Войти в Agent Mode — исполнение по плану",
-    handler: async (_args, ctx) => {
-      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
-      if (!knowledgeRoot) {
-        ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
-        return;
-      }
-
-      // Check for active task
-      const registry = readJson<any>(path.join(knowledgeRoot, "tasks", "registry.json"));
-      const activeTask = registry?.tasks?.find((t: any) => t.status === "in_progress");
-
-      if (!activeTask) {
-        ctx.ui.notify("Нет активной задачи in_progress. Создайте задачу через /plan или обновите registry.json.", "warning");
-        return;
-      }
-
-      state.mode = "agent";
-      state.currentTaskId = activeTask.task_id;
-      saveState(pi, state);
-      pi.setActiveTools(AGENT_MODE_TOOLS);
-      updateModeWidget(ctx, "agent");
-      updateTaskWidget(ctx, activeTask.task_id, ctx.cwd);
-      ctx.ui.notify(`[AGENT] Режим исполнения активирован. Задача: ${activeTask.title}`, "info");
-    },
+    handler: async (_args, ctx) => enterAgentMode(ctx),
   });
 
   pi.registerCommand("loom-init", {
@@ -299,6 +314,33 @@ export default function loomExtension(pi: ExtensionAPI): void {
     return undefined;
   });
 
+  pi.registerShortcut("ctrl+shift+m", {
+    description: "Циклическое переключение режимов loom: idle → plan → agent → idle",
+    handler: async (ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+
+      if (state.mode === "idle") {
+        await enterPlanMode(ctx);
+      } else if (state.mode === "plan") {
+        const registry = readJson<any>(path.join(knowledgeRoot, "tasks", "registry.json"));
+        const activeTask = registry?.tasks?.find((t: any) => t.status === "in_progress");
+        if (activeTask) {
+          await enterAgentMode(ctx);
+        } else {
+          ctx.ui.notify("Нет активной задачи для Agent Mode. Сброс в idle.", "warning");
+          await enterIdleMode(ctx);
+        }
+      } else {
+        // agent → idle
+        await enterIdleMode(ctx);
+      }
+    },
+  });
+
   pi.on("agent_end", async (_event, ctx) => {
     // In plan mode, after agent finishes, show options
     if (state.mode === "plan") {
@@ -309,19 +351,10 @@ export default function loomExtension(pi: ExtensionAPI): void {
       ]);
 
       if (choice === "Перейти в Agent Mode и начать исполнение") {
-        state.mode = "agent";
-        saveState(pi, state);
-        pi.setActiveTools(AGENT_MODE_TOOLS);
-        updateModeWidget(ctx, "agent");
-        updateTaskWidget(ctx, state.currentTaskId, ctx.cwd);
-        ctx.ui.notify("Переход в Agent Mode...", "info");
+        await enterAgentMode(ctx);
         pi.sendUserMessage("Начни исполнение текущего плана.");
       } else if (choice === "Завершить сессию планирования") {
-        state.mode = "idle";
-        state.currentTaskId = null;
-        saveState(pi, state);
-        pi.setActiveTools(NORMAL_MODE_TOOLS);
-        updateModeWidget(ctx, "idle");
+        await enterIdleMode(ctx);
       }
     }
   });

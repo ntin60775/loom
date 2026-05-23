@@ -126,6 +126,60 @@
       "dependencies": ["COMP-spawner"],
       "files": [".pi/extensions/loom/subagent/prompts/reviewer.md"],
       "status": "verified"
+    },
+    {
+      "id": "COMP-onboarding",
+      "name": "Onboarding Pipeline",
+      "responsibilities": ["Pre-check project state", "Classify as clean/partial/foreign/mixed/compatible", "Initialize knowledge structure", "Generate AGENTS.md", "Run onboarding wizard"],
+      "interfaces": ["/loom-init command", "onboardProject()", "generateAgentsMd()", "preCheck()", "ensureKnowledgeStructure()"],
+      "dependencies": ["COMP-knowledge-io", "COMP-scout", "COMP-researcher", "COMP-migrator"],
+      "files": [".pi/extensions/loom/knowledge/onboarding.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-scout",
+      "name": "Scout Subagent",
+      "responsibilities": ["Analyze codebase by file extensions and config files", "Produce stack.json with technology stack and module map"],
+      "interfaces": ["loom_run_scout tool", "scout.md prompt", "stack.json artifact"],
+      "dependencies": ["COMP-spawner"],
+      "files": [".pi/extensions/loom/subagent/prompts/scout.md", ".pi/extensions/loom/subagent/specs.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-researcher",
+      "name": "Research Subagent",
+      "responsibilities": ["Analyze project documentation, CI/CD, conventions", "Produce context-research.json"],
+      "interfaces": ["loom_run_researcher tool", "researcher.md prompt", "context-research.json artifact"],
+      "dependencies": ["COMP-spawner"],
+      "files": [".pi/extensions/loom/subagent/prompts/researcher.md", ".pi/extensions/loom/subagent/specs.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-migrator",
+      "name": "Migration Subagent",
+      "responsibilities": ["Detect foreign task/knowledge systems", "Analyze migration feasibility", "Produce migration-analysis.json"],
+      "interfaces": ["loom_run_migrator tool", "migrator.md prompt", "migration-analysis.json artifact"],
+      "dependencies": ["COMP-spawner"],
+      "files": [".pi/extensions/loom/subagent/prompts/migrator.md", ".pi/extensions/loom/subagent/specs.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-catalogs",
+      "name": "Rules + Architecture Catalogs",
+      "responsibilities": ["Store and manage project rules", "Store and manage architecture components", "Provide list/add operations"],
+      "interfaces": ["/rule-add, /rule-list commands", "/arch-add, /arch-list commands", "loom_add_rule, loom_list_rules tools", "loom_add_architecture_component, loom_list_architecture_components tools"],
+      "dependencies": ["COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/plan-mode/tools.ts", ".pi/extensions/loom/knowledge/onboarding.ts"],
+      "status": "verified"
+    },
+    {
+      "id": "COMP-mode-switcher",
+      "name": "Mode Switcher",
+      "responsibilities": ["Switch between idle/plan/agent modes", "Provide keyboard shortcut ctrl+shift+m", "Persist and restore mode across sessions"],
+      "interfaces": ["/plan command", "/agent command", "ctrl+shift+m shortcut", "enterPlanMode(), enterAgentMode(), enterIdleMode() helpers"],
+      "dependencies": ["COMP-orchestrator", "COMP-executor"],
+      "files": [".pi/extensions/loom/index.ts"],
+      "status": "verified"
     }
   ],
   "data_model_refs": [
@@ -243,6 +297,6 @@
     }
   ],
   "created_at": "2026-05-21",
-  "updated_at": "2026-05-23",
+  "updated_at": "2026-05-24",
   "schema_version": "1.0.0"
 }
