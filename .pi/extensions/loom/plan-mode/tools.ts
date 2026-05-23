@@ -16,7 +16,18 @@ import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
-import { getFinalOutput } from "../shared/utils";
+import { getFinalOutput, loadPrompt } from "../shared/utils";
+import {
+  getStackJsonPath,
+  getContextResearchPath,
+  getMigrationAnalysisPath,
+  getGeneratedAgentsMdPath,
+  writeRule,
+  writeArchitectureComponent,
+  listRules,
+  listArchitectureComponents,
+  generateAgentsMd,
+} from "../knowledge/onboarding";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -309,6 +320,318 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         content: [{ type: "text", text: output || "(no output)" }],
         details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
         isError: result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted",
+      };
+    },
+  });
+
+  // ── Onboarding Subagent Tools ───────────────────────────────────────────
+
+  pi.registerTool({
+    name: "loom_run_scout",
+    label: "Run Scout",
+    description: "Run the scout subagent to analyze codebase and produce stack.json",
+    parameters: Type.Object({
+      output_path: Type.Optional(Type.String({ description: "Override output path for stack.json" })),
+      model: Type.Optional(Type.String()),
+    }),
+
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const outputPath = params.output_path ?? getStackJsonPath(ctx.cwd);
+      const model = params.model ?? resolveModelArg("scout", "scout codebase analysis", ctx.cwd);
+      const prompt = loadPrompt("subagent/prompts/scout");
+
+      const spec: WorkerSpec = {
+        name: "loom-scout",
+        systemPrompt: prompt,
+        model,
+        tools: ["read", "bash", "grep", "find", "ls"],
+        task: `Analyze the project at ${ctx.cwd}. Produce a stack.json artifact describing the technology stack and module map. Save the final JSON to ${outputPath}.`,
+        cwd: ctx.cwd,
+      };
+
+      const result = await spawnSubagent(spec, signal);
+      const output = getFinalOutput(result.messages);
+
+      let parsed: any = null;
+      try {
+        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
+        if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
+        else parsed = JSON.parse(output);
+      } catch {
+        parsed = null;
+      }
+
+      if (parsed) {
+        writeJson(outputPath, parsed);
+      }
+
+      return {
+        content: [{ type: "text", text: `Scout completed. Output saved to ${outputPath}.` }],
+        details: { outputPath, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: !parsed && result.exitCode !== 0,
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_run_researcher",
+    label: "Run Researcher",
+    description: "Run the research subagent to analyze docs and produce context-research.json",
+    parameters: Type.Object({
+      output_path: Type.Optional(Type.String()),
+      model: Type.Optional(Type.String()),
+    }),
+
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const outputPath = params.output_path ?? getContextResearchPath(ctx.cwd);
+      const model = params.model ?? resolveModelArg("scout", "documentation research", ctx.cwd);
+      const prompt = loadPrompt("subagent/prompts/researcher");
+
+      const spec: WorkerSpec = {
+        name: "loom-researcher",
+        systemPrompt: prompt,
+        model,
+        tools: ["read", "bash", "grep", "find", "ls"],
+        task: `Analyze documentation and configuration in ${ctx.cwd}. Produce context-research.json. Save to ${outputPath}.`,
+        cwd: ctx.cwd,
+      };
+
+      const result = await spawnSubagent(spec, signal);
+      const output = getFinalOutput(result.messages);
+
+      let parsed: any = null;
+      try {
+        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
+        if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
+        else parsed = JSON.parse(output);
+      } catch {
+        parsed = null;
+      }
+
+      if (parsed) {
+        writeJson(outputPath, parsed);
+      }
+
+      return {
+        content: [{ type: "text", text: `Researcher completed. Output saved to ${outputPath}.` }],
+        details: { outputPath, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: !parsed && result.exitCode !== 0,
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_run_migrator",
+    label: "Run Migrator",
+    description: "Run the migration subagent to detect foreign systems and produce migration-analysis.json",
+    parameters: Type.Object({
+      output_path: Type.Optional(Type.String()),
+      model: Type.Optional(Type.String()),
+    }),
+
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const outputPath = params.output_path ?? getMigrationAnalysisPath(ctx.cwd);
+      const model = params.model ?? resolveModelArg("scout", "migration analysis", ctx.cwd);
+      const prompt = loadPrompt("subagent/prompts/migrator");
+
+      const spec: WorkerSpec = {
+        name: "loom-migrator",
+        systemPrompt: prompt,
+        model,
+        tools: ["read", "bash", "grep", "find", "ls"],
+        task: `Analyze ${ctx.cwd} for foreign task/knowledge systems. Produce migration-analysis.json. Save to ${outputPath}.`,
+        cwd: ctx.cwd,
+      };
+
+      const result = await spawnSubagent(spec, signal);
+      const output = getFinalOutput(result.messages);
+
+      let parsed: any = null;
+      try {
+        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
+        if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
+        else parsed = JSON.parse(output);
+      } catch {
+        parsed = null;
+      }
+
+      if (parsed) {
+        writeJson(outputPath, parsed);
+      }
+
+      return {
+        content: [{ type: "text", text: `Migrator completed. Output saved to ${outputPath}.` }],
+        details: { outputPath, parsed: !!parsed, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: !parsed && result.exitCode !== 0,
+      };
+    },
+  });
+
+  // ── Catalog Tools ───────────────────────────────────────────────────────
+
+  pi.registerTool({
+    name: "loom_add_rule",
+    label: "Add Rule",
+    description: "Add a project rule to the rules catalog (knowledge/project/rules/)",
+    parameters: Type.Object({
+      id: Type.String(),
+      category: Type.String({ enum: ["naming", "error-handling", "testing", "api-design", "dependencies", "style", "security", "performance", "documentation", "git", "localization", "other"] }),
+      title: Type.String(),
+      body: Type.String(),
+      scope: Type.Optional(Type.Array(Type.String())),
+      source_type: Type.String({ default: "operator" }),
+      source_ref: Type.String({ default: "manual" }),
+      status: Type.String({ default: "proposed" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const today = new Date().toISOString().split("T")[0];
+      const rule = {
+        id: params.id,
+        category: params.category,
+        title: params.title,
+        body: params.body,
+        scope: params.scope ?? ["*"],
+        source: {
+          type: params.source_type,
+          ref: params.source_ref,
+        },
+        status: params.status,
+        evidence: [],
+        created_at: today,
+        updated_at: today,
+        version: 1,
+      };
+
+      const filePath = writeRule(ctx.cwd, rule);
+      return {
+        content: [{ type: "text", text: `Rule ${params.id} added. File: ${filePath}` }],
+        details: { rule, filePath },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_list_rules",
+    label: "List Rules",
+    description: "List all rules in the project rules catalog",
+    parameters: Type.Object({}),
+
+    async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
+      const rules = listRules(ctx.cwd);
+      if (rules.length === 0) {
+        return { content: [{ type: "text", text: "Нет зарегистрированных правил." }] };
+      }
+      const lines = rules.map((r) => `- ${r.id} [${r.category}] ${r.title} (${r.status})`);
+      return {
+        content: [{ type: "text", text: `Правил: ${rules.length}\n${lines.join("\n")}` }],
+        details: { count: rules.length, rules },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_add_architecture_component",
+    label: "Add Architecture Component",
+    description: "Add an architecture component to the catalog (knowledge/project/architecture/components/)",
+    parameters: Type.Object({
+      id: Type.String(),
+      name: Type.String(),
+      layer: Type.String({ enum: ["domain", "application", "infrastructure", "presentation", "external"] }),
+      responsibilities: Type.Array(Type.String()),
+      files: Type.Array(Type.String()),
+      dependencies: Type.Optional(Type.Array(Type.String())),
+      interfaces: Type.Optional(Type.Array(Type.Object({
+        name: Type.String(),
+        type: Type.String({ enum: ["api", "event", "db", "file", "cli"] }),
+        contract: Type.String(),
+        consumers: Type.Array(Type.String()),
+      }))),
+      status: Type.String({ default: "discovered" }),
+      source_type: Type.String({ default: "operator-defined" }),
+      source_ref: Type.String({ default: "manual" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const comp = {
+        id: params.id,
+        name: params.name,
+        layer: params.layer,
+        responsibilities: params.responsibilities,
+        files: params.files,
+        dependencies: params.dependencies ?? [],
+        interfaces: params.interfaces ?? [],
+        status: params.status,
+        source: {
+          type: params.source_type,
+          ref: params.source_ref,
+        },
+      };
+
+      const filePath = writeArchitectureComponent(ctx.cwd, comp);
+      return {
+        content: [{ type: "text", text: `Component ${params.id} added. File: ${filePath}` }],
+        details: { component: comp, filePath },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_list_architecture_components",
+    label: "List Architecture Components",
+    description: "List all architecture components in the catalog",
+    parameters: Type.Object({}),
+
+    async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
+      const comps = listArchitectureComponents(ctx.cwd);
+      if (comps.length === 0) {
+        return { content: [{ type: "text", text: "Нет зарегистрированных компонентов." }] };
+      }
+      const lines = comps.map((c) => `- ${c.id} [${c.layer}] ${c.name} (${c.status})`);
+      return {
+        content: [{ type: "text", text: `Компонентов: ${comps.length}\n${lines.join("\n")}` }],
+        details: { count: comps.length, components: comps },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_generate_agents_md",
+    label: "Generate AGENTS.md",
+    description: "Generate AGENTS.md from onboarding artifacts and catalogs",
+    parameters: Type.Object({
+      project_name: Type.String({ default: "Project" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const stack = readJson(getStackJsonPath(ctx.cwd));
+      const research = readJson(getContextResearchPath(ctx.cwd));
+      const rulesRaw = listRules(ctx.cwd);
+      const compsRaw = listArchitectureComponents(ctx.cwd);
+
+      const rules = rulesRaw.map((r) => {
+        const full = readJson(path.join(ctx.cwd, "knowledge", "project", "rules", `${r.id}.json`));
+        return full ?? r;
+      });
+      const components = compsRaw.map((c) => {
+        const full = readJson(path.join(ctx.cwd, "knowledge", "project", "architecture", "components", `${c.id}.json`));
+        return full ?? c;
+      });
+
+      const md = generateAgentsMd({
+        projectName: params.project_name,
+        stack,
+        research,
+        rules,
+        components,
+      });
+
+      const outPath = getGeneratedAgentsMdPath(ctx.cwd);
+      fs.writeFileSync(outPath, md, "utf-8");
+
+      return {
+        content: [{ type: "text", text: `AGENTS.md generated at ${outPath}` }],
+        details: { path: outPath },
       };
     },
   });

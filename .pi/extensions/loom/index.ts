@@ -16,7 +16,7 @@ import { updateTaskWidget } from "./ui/task-widget";
 import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readJson } from "./knowledge/io";
-import { onboardProject } from "./knowledge/onboarding";
+import { onboardProject, listRules, listArchitectureComponents, getStackJsonPath, getContextResearchPath, getMigrationAnalysisPath } from "./knowledge/onboarding";
 import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
 
@@ -55,6 +55,10 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_create_task", "loom_create_plan", "loom_add_invariant",
     "loom_add_delivery_unit", "loom_finalize_plan",
     "loom_spawn_subagent",
+    "loom_run_scout", "loom_run_researcher", "loom_run_migrator",
+    "loom_add_rule", "loom_list_rules",
+    "loom_add_architecture_component", "loom_list_architecture_components",
+    "loom_generate_agents_md",
   ];
   const AGENT_MODE_TOOLS = [
     "read", "bash", "grep", "find", "ls",
@@ -62,7 +66,12 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_spawn_worker", "loom_spawn_reviewer",
     "loom_update_task", "loom_read_artifact",
   ];
-  const NORMAL_MODE_TOOLS = ["read", "bash", "edit", "write", "grep", "find", "ls"];
+  const NORMAL_MODE_TOOLS = [
+    "read", "bash", "edit", "write", "grep", "find", "ls",
+    "loom_add_rule", "loom_list_rules",
+    "loom_add_architecture_component", "loom_list_architecture_components",
+    "loom_generate_agents_md",
+  ];
 
   pi.registerCommand("plan", {
     description: "Войти в Plan Mode — брейншторм, артефакты, декомпозиция",
@@ -115,17 +124,29 @@ export default function loomExtension(pi: ExtensionAPI): void {
   });
 
   pi.registerCommand("loom-init", {
-    description: "Инициализировать loom в текущем проекте",
+    description: "Инициализировать loom в текущем проекте (с onboarding wizard)",
     handler: async (_args, ctx) => {
       const result = onboardProject(ctx.cwd);
       const lines = [
         "loom инициализирован.",
         `Создано: ${result.created.join(", ") || "ничего нового"}`,
+        `Классификация проекта: ${result.state.classification}`,
       ];
       if (result.existing.length > 0) {
         lines.push(`Уже существовало: ${result.existing.join(", ")}`);
       }
       ctx.ui.notify(lines.join("\n"), "success");
+
+      // Onboarding wizard for non-clean states
+      if (result.state.classification !== "clean") {
+        const runOnboarding = await ctx.ui.select(
+          `Проект классифицирован как "${result.state.classification}". Запустить onboarding pipeline?`,
+          ["Да — запустить scout + research + migration", "Нет — оставить как есть"],
+        );
+        if (runOnboarding === "Да — запустить scout + research + migration") {
+          pi.sendUserMessage("Запусти onboarding pipeline для этого проекта: сначала loom_run_scout, затем loom_run_researcher, затем loom_run_migrator. После этого сгенерируй AGENTS.md через loom_generate_agents_md.");
+        }
+      }
     },
   });
 
@@ -170,6 +191,66 @@ export default function loomExtension(pi: ExtensionAPI): void {
     },
   });
 
+  pi.registerCommand("rule-add", {
+    description: "Добавить правило в каталог проекта",
+    handler: async (_args, ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+      pi.sendUserMessage("Добавь новое правило в проект через tool loom_add_rule.");
+    },
+  });
+
+  pi.registerCommand("rule-list", {
+    description: "Показать список правил проекта",
+    handler: async (_args, ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+      const rules = listRules(ctx.cwd);
+      if (rules.length === 0) {
+        ctx.ui.notify("Правила не найдены.", "info");
+        return;
+      }
+      const lines = rules.map((r) => `• ${r.id} [${r.category}] ${r.title} (${r.status})`);
+      ctx.ui.notify(`Правил: ${rules.length}\n${lines.join("\n")}`, "info");
+    },
+  });
+
+  pi.registerCommand("arch-add", {
+    description: "Добавить архитектурный компонент в каталог",
+    handler: async (_args, ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+      pi.sendUserMessage("Добавь новый архитектурный компонент через tool loom_add_architecture_component.");
+    },
+  });
+
+  pi.registerCommand("arch-list", {
+    description: "Показать список архитектурных компонентов",
+    handler: async (_args, ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+      const comps = listArchitectureComponents(ctx.cwd);
+      if (comps.length === 0) {
+        ctx.ui.notify("Компоненты не найдены.", "info");
+        return;
+      }
+      const lines = comps.map((c) => `• ${c.id} [${c.layer}] ${c.name} (${c.status})`);
+      ctx.ui.notify(`Компонентов: ${comps.length}\n${lines.join("\n")}`, "info");
+    },
+  });
+
   // ── Event Hooks ────────────────────────────────────────────────────────
 
   pi.on("session_start", async (_event, ctx) => {
@@ -188,7 +269,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
 
     const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
     if (knowledgeRoot) {
-      ctx.ui.notify("loom загружен. Команды: /plan, /agent, /loom-init, /task-status", "info");
+      ctx.ui.notify("loom загружен. Команды: /plan, /agent, /loom-init, /task-status, /rule-add, /rule-list, /arch-add, /arch-list", "info");
     }
   });
 

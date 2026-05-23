@@ -1,15 +1,13 @@
-{
-  "task_id": "TASK-2026-0001-bootstrap",
-  "step": "isolate-du-into-subtasks",
-  "files": [
-    "knowledge/tasks/registry.json",
-    "knowledge/tasks/TASK-2026-0001-bootstrap/task.md",
-    "knowledge/tasks/TASK-2026-0003-core-design/task.json",
-    "knowledge/tasks/TASK-2026-0004-agent-mode-impl/task.json",
-    "knowledge/tasks/TASK-2026-0004-agent-mode-impl/plan.json",
-    "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json",
-    "knowledge/tasks/TASK-2026-0005-onboarding-impl/plan.json",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/task.json",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json"
-  ]
-}
+[
+  ".pi/extensions/loom/index.ts",
+  ".pi/extensions/loom/knowledge/onboarding.ts",
+  ".pi/extensions/loom/knowledge/schemas.ts",
+  ".pi/extensions/loom/plan-mode/tools.ts",
+  ".pi/extensions/loom/subagent/prompts/scout.md",
+  ".pi/extensions/loom/subagent/prompts/researcher.md",
+  ".pi/extensions/loom/subagent/prompts/migrator.md",
+  "AGENTS.md",
+  "knowledge/tasks/TASK-2026-0005-onboarding-impl/plan.json",
+  "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json",
+  "knowledge/tasks/registry.json"
+]

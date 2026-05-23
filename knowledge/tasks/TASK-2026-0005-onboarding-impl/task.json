@@ -3,7 +3,7 @@
   "slug": "onboarding-impl",
   "title": "DU-3: Реализация Onboarding + Knowledge accumulation",
   "description": "Реализовать onboarding pipeline: scout subagent, research subagent, migration subagent, rules catalog, architecture catalog, AGENTS.md generator. Эта подзадача изолирована из TASK-2026-0001-bootstrap.",
-  "status": "draft",
+  "status": "in_progress",
   "priority": "high",
   "branch": "task/task-2026-0005-onboarding-impl",
   "parent_task_id": "TASK-2026-0001-bootstrap",
@@ -61,6 +61,6 @@
     }
   ],
   "created_at": "2026-05-23",
-  "updated_at": "2026-05-23",
+  "updated_at": "2026-05-24",
   "schema_version": "1.0.0"
 }
