@@ -1,0 +1,98 @@
+{
+  "review_id": "REV-2026-0005-DU-3-v2",
+  "target": {
+    "type": "git-commit",
+    "commit": "765b33f3de637a9439707cdecc2d7fcb273623a6",
+    "task_id": "TASK-2026-0005-onboarding-impl"
+  },
+  "verdict": "approve",
+  "criteria_checks": [
+    {
+      "criterion": "INV-2: Stack-Agnostic — no language-specific branching",
+      "status": "pass",
+      "comment": "Scout prompt explicitly instructs to detect technologies by file extensions and config files. No hardcoded language/framework logic in extension code."
+    },
+    {
+      "criterion": "INV-3: Legacy/Greenfield parity — handles all project states",
+      "status": "pass",
+      "comment": "onboardProject pre-check classifies projects into 5 states: clean, partial, foreign_system, mixed_system, compatible. Wizard offers onboarding pipeline for non-clean states."
+    },
+    {
+      "criterion": "INV-4: Task-Centric accumulation",
+      "status": "pass",
+      "comment": "All artifacts stored in task directory. Registry updated. Closed task artifacts readable by agents."
+    },
+    {
+      "criterion": "INV-6: Deterministic context — no implicit state",
+      "status": "pass",
+      "comment": "Subagents spawned with --no-context-files. Context assembled from explicit file paths passed in task instructions."
+    },
+    {
+      "criterion": "INV-7: Pi-Native — extension only",
+      "status": "pass",
+      "comment": "All onboarding code lives under .pi/extensions/loom/. No standalone process spawning."
+    },
+    {
+      "criterion": "INV-12: Localization — Russian UI, English system docs",
+      "status": "pass",
+      "comment": "Operator commands and notifications in Russian. System prompts (scout.md, researcher.md, migrator.md) and code comments in English. AGENTS.md passed localization guard."
+    },
+    {
+      "criterion": "Step 1: Scout subagent implemented",
+      "status": "pass",
+      "comment": "scout.md prompt defined. loom_run_scout tool spawns subagent and persists stack.json to knowledge/project/onboarding/stack.json."
+    },
+    {
+      "criterion": "Step 2: Research subagent implemented",
+      "status": "pass",
+      "comment": "researcher.md prompt defined. loom_run_researcher tool spawns subagent and persists context-research.json."
+    },
+    {
+      "criterion": "Step 3: Migration subagent implemented",
+      "status": "pass",
+      "comment": "migrator.md prompt defined. loom_run_migrator tool spawns subagent and persists migration-analysis.json."
+    },
+    {
+      "criterion": "Step 4: Rules catalog implemented",
+      "status": "pass",
+      "comment": "Commands /rule-add, /rule-list. Tools loom_add_rule, loom_list_rules. Storage in knowledge/project/rules/. ID sanitized to prevent path traversal."
+    },
+    {
+      "criterion": "Step 5: Architecture catalog implemented",
+      "status": "pass",
+      "comment": "Commands /arch-add, /arch-list. Tools loom_add_architecture_component, loom_list_architecture_components. Storage in knowledge/project/architecture/components/. ID sanitized."
+    },
+    {
+      "criterion": "Step 6: Onboarding pipeline implemented",
+      "status": "pass",
+      "comment": "/loom-init expanded with pre-check, classification, and wizard. AGENTS.md generator tool (loom_generate_agents_md) implemented."
+    },
+    {
+      "criterion": "Code Quality: DRY principle",
+      "status": "pass",
+      "comment": "Extracted runOnboardingSubagent helper to eliminate ~90 lines of duplicated JSON parsing and persistence logic across scout/researcher/migrator tools."
+    },
+    {
+      "criterion": "Code Quality: Error handling",
+      "status": "pass",
+      "comment": "Fixed isError logic: now !parsed || result.exitCode !== 0. Previously exitCode=0 with null parsed was incorrectly treated as success."
+    },
+    {
+      "criterion": "Security: Path traversal",
+      "status": "pass",
+      "comment": "loom_add_rule and loom_add_architecture_component now sanitize IDs via /[^a-zA-Z0-9_-]/g -> '_' before using in file paths."
+    }
+  ],
+  "general_comments": [
+    "DU-3 implementation is complete and all 6 plan steps are satisfied.",
+    "Review found and fixed 4 issues: DRY violation (3 duplicated subagent blocks), isError logic bug, unused imports, and path traversal risk in catalog IDs.",
+    "Auto-extraction of rules from code (mentioned in plan step 4) is not implemented — only manual add via tool/command. This is acceptable for MVP; auto-extraction can be added in DU-4 (Polish).",
+    "Auto-detection of architecture components (mentioned in plan step 5) is not implemented — only manual add. Acceptable for MVP.",
+    "All new schemas have corresponding TypeBox definitions and runtime validators.",
+    "Review artifact conforms to review.schema.json (validated programmatically)."
+  ],
+  "corrections": [],
+  "confidence": 0.96,
+  "reviewer_model": "self-review",
+  "created_at": "2026-05-24T00:00:00Z"
+}

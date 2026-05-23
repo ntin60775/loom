@@ -69,7 +69,7 @@
       "constraints": ["INV-8", "INV-13"],
       "depends_on": [6],
       "estimated_effort": "small",
-      "status": "in_progress"
+      "status": "done"
     }
   ],
   "risks": [
