@@ -5,6 +5,9 @@
  * progress.json polling reserved for tmux-based detached sessions.
  */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
+
 export interface ProgressSnapshot {
   status: "running" | "completed" | "error" | "aborted";
   step?: string;
@@ -14,9 +17,8 @@ export interface ProgressSnapshot {
   timestamp: string;
 }
 
-export async function readProgress(progressPath: string): Promise<ProgressSnapshot | null> {
+export function readProgress(progressPath: string): ProgressSnapshot | null {
   try {
-    const fs = await import("node:fs");
     const data = fs.readFileSync(progressPath, "utf-8");
     return JSON.parse(data) as ProgressSnapshot;
   } catch {
@@ -24,9 +26,8 @@ export async function readProgress(progressPath: string): Promise<ProgressSnapsh
   }
 }
 
-export async function writeProgress(progressPath: string, snapshot: ProgressSnapshot): Promise<void> {
-  const fs = await import("node:fs");
-  const dir = (await import("node:path")).dirname(progressPath);
+export function writeProgress(progressPath: string, snapshot: ProgressSnapshot): void {
+  const dir = path.dirname(progressPath);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(progressPath, JSON.stringify(snapshot, null, 2), "utf-8");
 }

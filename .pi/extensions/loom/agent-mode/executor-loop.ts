@@ -245,9 +245,10 @@ export function registerExecutorLoopTools(pi: ExtensionAPI): void {
   pi.registerTool({
     name: "loom_check_iteration",
     label: "Check Iteration",
-    description: "Check reject iteration counter. If max_iterations exceeded, returns escalated=true. Use after reviewer rejects to decide: retry or escalate.",
+    description: "Check reject iteration counter. If max_iterations exceeded, returns escalated=true. Pass action='reject' to record a rejection; pass action='check' to only query current status without incrementing.",
     parameters: Type.Object({
       task_id: Type.String({ description: "Task ID" }),
+      action: Type.String({ description: "'reject' to record and check, 'check' to only query", default: "reject" }),
     }),
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
@@ -256,7 +257,19 @@ export function registerExecutorLoopTools(pi: ExtensionAPI): void {
       const execConfig = readJson<any>(configPath);
       const maxIterations = execConfig?.recovery?.max_retries_per_step ?? 10;
 
-      const { iteration, escalated } = incrementIteration(params.task_id, maxIterations);
+      let iteration: number;
+      let escalated: boolean;
+
+      if (params.action === "reject") {
+        const state = incrementIteration(params.task_id, maxIterations);
+        iteration = state.iteration;
+        escalated = state.escalated;
+      } else {
+        // "check" — read-only, no increment
+        const state = getLoopState(params.task_id, maxIterations);
+        iteration = state.iteration;
+        escalated = state.status === "escalated";
+      }
 
       if (escalated) {
         return {

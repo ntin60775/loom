@@ -8,7 +8,6 @@
  *   loom_read_artifact   — read artifact file
  */
 
-import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
@@ -16,24 +15,10 @@ import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
+import { loadPrompt, getFinalOutput } from "../shared/utils";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
-}
-
-function loadPrompt(name: string): string {
-  // Use import.meta.dirname (ESM) with __dirname fallback (CJS/jiti)
-  const baseDir = typeof __dirname !== 'undefined'
-    ? __dirname
-    : typeof import.meta !== 'undefined' && import.meta.dirname
-      ? import.meta.dirname
-      : process.cwd();
-  const promptPath = path.join(baseDir, "..", "subagent", "prompts", `${name}.md`);
-  try {
-    return fs.readFileSync(promptPath, "utf-8");
-  } catch {
-    return `Prompt ${name} not found at ${promptPath}.`;
-  }
 }
 
 // INV-11: Strictly sequential execution — state machine
@@ -65,7 +50,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         return { content: [{ type: "text", text: `Step ${params.step_number} not found` }], isError: true };
       }
 
-      const workerPrompt = loadPrompt("worker");
+      const workerPrompt = loadPrompt("subagent/prompts/worker");
       const taskContext = `${task.title} ${step.title} ${step.expected_output} ${step.description}`;
       const model = resolveModelArg("worker", taskContext, ctx.cwd);
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
@@ -136,7 +121,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         return { content: [{ type: "text", text: `Step ${params.step_number} not found` }], isError: true };
       }
 
-      const reviewerPrompt = loadPrompt("reviewer");
+      const reviewerPrompt = loadPrompt("subagent/prompts/reviewer");
       const reviewContext = `Review commit ${params.commit_hash}. Expected: ${step.expected_output}. Invariants: ${task.invariants.map((i: any) => i.id).join(", ")}`;
       const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
@@ -257,14 +242,4 @@ export function registerAgentTools(pi: ExtensionAPI): void {
   });
 }
 
-function getFinalOutput(messages: Array<{ role: string; content: Array<{ type: string; text?: string }> }>): string {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.role === "assistant") {
-      for (const part of msg.content) {
-        if (part.type === "text" && part.text) return part.text;
-      }
-    }
-  }
-  return "";
-}
+

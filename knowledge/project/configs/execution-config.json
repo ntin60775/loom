@@ -28,7 +28,7 @@
   },
   "recovery": {
     "default_strategy": "retry_with_correction",
-    "max_retries_per_step": 3,
+    "max_retries_per_step": 10,
     "escalate_after_total_failures": 5
   },
   "localization_guard": {

@@ -7,12 +7,13 @@
  *   INV-14: pi CLI flags verified via PoC
  */
 
-import { spawn } from "node:child_process";
+import { spawn, execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { withFileMutationQueue } from "@earendil-works/pi-coding-agent";
 import type { SubagentResult, WorkerSpec, ReviewerSpec } from "./specs";
+import { getFinalOutput } from "../shared/utils";
 
 function getPiInvocation(): { command: string; args: string[] } {
   const currentScript = process.argv[1];
@@ -27,6 +28,18 @@ function getPiInvocation(): { command: string; args: string[] } {
     return { command: process.execPath, args: [] };
   }
 
+  // Fallback: verify 'pi' is in PATH before using it
+  try {
+    const which = execSync("command -v pi 2>/dev/null || which pi 2>/dev/null || echo ''", {
+      encoding: "utf-8",
+      timeout: 2000,
+    }).trim();
+    if (which) return { command: "pi", args: [] };
+  } catch {
+    // command not found — fall through
+  }
+
+  // Last resort: use current runtime as generic launcher
   return { command: "pi", args: [] };
 }
 
@@ -38,18 +51,6 @@ async function writePromptToTempFile(name: string, prompt: string): Promise<{ di
     await fs.promises.writeFile(filePath, prompt, { encoding: "utf-8", mode: 0o600 });
   });
   return { dir: tmpDir, filePath };
-}
-
-function getFinalOutput(messages: SubagentResult["messages"]): string {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.role === "assistant") {
-      for (const part of msg.content) {
-        if (part.type === "text" && part.text) return part.text;
-      }
-    }
-  }
-  return "";
 }
 
 export async function spawnSubagent(

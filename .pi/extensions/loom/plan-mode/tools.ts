@@ -310,8 +310,8 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
       return {
         content: [{ type: "text", text: output || "(no output)" }],
-        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model } },
-        isError: result.exitCode !== 0,
+        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
+        isError: result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted",
       };
     },
   });

@@ -17,7 +17,7 @@ import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readJson } from "./knowledge/io";
 import { onboardProject } from "./knowledge/onboarding";
-import * as fs from "node:fs";
+import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
 
 interface LoomState {
@@ -192,23 +192,9 @@ export default function loomExtension(pi: ExtensionAPI): void {
     }
   });
 
-  function loadPromptFile(name: string): string {
-    const baseDir = typeof __dirname !== 'undefined'
-      ? __dirname
-      : typeof import.meta !== 'undefined' && import.meta.dirname
-        ? import.meta.dirname
-        : process.cwd();
-    const promptPath = path.join(baseDir, "prompts", `${name}.md`);
-    try {
-      return fs.readFileSync(promptPath, "utf-8");
-    } catch {
-      return `[LOAD ERROR: Prompt ${name} not found at ${promptPath}]`;
-    }
-  }
-
   pi.on("before_agent_start", async () => {
     if (state.mode === "plan") {
-      const prompt = loadPromptFile("plan-orchestrator");
+      const prompt = loadPrompt("prompts/plan-orchestrator");
       return {
         message: {
           customType: "loom-plan-context",
@@ -219,7 +205,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     }
 
     if (state.mode === "agent") {
-      const prompt = loadPromptFile("agent-executor");
+      const prompt = loadPrompt("prompts/agent-executor");
       return {
         message: {
           customType: "loom-agent-context",

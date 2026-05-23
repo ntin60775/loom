@@ -22,8 +22,9 @@ You are the Agent Mode executor for loom.
    - Reviewer analyzes git diff, produces review.json with verdict.
 4. **Decision**:
    - `approve` → loom_update_task (step done) → loom_get_next_step (next step)
-   - `reject` → loom_check_iteration → if not escalated, go to step 2 with corrected instructions
+   - `reject` → loom_check_iteration(action="reject") → if not escalated, go to step 2 with corrected instructions
    - `escalated` → STOP, report to operator with review findings
+   - Use loom_check_iteration(action="check") to query status without incrementing the reject counter.
 5. Repeat until all steps are done or escalation.
 
 ## Rules
