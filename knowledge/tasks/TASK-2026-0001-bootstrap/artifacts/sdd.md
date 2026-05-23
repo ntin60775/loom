@@ -420,8 +420,8 @@ interface ModelConfig {
 ДОСТУПНЫЕ ИНСТРУМЕНТЫ:
 - spawn_worker: запустить worker subagent для выполнения шага плана
 - spawn_reviewer: запустить reviewer subagent для проверки результата
-- git_commit: зафиксировать изменения
 - update_task_status: обновить статус задачи/delivery unit
+- read_artifact: прочитать knowledge/ артефакт
 
 ТЫ НЕ ПИШЕШЬ КОД. ТЫ НЕ РЕДАКТИРУЕШЬ ФАЙЛЫ (кроме knowledge/).
 Твоя задача — оркестрировать worker и reviewer.
@@ -433,7 +433,7 @@ interface ModelConfig {
 4. Сформировать ReviewerSpec: что проверять, по каким критериям.
 5. spawn_reviewer → reviewer проверит результат в tmux-вкладке.
 6. Прочитать review:
-   - approve → git_commit, update_status, следующий шаг
+   - approve → update_status, следующий шаг (worker уже сделал commit)
    - reject → сформировать коррекцию → spawn_worker (итерация +1)
    - max_iterations (10) → СТОП, спросить оператора
 
@@ -451,9 +451,10 @@ interface ModelConfig {
 |------|-----------|
 | `spawn_worker` | Запустить worker subagent для одного шага плана |
 | `spawn_reviewer` | Запустить reviewer subagent для проверки коммита |
-| `git_commit` | Task-scoped commit: `git commit -m "TASK-XXXX step-N: ..."` |
 | `update_task_status` | Обновить статус задачи или delivery unit |
 | `read_artifact` | Прочитать любой knowledge/ артефакт |
+
+**Важно:** Worker делает `git add -A && git commit` самостоятельно. Executor НЕ делает commit за worker. Executor только читает summary.json с commit-hash.
 
 ### 6.4 Цикл: worker → review → decision
 
@@ -461,7 +462,8 @@ interface ModelConfig {
 Executor читает plan.json → шаг N
 │
 ├─► [iter=1] spawn_worker (WorkerSpec со step-N)
-│   └─► Worker в tmux: пишет код/артефакт → git commit → summary.json
+│   └─► Worker в tmux: пишет код/артефакт → git add -A && git commit → summary.json
+│   └─► Worker владеет первичным коммитом своих изменений
 │
 ├─► Executor читает summary.json
 ├─► Выбирает reviewer (по расширениям файлов из config)
@@ -470,7 +472,7 @@ Executor читает plan.json → шаг N
 │   └─► Reviewer в tmux: git show → read → review.json
 │
 ├─► Executor читает review.json
-│   ├─► verdict=approve → git commit (если надо) → update_status → step N+1
+│   ├─► verdict=approve → update_status → step N+1
 │   └─► verdict=reject → формирует CorrectionSpec → iter=2 → spawn_worker
 │
 ├─► iter > 10? → STOP, ask operator
@@ -627,6 +629,19 @@ Reviewer:
 | `knowledge/tasks/_templates/` | Шаблоны markdown | Удалить | loom использует JSON schemas, не markdown шаблоны |
 | `artifacts/verification-matrix.md` | Markdown | `artifacts/verification-matrix.json` | Распарсить строки матрицы |
 | `worklog.md`, `decisions.md`, `handoff.md` | Markdown | `worklog.json`, `decisions.json`, `handoff.json` | Перенести как есть + структурировать |
+
+**Маппинг статусов TCK → loom:**
+
+| Статус TCK | Статус loom |
+|-----------|-------------|
+| `черновик` | `черновик` |
+| `готова к работе` | `готова` |
+| `в работе` | `в_работе` |
+| `на проверке` | `на_проверке` |
+| `ждёт пользователя` | `ждёт_пользователя` |
+| `заблокирована` | `заблокирована` |
+| `завершена` | `завершена` |
+| `отменена` | `отменена` |
 
 #### 7.4.2 Что НЕ мигрируем (удаляется после верификации)
 
