@@ -1,5 +1,6 @@
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { registerAgentTools } from "./tools";
 
 export function registerAgentMode(pi: ExtensionAPI): void {
-  // TODO: implement Agent Mode executor (Step 3)
+  registerAgentTools(pi);
 }

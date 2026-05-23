@@ -47,6 +47,18 @@ export default function loomExtension(pi: ExtensionAPI): void {
 
   // ── Commands ───────────────────────────────────────────────────────────
 
+  const PLAN_MODE_TOOLS = [
+    "read", "bash", "grep", "find", "ls",
+    "loom_create_task", "loom_create_plan", "loom_add_invariant",
+    "loom_add_delivery_unit", "loom_finalize_plan",
+  ];
+  const AGENT_MODE_TOOLS = [
+    "read", "bash", "grep", "find", "ls",
+    "loom_spawn_worker", "loom_spawn_reviewer",
+    "loom_update_task", "loom_read_artifact",
+  ];
+  const NORMAL_MODE_TOOLS = ["read", "bash", "edit", "write", "grep", "find", "ls"];
+
   pi.registerCommand("plan", {
     description: "Войти в Plan Mode — брейншторм, артефакты, декомпозиция",
     handler: async (args, ctx) => {
@@ -57,12 +69,12 @@ export default function loomExtension(pi: ExtensionAPI): void {
       }
 
       state.mode = "plan";
-      state.currentTaskId = null; // Plan mode does not bind to a specific task until finalized
+      state.currentTaskId = null;
       saveState(pi, state);
+      pi.setActiveTools(PLAN_MODE_TOOLS);
       updateModeWidget(ctx, "plan");
       ctx.ui.notify("[PLAN] Режим планирования активирован. Опишите задачу или начните декомпозицию.", "info");
 
-      // If user provided args, treat as initial prompt
       if (args && args.trim()) {
         pi.sendUserMessage(args.trim());
       }
@@ -90,6 +102,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
       state.mode = "agent";
       state.currentTaskId = activeTask.task_id;
       saveState(pi, state);
+      pi.setActiveTools(AGENT_MODE_TOOLS);
       updateModeWidget(ctx, "agent");
       ctx.ui.notify(`[AGENT] Режим исполнения активирован. Задача: ${activeTask.title}`, "info");
     },
@@ -179,6 +192,15 @@ export default function loomExtension(pi: ExtensionAPI): void {
     state = loadState(ctx);
     updateModeWidget(ctx, state.mode);
 
+    // Restore tools based on persisted mode
+    if (state.mode === "plan") {
+      pi.setActiveTools(PLAN_MODE_TOOLS);
+    } else if (state.mode === "agent") {
+      pi.setActiveTools(AGENT_MODE_TOOLS);
+    } else {
+      pi.setActiveTools(NORMAL_MODE_TOOLS);
+    }
+
     const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
     if (knowledgeRoot) {
       ctx.ui.notify("loom загружен. Команды: /plan, /agent, /loom-init, /task-status", "info");
@@ -253,6 +275,7 @@ Rules:
       if (choice === "Перейти в Agent Mode и начать исполнение") {
         state.mode = "agent";
         saveState(pi, state);
+        pi.setActiveTools(AGENT_MODE_TOOLS);
         updateModeWidget(ctx, "agent");
         ctx.ui.notify("Переход в Agent Mode...", "info");
         pi.sendUserMessage("Начни исполнение текущего плана.");
@@ -260,6 +283,7 @@ Rules:
         state.mode = "idle";
         state.currentTaskId = null;
         saveState(pi, state);
+        pi.setActiveTools(NORMAL_MODE_TOOLS);
         updateModeWidget(ctx, "idle");
       }
     }

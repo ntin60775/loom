@@ -1,0 +1,243 @@
+/**
+ * Agent Mode Tools — executor orchestration
+ *
+ * Tools:
+ *   loom_spawn_worker    — spawn worker subagent for a plan step
+ *   loom_spawn_reviewer  — spawn reviewer subagent for a worker commit
+ *   loom_update_task     — update task.json / plan.json status
+ *   loom_read_artifact   — read artifact file
+ */
+
+import * as fs from "node:fs";
+import * as path from "node:path";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
+import { readJson, writeJson } from "../knowledge/io";
+import { spawnSubagent } from "../subagent/spawner";
+import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
+
+function taskDir(cwd: string, taskId: string): string {
+  return path.join(cwd, "knowledge", "tasks", taskId);
+}
+
+function loadPrompt(name: string): string {
+  const promptPath = path.join(__dirname, "..", "subagent", "prompts", `${name}.md`);
+  try {
+    return fs.readFileSync(promptPath, "utf-8");
+  } catch {
+    return `Prompt ${name} not found.`;
+  }
+}
+
+export function registerAgentTools(pi: ExtensionAPI): void {
+  pi.registerTool({
+    name: "loom_spawn_worker",
+    label: "Spawn Worker",
+    description: "Spawn a worker subagent to execute a plan step. Returns worker output.",
+    parameters: Type.Object({
+      task_id: Type.String(),
+      step_number: Type.Number(),
+      additional_context: Type.Optional(Type.String({ description: "Extra context for the worker" })),
+    }),
+
+    async execute(_toolCallId, params, signal, onUpdate, ctx) {
+      const dir = taskDir(ctx.cwd, params.task_id);
+      const plan = readJson<any>(path.join(dir, "plan.json"));
+      const task = readJson<any>(path.join(dir, "task.json"));
+      const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
+
+      if (!plan || !task) {
+        return { content: [{ type: "text", text: `Task or plan not found for ${params.task_id}` }], isError: true };
+      }
+
+      const step = plan.steps.find((s: any) => s.step_number === params.step_number);
+      if (!step) {
+        return { content: [{ type: "text", text: `Step ${params.step_number} not found` }], isError: true };
+      }
+
+      const workerPrompt = loadPrompt("worker");
+      const model = config?.worker?.model;
+      const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
+
+      const spec: WorkerSpec = {
+        name: `${params.task_id}-worker-step${params.step_number}`,
+        systemPrompt: workerPrompt,
+        model,
+        tools,
+        task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${params.additional_context ?? ""}`,
+        cwd: ctx.cwd,
+      };
+
+      const result = await spawnSubagent(spec, signal, (output) => {
+        if (onUpdate) {
+          onUpdate({ content: [{ type: "text", text: output }], details: { phase: "worker", step: params.step_number } });
+        }
+      });
+
+      const output = getFinalOutput(result.messages);
+      const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+
+      return {
+        content: [{ type: "text", text: output || "(no output)" }],
+        details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
+        isError,
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_spawn_reviewer",
+    label: "Spawn Reviewer",
+    description: "Spawn a reviewer subagent to review a worker commit. Returns review JSON.",
+    parameters: Type.Object({
+      task_id: Type.String(),
+      step_number: Type.Number(),
+      commit_hash: Type.String({ description: "Git commit hash to review" }),
+    }),
+
+    async execute(_toolCallId, params, signal, onUpdate, ctx) {
+      const dir = taskDir(ctx.cwd, params.task_id);
+      const plan = readJson<any>(path.join(dir, "plan.json"));
+      const task = readJson<any>(path.join(dir, "task.json"));
+      const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
+
+      if (!plan || !task) {
+        return { content: [{ type: "text", text: `Task or plan not found for ${params.task_id}` }], isError: true };
+      }
+
+      const step = plan.steps.find((s: any) => s.step_number === params.step_number);
+      if (!step) {
+        return { content: [{ type: "text", text: `Step ${params.step_number} not found` }], isError: true };
+      }
+
+      const reviewerPrompt = loadPrompt("reviewer");
+      const model = config?.reviewer?.model;
+      const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
+
+      const spec: ReviewerSpec = {
+        name: `${params.task_id}-reviewer-step${params.step_number}`,
+        systemPrompt: reviewerPrompt,
+        model,
+        tools,
+        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output}\nInvariants: ${task.invariants.map((i: any) => i.id).join(", ")}`,
+        targetCommit: params.commit_hash,
+        planJsonPath: path.join(dir, "plan.json"),
+        stepNumber: params.step_number,
+        cwd: ctx.cwd,
+      };
+
+      const result = await spawnSubagent(spec as any, signal, (output) => {
+        if (onUpdate) {
+          onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
+        }
+      });
+
+      const output = getFinalOutput(result.messages);
+      const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+
+      // Attempt to parse review JSON from output
+      let reviewJson: any = null;
+      try {
+        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
+        if (jsonMatch) reviewJson = JSON.parse(jsonMatch[1]);
+        else reviewJson = JSON.parse(output);
+      } catch {
+        reviewJson = null;
+      }
+
+      return {
+        content: [{ type: "text", text: output || "(no output)" }],
+        details: { reviewJson, result: { exitCode: result.exitCode, usage: result.usage } },
+        isError: isError && !reviewJson,
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_update_task",
+    label: "Update Task",
+    description: "Update task.json or plan.json status, step status, etc.",
+    parameters: Type.Object({
+      task_id: Type.String(),
+      step_number: Type.Optional(Type.Number()),
+      step_status: Type.Optional(Type.String({ description: "pending | in_progress | done | blocked" })),
+      task_status: Type.Optional(Type.String({ description: "draft | in_progress | completed | rejected" })),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const dir = taskDir(ctx.cwd, params.task_id);
+      const taskPath = path.join(dir, "task.json");
+      const planPath = path.join(dir, "plan.json");
+      const registryPath = path.join(ctx.cwd, "knowledge", "tasks", "registry.json");
+
+      if (params.task_status) {
+        const task = readJson<any>(taskPath);
+        if (task) {
+          task.status = params.task_status;
+          task.updated_at = new Date().toISOString().split("T")[0];
+          writeJson(taskPath, task);
+        }
+
+        const registry = readJson<any>(registryPath);
+        if (registry) {
+          const entry = registry.tasks.find((t: any) => t.task_id === params.task_id);
+          if (entry) {
+            entry.status = params.task_status;
+            entry.updated_at = task?.updated_at;
+            writeJson(registryPath, registry);
+          }
+        }
+      }
+
+      if (params.step_number && params.step_status) {
+        const plan = readJson<any>(planPath);
+        if (plan) {
+          const step = plan.steps.find((s: any) => s.step_number === params.step_number);
+          if (step) {
+            step.status = params.step_status;
+            writeJson(planPath, plan);
+          }
+        }
+      }
+
+      return {
+        content: [{ type: "text", text: `Updated ${params.task_id}${params.step_number ? ` step ${params.step_number}` : ""}` }],
+        details: { task_id: params.task_id, step_number: params.step_number, step_status: params.step_status, task_status: params.task_status },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "loom_read_artifact",
+    label: "Read Artifact",
+    description: "Read an artifact file from a task directory",
+    parameters: Type.Object({
+      task_id: Type.String(),
+      artifact_path: Type.String({ description: "Relative path inside task dir, e.g. artifacts/summary.json" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const filePath = path.join(taskDir(ctx.cwd, params.task_id), params.artifact_path);
+      const data = readJson<any>(filePath);
+      if (data === null) {
+        return { content: [{ type: "text", text: `Artifact not found: ${params.artifact_path}` }], isError: true };
+      }
+      return {
+        content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+        details: { artifact_path: params.artifact_path },
+      };
+    },
+  });
+}
+
+function getFinalOutput(messages: Array<{ role: string; content: Array<{ type: string; text?: string }> }>): string {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    if (msg.role === "assistant") {
+      for (const part of msg.content) {
+        if (part.type === "text" && part.text) return part.text;
+      }
+    }
+  }
+  return "";
+}
