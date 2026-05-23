@@ -611,7 +611,116 @@ Reviewer:
 Не добавляй сюда ничего без команды оператора.
 ```
 
-## 8. Knowledge Storage (полная структура)
+### 7.4 Миграция с task-centric-knowledge
+
+**Контекст.** `task-centric-knowledge` (TCK) — это skill, на чьих концепциях построен loom. Проекты, уже использующие TCK, должны мигрировать на loom без потери данных. Форматы TCK известны, поэтому миграция детерминирована, не требует «угадывания».
+
+#### 7.4.1 Что мигрируем
+
+| Артефакт TCK | Формат TCK | Куда в loom | Как |
+|-------------|-----------|------------|-----|
+| `AGENTS.md` (managed-блок TCK) | Markdown между `⟦⟦BEGIN_TASK_KNOWLEDGE_SYSTEM⟧⟧` | `AGENTS.md` (loom entry-point) | Извлечь identity/conventions → правила. Заменить managed-блок на loom-формат |
+| `knowledge/tasks/TASK-XXXX/task.md` | Markdown с полями | `task.json` | Распарсить поля: TASK-ID, Краткое имя, Статус, Ветка. Инварианты → массив. DU → delivery_units |
+| `knowledge/tasks/TASK-XXXX/plan.md` | Markdown список шагов | `plan.json` | Распарсить шаги → steps[]. Риски → risks[] |
+| `knowledge/tasks/TASK-XXXX/sdd.md` | Markdown инварианты | `sdd.json` | Инварианты → invariant_set. Архитектурные решения → отдельно |
+| `knowledge/tasks/registry.md` | Markdown таблица | `registry.json` | Распарсить строки таблицы → tasks[] |
+| `knowledge/tasks/_templates/` | Шаблоны markdown | Удалить | loom использует JSON schemas, не markdown шаблоны |
+| `artifacts/verification-matrix.md` | Markdown | `artifacts/verification-matrix.json` | Распарсить строки матрицы |
+| `worklog.md`, `decisions.md`, `handoff.md` | Markdown | `worklog.json`, `decisions.json`, `handoff.json` | Перенести как есть + структурировать |
+
+#### 7.4.2 Что НЕ мигрируем
+
+- `⟦⟦BEGIN/END_TASK_KNOWLEDGE_SYSTEM⟧⟧` маркеры — заменяются на loom-совместимый AGENTS.md
+- Managed-блок TCK — заменяется на loom entry-point (раздел 7.3)
+- `AGENTS.task-centric-knowledge.<profile>.md` — удаляется после извлечения данных
+- `knowledge/MIGRATION-SUGGESTION.md` — удаляется
+
+#### 7.4.3 Pipeline миграции
+
+```
+Оператор: /loom-init (обнаружен TCK managed-блок)
+│
+├─► Шаг 0: Классификация → "compatible" (TCK обнаружен)
+│
+├─► Шаг 1: Извлечение из AGENTS.md
+│   - Найти managed-блок ⟦⟦BEGIN_TASK_KNOWLEDGE_SYSTEM⟧⟧
+│   - Извлечь project identity, conventions, rules
+│   - Создать RULE-XXXX-tck-migration-*.json в proposed
+│
+├─► Шаг 2: Миграция задач (migration subagent, tmux)
+│   - Прочитать registry.md → список задач
+│   - Для каждой задачи:
+│     - Распарсить task.md → task.json
+│     - Распарсить plan.md → plan.json
+│     - Распарсить sdd.md → sdd.json (если есть)
+│     - Распарсить worklog/decisions → соответствующие JSON
+│   - Вывод: список сконвертированных задач + предупреждения
+│
+├─► Шаг 3: Миграция реестра
+│   - Распарсить registry.md → registry.json
+│
+├─► Шаг 4: Очистка TCK
+│   - Удалить managed-блок из AGENTS.md
+│   - Удалить _templates/
+│   - Удалить AGENTS.task-centric-knowledge.*.md
+│   - Удалить MIGRATION-SUGGESTION.md
+│
+├─► Шаг 5: Генерация loom AGENTS.md
+│   - На основе извлечённых данных + раздел 7.3
+│
+├─► Шаг 6: Сводка для operator review
+│   - Сколько задач сконвертировано
+│   - Какие правила извлечены
+│   - Что будет удалено
+│   - Operator: approve / edit / cancel
+│
+└─► Шаг 7: Фиксация
+    - git commit с migration-изменениями
+    - Старые .md файлы не удаляются — остаются рядом с .json для ручной верификации
+```
+
+#### 7.4.4 Пример конвертации: task.md → task.json
+
+**Было (TCK):**
+```markdown
+# TASK-2026-0001-bootstrap
+
+## Сводка
+- **TASK-ID**: TASK-2026-0001-bootstrap
+- **Краткое имя**: bootstrap
+- **Статус**: active
+- **Ветка**: task/TASK-2026-0001-bootstrap
+
+## Инварианты задачи
+### INV-1: AI-First спецификация
+Все спецификации оптимизированы для LLM...
+```
+
+**Стало (loom):**
+```json
+{
+  "task_id": "TASK-2026-0001-bootstrap",
+  "slug": "bootstrap",
+  "title": {"ru": "bootstrap"},
+  "status": "в_работе",
+  "branch": "task/task-2026-0001-bootstrap",
+  "invariants": [
+    {
+      "id": "INV-1",
+      "text": "AI-First: все спецификации оптимизированы для LLM",
+      "marker": "INVARIANT: JSON must be primary format",
+      "status": "defined"
+    }
+  ]
+}
+```
+
+#### 7.4.5 Откат миграции
+
+- Старые .md файлы сохраняются рядом с .json
+- Оператор может вручную удалить .json и вернуть .md
+- Реестр TCK остаётся в registry.md (не удаляется) — можно восстановить
+- Обратной конвертации json→md не предусмотрено (лоом — целевая система)
 
 ```
 knowledge/
