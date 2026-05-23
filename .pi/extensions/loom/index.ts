@@ -12,9 +12,11 @@
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { updateModeWidget } from "./ui/mode-widget";
+import { updateTaskWidget } from "./ui/task-widget";
 import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readJson } from "./knowledge/io";
+import { onboardProject } from "./knowledge/onboarding";
 import * as path from "node:path";
 
 interface LoomState {
@@ -104,6 +106,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
       saveState(pi, state);
       pi.setActiveTools(AGENT_MODE_TOOLS);
       updateModeWidget(ctx, "agent");
+      updateTaskWidget(ctx, activeTask.task_id, ctx.cwd);
       ctx.ui.notify(`[AGENT] Режим исполнения активирован. Задача: ${activeTask.title}`, "info");
     },
   });
@@ -111,37 +114,15 @@ export default function loomExtension(pi: ExtensionAPI): void {
   pi.registerCommand("loom-init", {
     description: "Инициализировать loom в текущем проекте",
     handler: async (_args, ctx) => {
-      const knowledgeRoot = path.join(ctx.cwd, "knowledge");
-      const tasksDir = path.join(knowledgeRoot, "tasks");
-      const projectDir = path.join(knowledgeRoot, "project");
-      const schemasDir = path.join(projectDir, "schemas");
-      const configsDir = path.join(projectDir, "configs");
-      const rulesDir = path.join(projectDir, "rules");
-      const archDir = path.join(projectDir, "architecture");
-
-      // Create directory structure
-      const dirs = [tasksDir, projectDir, schemasDir, configsDir, rulesDir, archDir];
-      for (const dir of dirs) {
-        try {
-          const fs = await import("node:fs");
-          fs.mkdirSync(dir, { recursive: true });
-        } catch {
-          /* ignore */
-        }
+      const result = onboardProject(ctx.cwd);
+      const lines = [
+        "loom инициализирован.",
+        `Создано: ${result.created.join(", ") || "ничего нового"}`,
+      ];
+      if (result.existing.length > 0) {
+        lines.push(`Уже существовало: ${result.existing.join(", ")}`);
       }
-
-      // Create registry.json if missing
-      const registryPath = path.join(tasksDir, "registry.json");
-      const fs = await import("node:fs");
-      if (!fs.existsSync(registryPath)) {
-        const registry = {
-          schema_version: "1.0.0",
-          tasks: [],
-        };
-        fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2), "utf-8");
-      }
-
-      ctx.ui.notify("loom инициализирован. Структура knowledge/ создана.", "success");
+      ctx.ui.notify(lines.join("\n"), "success");
     },
   });
 
@@ -191,6 +172,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
   pi.on("session_start", async (_event, ctx) => {
     state = loadState(ctx);
     updateModeWidget(ctx, state.mode);
+    updateTaskWidget(ctx, state.currentTaskId, ctx.cwd);
 
     // Restore tools based on persisted mode
     if (state.mode === "plan") {
@@ -277,6 +259,7 @@ Rules:
         saveState(pi, state);
         pi.setActiveTools(AGENT_MODE_TOOLS);
         updateModeWidget(ctx, "agent");
+        updateTaskWidget(ctx, state.currentTaskId, ctx.cwd);
         ctx.ui.notify("Переход в Agent Mode...", "info");
         pi.sendUserMessage("Начни исполнение текущего плана.");
       } else if (choice === "Завершить сессию планирования") {
