@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "task_id": "TASK-2026-0001-bootstrap",
+      "slug": "bootstrap",
+      "title_ru": "Ядро loom — bootstrap",
+      "status": "в_работе",
+      "branch": "main",
+      "created_at": "2026-05-21",
+      "updated_at": "2026-05-23"
+    },
+    {
+      "task_id": "TASK-2026-0002-loom-vnext",
+      "slug": "loom-vnext",
+      "title_ru": "Когнитивные слои loom v2",
+      "status": "черновик",
+      "branch": "task/task-2026-0002-loom-vnext",
+      "created_at": "2026-05-23",
+      "updated_at": "2026-05-23"
+    }
+  ]
+}

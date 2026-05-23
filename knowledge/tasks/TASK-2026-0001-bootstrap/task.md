@@ -49,11 +49,12 @@
 ## Контур публикации
 
 - **Delivery Unit 1**: `du/bootstrap-core-design`
-  - Статус: open
-  - Содержание: Архитектурный дизайн ядра, модель данных, форматы артефактов, инварианты.
+  - Статус: complete
+  - Содержание: Архитектурный дизайн ядра, модель данных, форматы артефактов, инварианты. Результат — `artifacts/sdd.md`.
 - **Delivery Unit 2**: `du/bootstrap-impl-v1`
   - Статус: open
-  - Содержание: Реализация ядра: task lifecycle, knowledge storage, agent context protocol, базовый CLI.
+  - Содержание: Реализация ядра: extension, Plan Mode, Agent Mode, subagent spawner, git review flow.
+- **Deferred to v2**: когнитивные слои → `TASK-2026-0002-loom-vnext`
 
 ## Артефакты задачи
 
