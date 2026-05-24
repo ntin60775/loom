@@ -334,6 +334,47 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       };
     },
   });
+
+  // Tool: Edit execution-config or subagent-config
+  pi.registerTool({
+    name: "loom_edit_config",
+    label: "Edit Config",
+    description: "Edit execution-config.json or subagent-config.json with partial updates. Deep-merges updates into existing config.",
+    parameters: Type.Object({
+      config_type: Type.String({ description: "execution | subagent" }),
+      updates: Type.Record(Type.String(), Type.Any(), { description: "Partial JSON object to merge" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const configsDir = path.join(ctx.cwd, "knowledge", "project", "configs");
+      const fileName = params.config_type === "subagent" ? "subagent-config.json" : "execution-config.json";
+      const filePath = path.join(configsDir, fileName);
+
+      const existing = readJson<Record<string, unknown>>(filePath) ?? {};
+
+      function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
+        const result = { ...target };
+        for (const key of Object.keys(source)) {
+          const sv = source[key];
+          const tv = result[key];
+          if (sv !== null && typeof sv === "object" && !Array.isArray(sv) && tv !== null && typeof tv === "object" && !Array.isArray(tv)) {
+            result[key] = deepMerge(tv as Record<string, unknown>, sv as Record<string, unknown>);
+          } else {
+            result[key] = sv;
+          }
+        }
+        return result;
+      }
+
+      const merged = deepMerge(existing, params.updates as Record<string, unknown>);
+      writeJson(filePath, merged);
+
+      return {
+        content: [{ type: "text", text: `Updated ${fileName} at ${filePath}` }],
+        details: { config_type: params.config_type, filePath },
+      };
+    },
+  });
 }
 
 

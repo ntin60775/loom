@@ -172,6 +172,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_add_architecture_component", "loom_list_architecture_components",
     "loom_generate_agents_md",
     "loom_verify_invariants",
+    "loom_edit_config",
   ];
 
   pi.registerCommand("plan", {
@@ -350,6 +351,23 @@ export default function loomExtension(pi: ExtensionAPI): void {
       } else {
         ctx.ui.notify(`Субагент "${id}" не найден.`, "error");
       }
+    },
+  });
+
+  pi.registerCommand("loom-config", {
+    description: "Редактировать execution-config.json или subagent-config.json",
+    handler: async (_args, ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+      const choice = await ctx.ui.select("Выберите конфиг для редактирования:", [
+        "execution-config.json",
+        "subagent-config.json",
+      ]);
+      const configType = choice === "execution-config.json" ? "execution" : "subagent";
+      pi.sendUserMessage(`Покажи текущее содержимое ${choice} и предложи изменения. Для применения используй tool loom_edit_config с config_type="${configType}".`);
     },
   });
 

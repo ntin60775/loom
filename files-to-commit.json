@@ -1,8 +1,7 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": 4,
+  "step": 5,
   "files": [
-    ".pi/extensions/loom/knowledge/verification.ts",
     ".pi/extensions/loom/agent-mode/tools.ts",
     ".pi/extensions/loom/index.ts",
     "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json",
