@@ -2,11 +2,6 @@
   "task_id": "TASK-2026-0008-memory-layer",
   "step": 9,
   "files": [
-    "knowledge/tasks/TASK-2026-0008-memory-layer/task.json",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/plan.json",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/task.md",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/artifacts/verification-matrix.md",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/reviews/review-ML-1.json",
-    "knowledge/tasks/registry.json"
+    ".pi/extensions/loom/knowledge/schemas.ts"
   ]
 }
