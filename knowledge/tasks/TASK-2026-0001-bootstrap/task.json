@@ -3,7 +3,7 @@
   "slug": "bootstrap",
   "title": "Ядро loom — bootstrap",
   "description": "Спроектировать и реализовать ядро loom — AI-Native Development Environment для pi. Система разработки с помощью ИИ-агентов, оптимизированная под восприятие LLM, с накоплением знаний и артефактов.",
-  "status": "in_progress",
+  "status": "completed",
   "priority": "critical",
   "branch": "task/task-2026-0001-bootstrap",
   "invariants": [
@@ -121,7 +121,7 @@
     },
     {
       "id": "DU-3",
-      "status": "planned",
+      "status": "merged",
       "purpose": "Onboarding: scout, research, migration, rules catalog, architecture catalog",
       "base_branch": "main"
     },
