@@ -3,13 +3,16 @@
  *
  * Priority: semantic > episodic > procedural > session
  * Token budget: configurable (default 4000 tokens).
+ * charsPerToken: heuristic estimate — 4 chars/token works for mixed EN/RU content.
+ *   English ~5 chars/token, Russian ~2-3 chars/token.
+ *   Configure via ContextAssemblerOptions if higher precision needed.
  * Truncation: by priority, with lossy summarization for lower-priority tracks.
  *
  * INV-4: Deterministic context assembly — no hidden state.
  * INV-6: Token budget respected — output truncated to fit.
  */
 
-import type { MemoryEntry, MemoryQuery } from "./types";
+import type { MemoryEntry, MemoryQuery, SemanticContent, EpisodicContent, ProceduralContent, SessionContent } from "./types";
 import type { MemoryManager } from "./manager";
 
 export interface ContextAssemblerOptions {
@@ -145,19 +148,19 @@ export class ContextAssembler {
   private summarizeEntry(entry: MemoryEntry): string {
     switch (entry.track_type) {
       case "semantic": {
-        const c = entry.content as import("./types").SemanticContent;
+        const c = entry.content as SemanticContent;
         return `[${c.category}] ${c.fact.replace(/\n/g, " ")}`.slice(0, 200);
       }
       case "episodic": {
-        const c = entry.content as import("./types").EpisodicContent;
+        const c = entry.content as EpisodicContent;
         return `${c.event} → ${c.outcome}`.slice(0, 200);
       }
       case "procedural": {
-        const c = entry.content as import("./types").ProceduralContent;
+        const c = entry.content as ProceduralContent;
         return `${c.pattern} (${c.validation_status})`.slice(0, 200);
       }
       case "session": {
-        const c = entry.content as import("./types").SessionContent;
+        const c = entry.content as SessionContent;
         return `[${c.role}] ${c.message.replace(/\n/g, " ")}`.slice(0, 200);
       }
       default:

@@ -8,8 +8,8 @@
   "properties": {
     "entry_id": {
       "type": "string",
-      "description": "Unique identifier for the memory entry (UUID v4)",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "description": "Unique identifier for the memory entry. Semantic IDs (e.g. semantic-rule_X-...) or UUID v4.",
+      "pattern": "^[a-zA-Z0-9_-]+(-[a-zA-Z0-9_-]+)*$|^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
     },
     "task_id": {
       "type": ["string", "null"],

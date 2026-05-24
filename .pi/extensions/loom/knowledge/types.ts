@@ -20,6 +20,7 @@ export interface DeliveryUnitData {
   status: string;
   purpose: string;
   base_branch: string;
+  subtask_id?: string;
 }
 
 export interface TaskData {

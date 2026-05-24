@@ -31,6 +31,7 @@ export const TaskSchema = Type.Object({
       status: Type.String({ default: "draft" }),
       purpose: Type.String(),
       base_branch: Type.String({ default: "main" }),
+      subtask_id: Type.Optional(Type.String()),
     }),
   ),
   created_at: Type.String(),

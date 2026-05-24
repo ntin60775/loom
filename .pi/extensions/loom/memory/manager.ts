@@ -11,11 +11,14 @@
  * INV-6: Token budget respected (enforced at ContextAssembler level).
  */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
 import type { MemoryEntry, MemoryQuery, TrackType } from "./types";
 import { SessionTrack } from "./session-track";
 import { EpisodicStore } from "./episodic-store";
 import { SemanticStore } from "./semantic-store";
 import { ProceduralStore } from "./procedural-store";
+import { readJsonFile, writeJsonFile } from "./utils";
 
 export interface RelevanceWeights {
   freshness: number;
@@ -130,7 +133,12 @@ export class MemoryManager {
 
   /**
    * Recompute relevance scores for all entries in a track.
-   * This mutates entries in-place (for file-backed stores, persists).
+   * This mutates entries in-place and persists file-backed stores.
+   *
+   * Formula: relevance = α * freshness + β * frequency + γ * explicitRating
+   *   - freshness = exp(-age / maxAgeMs)
+   *   - frequency = min(access_count / 10, 1)
+   *   - explicit = current relevance_score (operator rating baseline)
    */
   recomputeRelevance(track: TrackType): void {
     const now = Date.now();
@@ -140,8 +148,8 @@ export class MemoryManager {
       const lastAccessed = entry.last_accessed_at ? new Date(entry.last_accessed_at).getTime() : new Date(entry.created_at).getTime();
       const age = now - lastAccessed;
       const freshness = Math.exp(-(age / maxAgeMs));
-      const freq = Math.min(entry.access_count / 10, 1); // normalize at 10 accesses
-      const explicit = entry.relevance_score; // current score treated as operator rating baseline
+      const freq = Math.min(entry.access_count / 10, 1);
+      const explicit = entry.relevance_score;
       return (
         this.weights.freshness * freshness +
         this.weights.frequency * freq +
@@ -151,22 +159,65 @@ export class MemoryManager {
 
     switch (track) {
       case "session": {
-        for (const entry of this.session.getContext()) {
+        const entries = this.session.getContext();
+        for (const entry of entries) {
           entry.relevance_score = compute(entry);
         }
         break;
       }
       case "episodic": {
-        // Episodic entries are per-task; we iterate all task files
-        // This is a simplified approach: recompute on next query/compact cycle
+        const tasksDir = path.join(this.cwd, "knowledge", "tasks");
+        if (!fs.existsSync(tasksDir)) break;
+        const taskIds = fs.readdirSync(tasksDir)
+          .filter((d) => d.startsWith("TASK-"))
+          .filter((d) => fs.statSync(path.join(tasksDir, d)).isDirectory());
+        for (const taskId of taskIds) {
+          const epPath = path.join(tasksDir, taskId, "artifacts", "memory-episodic.json");
+          const entries = readJsonFile<MemoryEntry[]>(epPath);
+          if (!entries) continue;
+          let changed = false;
+          for (const entry of entries) {
+            if (entry.track_type !== "episodic") continue;
+            const newScore = compute(entry);
+            if (Math.abs(entry.relevance_score - newScore) > 0.001) {
+              entry.relevance_score = newScore;
+              changed = true;
+            }
+          }
+          if (changed) writeJsonFile(epPath, entries);
+        }
         break;
       }
       case "semantic": {
-        // Semantic entries updated on next index/compact cycle
+        const semPath = path.join(this.cwd, "knowledge", "project", "memory", "semantic.json");
+        const entries = readJsonFile<MemoryEntry[]>(semPath);
+        if (!entries) break;
+        let changed = false;
+        for (const entry of entries) {
+          if (entry.track_type !== "semantic") continue;
+          const newScore = compute(entry);
+          if (Math.abs(entry.relevance_score - newScore) > 0.001) {
+            entry.relevance_score = newScore;
+            changed = true;
+          }
+        }
+        if (changed) writeJsonFile(semPath, entries);
         break;
       }
       case "procedural": {
-        // Procedural entries updated on next query/compact cycle
+        const procPath = path.join(this.cwd, "knowledge", "project", "memory", "procedural.json");
+        const entries = readJsonFile<MemoryEntry[]>(procPath);
+        if (!entries) break;
+        let changed = false;
+        for (const entry of entries) {
+          if (entry.track_type !== "procedural") continue;
+          const newScore = compute(entry);
+          if (Math.abs(entry.relevance_score - newScore) > 0.001) {
+            entry.relevance_score = newScore;
+            changed = true;
+          }
+        }
+        if (changed) writeJsonFile(procPath, entries);
         break;
       }
     }
@@ -221,14 +272,14 @@ export class MemoryManager {
   stats(): MemoryManagerStats {
     const sessionStats = this.session.stats();
     // Episodic stats are per-task; we return a global aggregate
-    const tasksDir = require("node:path").join(this.cwd, "knowledge", "tasks");
+    const tasksDir = path.join(this.cwd, "knowledge", "tasks");
     let episodicTotal = 0;
     let episodicRelevance = 0;
     try {
-      const taskIds = require("node:fs")
+      const taskIds = fs
         .readdirSync(tasksDir)
         .filter((d: string) => d.startsWith("TASK-"))
-        .filter((d: string) => require("node:fs").statSync(require("node:path").join(tasksDir, d)).isDirectory());
+        .filter((d: string) => fs.statSync(path.join(tasksDir, d)).isDirectory());
       for (const taskId of taskIds) {
         const s = this.episodic.stats(this.cwd, taskId);
         episodicTotal += s.total_entries;

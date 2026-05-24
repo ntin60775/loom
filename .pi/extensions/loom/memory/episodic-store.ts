@@ -8,8 +8,9 @@
  * INV-5: Task-scoped — each task has its own episodic file.
  */
 
+import * as fs from "node:fs";
 import * as path from "node:path";
-import type { MemoryEntry, MemoryQuery, TrackStats } from "./types";
+import type { MemoryEntry, MemoryQuery, TrackStats, EpisodicContent } from "./types";
 import { readJsonFile, writeJsonFile } from "./utils";
 
 export interface EpisodicStoreOptions {
@@ -60,8 +61,9 @@ export class EpisodicStore {
     };
 
     entries.push(enriched);
-    this.compact(entries);
-    this.writeTaskEntries(cwd, entry.task_id, entries);
+    // Compact only when near limit to avoid O(n²) on every record
+    const compacted = this.maybeCompact(entries);
+    this.writeTaskEntries(cwd, entry.task_id, compacted);
   }
 
   /**
@@ -93,9 +95,9 @@ export class EpisodicStore {
     let all: MemoryEntry[] = [];
 
     try {
-      const taskIds = require("node:fs")
+      const taskIds = fs
         .readdirSync(tasksDir)
-        .filter((d: string) => require("node:fs").statSync(path.join(tasksDir, d)).isDirectory());
+        .filter((d: string) => fs.statSync(path.join(tasksDir, d)).isDirectory());
 
       for (const taskId of taskIds) {
         const entries = this.readTaskEntries(cwd, taskId);
@@ -146,15 +148,15 @@ export class EpisodicStore {
       .slice(0, topN);
 
     const events = sorted.map((e) => {
-      const c = e.content as import("./types").EpisodicContent;
+      const c = e.content as EpisodicContent;
       return `- ${c.event} → ${c.outcome}`;
     });
 
-    const summaryContent: import("./types").EpisodicContent = {
+    const summaryContent: EpisodicContent = {
       event: `Summary of ${sorted.length} episodes`,
-      decision: `Top decisions: ${sorted.map((e) => (e.content as import("./types").EpisodicContent).decision).join("; ")}`,
+      decision: `Top decisions: ${sorted.map((e) => (e.content as EpisodicContent).decision).join("; ")}`,
       outcome: "summary",
-      affected_files: Array.from(new Set(sorted.flatMap((e) => (e.content as import("./types").EpisodicContent).affected_files ?? []))),
+      affected_files: Array.from(new Set(sorted.flatMap((e) => (e.content as EpisodicContent).affected_files ?? []))),
     };
 
     const now = new Date().toISOString();
@@ -185,6 +187,20 @@ export class EpisodicStore {
     let entries = this.readTaskEntries(cwd, taskId);
     entries = this.compact(entries);
     this.writeTaskEntries(cwd, taskId, entries);
+  }
+
+  /**
+   * Check if compaction is needed based on count and relevance threshold.
+   * Avoids O(n²) compaction on every record.
+   */
+  private maybeCompact(entries: MemoryEntry[]): MemoryEntry[] {
+    if (entries.length <= this.maxEntriesPerTask) {
+      const hasLowRelevance = entries.some((e) => e.relevance_score < this.minRelevance);
+      if (!hasLowRelevance) {
+        return entries; // skip compaction when under limit and no low-relevance entries
+      }
+    }
+    return this.compact(entries);
   }
 
   private compact(entries: MemoryEntry[]): MemoryEntry[] {

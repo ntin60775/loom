@@ -56,8 +56,9 @@ export function buildMemoryContext(cwd: string, taskId: string): string | null {
       },
     });
 
-    // Index semantic store on first use
+    // Index semantic store on first use; seed procedural patterns from closed tasks
     manager.indexSemantic();
+    manager.seedProcedural();
     managerCache.set(cwd, manager);
   }
 
