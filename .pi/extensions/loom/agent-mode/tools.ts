@@ -18,6 +18,7 @@ import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
 import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
+import { generateVerificationMatrix } from "../knowledge/verification";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -306,6 +307,31 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           isError: true,
         };
       }
+    },
+  });
+
+  // Tool: Generate verification matrix
+  pi.registerTool({
+    name: "loom_verify_invariants",
+    label: "Verify Invariants",
+    description: "Generate verification matrix from all task invariants. Writes to knowledge/project/artifacts/verification-matrix.json.",
+    parameters: Type.Object({}),
+
+    async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
+      const matrix = generateVerificationMatrix(ctx.cwd);
+      const lines = [
+        `Verification matrix generated: ${matrix.summary.total} invariants`,
+        `  ✅ verified: ${matrix.summary.verified}`,
+        `  🟡 defined: ${matrix.summary.defined}`,
+        `  ❌ failed: ${matrix.summary.failed}`,
+        `  ⚪ unknown: ${matrix.summary.unknown}`,
+        ``,
+        `Written to: knowledge/project/artifacts/verification-matrix.json`,
+      ];
+      return {
+        content: [{ type: "text", text: lines.join("\n") }],
+        details: { summary: matrix.summary },
+      };
     },
   });
 }

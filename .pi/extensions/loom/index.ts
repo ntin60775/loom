@@ -19,6 +19,7 @@ import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readRegistryFile, readJson, writeJson } from "./knowledge/io";
 import { onboardProject, listRules, listArchitectureComponents } from "./knowledge/onboarding";
+import { generateVerificationMatrix } from "./knowledge/verification";
 import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
 
@@ -163,12 +164,14 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_spawn_worker", "loom_spawn_reviewer",
     "loom_update_task", "loom_read_artifact",
     "loom_run_localization_guard",
+    "loom_verify_invariants",
   ];
   const NORMAL_MODE_TOOLS = [
     "read", "bash", "edit", "write", "grep", "find", "ls",
     "loom_add_rule", "loom_list_rules",
     "loom_add_architecture_component", "loom_list_architecture_components",
     "loom_generate_agents_md",
+    "loom_verify_invariants",
   ];
 
   pi.registerCommand("plan", {
@@ -347,6 +350,26 @@ export default function loomExtension(pi: ExtensionAPI): void {
       } else {
         ctx.ui.notify(`Субагент "${id}" не найден.`, "error");
       }
+    },
+  });
+
+  pi.registerCommand("verify-matrix", {
+    description: "Сгенерировать и показать verification matrix",
+    handler: async (_args, ctx) => {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+        return;
+      }
+      const matrix = generateVerificationMatrix(ctx.cwd);
+      const lines = [
+        `📊 Verification Matrix: ${matrix.summary.total} инвариантов`,
+        `  ✅ verified: ${matrix.summary.verified}`,
+        `  🟡 defined: ${matrix.summary.defined}`,
+        `  ❌ failed: ${matrix.summary.failed}`,
+        `  ⚪ unknown: ${matrix.summary.unknown}`,
+      ];
+      ctx.ui.notify(lines.join("\n"), "info");
     },
   });
 
