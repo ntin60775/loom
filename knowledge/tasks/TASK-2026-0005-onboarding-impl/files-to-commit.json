@@ -1,6 +1,6 @@
 {
   "task_id": "TASK-2026-0005-onboarding-impl",
-  "step": "post-review-fixes",
+  "step": "finalize",
   "files": [
     ".gitignore",
     ".pi/extensions/loom/index.ts",
@@ -10,6 +10,7 @@
     "knowledge/tasks/TASK-2026-0005-onboarding-impl/artifacts/evidence-summary.md",
     "knowledge/tasks/TASK-2026-0005-onboarding-impl/artifacts/verification-matrix.md",
     "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json",
-    "knowledge/tasks/TASK-2026-0005-onboarding-impl/reviews/review-DU-3-post-fixes.json"
+    "knowledge/tasks/TASK-2026-0005-onboarding-impl/reviews/review-DU-3-post-fixes.json",
+    "knowledge/tasks/TASK-2026-0005-onboarding-impl/reviews/review-DU-3-final.json"
   ]
 }

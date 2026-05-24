@@ -1,6 +1,6 @@
 {
   "task_id": "TASK-2026-0005-onboarding-impl",
-  "step": "post-review-fixes",
+  "step": "finalize",
   "files": [
     ".pi/extensions/loom/index.ts",
     ".pi/extensions/loom/knowledge/onboarding.ts",

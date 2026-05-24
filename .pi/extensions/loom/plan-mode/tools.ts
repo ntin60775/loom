@@ -13,7 +13,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
@@ -289,11 +289,9 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const dir = taskDir(ctx.cwd, params.task_id);
-      const taskPath = path.join(dir, "task.json");
-      const planPath = path.join(dir, "plan.json");
 
-      const task = readJson<any>(taskPath);
-      const plan = readJson<any>(planPath);
+      const task = readTask(dir);
+      const plan = readPlan(dir);
 
       if (!task) {
         return { content: [{ type: "text", text: `Task ${params.task_id} not found` }], isError: true };
@@ -305,11 +303,11 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       // Update task status
       task.status = "draft";
       task.updated_at = new Date().toISOString().split("T")[0];
-      writeJson(taskPath, task);
+      writeJson(path.join(dir, "task.json"), task);
 
       // Update registry
-      const registryPath = path.join(ctx.cwd, "knowledge", "tasks", "registry.json");
-      const registry = readJson<any>(registryPath) ?? { schema_version: "1.0.0", tasks: [] };
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd) ?? path.join(ctx.cwd, "knowledge");
+      const registry = readRegistryFile(knowledgeRoot) ?? { schema_version: "1.0.0", tasks: [] };
       const existingIndex = registry.tasks.findIndex((t) => t.task_id === params.task_id);
       const entry = {
         task_id: params.task_id,
@@ -329,7 +327,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       } else {
         registry.tasks.push(entry);
       }
-      writeJson(registryPath, registry);
+      writeJson(path.join(knowledgeRoot, "tasks", "registry.json"), registry);
 
       // Generate derivative markdown (basic)
       const taskMd = `# ${task.title}\n\n**Task ID:** ${task.task_id}\n\n**Status:** ${task.status}\n**Priority:** ${task.priority}\n**Branch:** ${task.branch}\n\n## Description\n\n${task.description}\n\n## Invariants\n\n${task.invariants.map((i) => `- **${i.id}**: ${i.text}`).join("\n")}\n\n## Delivery Units\n\n${task.delivery_units.map((d) => `- **${d.id}**: ${d.purpose} (status: ${d.status})`).join("\n")}\n\n---\n\n*Generated from task.json*\n`;
@@ -618,7 +616,8 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       const research = readJson<Record<string, unknown>>(getContextResearchPath(ctx.cwd));
       const rulesRaw = listRules(ctx.cwd);
       const compsRaw = listArchitectureComponents(ctx.cwd);
-      const registry = readRegistryFile(ctx.cwd);
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd) ?? path.join(ctx.cwd, "knowledge");
+      const registry = readRegistryFile(knowledgeRoot);
 
       const rules = rulesRaw.map((r) => {
         const full = readJson(path.join(ctx.cwd, "knowledge", "project", "rules", `${r.id}.json`));

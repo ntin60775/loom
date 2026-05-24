@@ -206,7 +206,7 @@ export function generateAgentsMd(input: AgentsMdInput): string {
     "## Проект",
     "",
     `- **Название:** ${input.projectName}`,
-    `**Stack:** ${input.stack ? (input.stack.languages as string[])?.join(", ") ?? "unknown" : "unknown"}`,
+    `**Stack:** ${(() => { const s = input.stack as Record<string, unknown> | null; const langs = s?.languages; return Array.isArray(langs) && langs.length > 0 ? (langs as string[]).join(", ") : "unknown"; })()}`,
     "",
     "## Маршрутизация",
     "",

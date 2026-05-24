@@ -11,7 +11,7 @@
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
@@ -39,7 +39,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const dir = taskDir(ctx.cwd, params.task_id);
       const plan = readPlan(dir);
       const task = readTask(dir);
-      const config = readJson<any>(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
+      const config = readSubagentConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
 
       if (!plan || !task) {
         return { content: [{ type: "text", text: `Task or plan not found for ${params.task_id}` }], isError: true };
