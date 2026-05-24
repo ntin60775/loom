@@ -9,6 +9,7 @@
  */
 
 import * as path from "node:path";
+import { spawnSync } from "node:child_process";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig } from "../knowledge/io";
@@ -16,6 +17,8 @@ import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
+import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
+import { generateVerificationMatrix } from "../knowledge/verification";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -92,6 +95,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         };
       } finally {
         activeWorkerId = null;
+        updateSubagentStatus(workerId, "completed");
+        removeSubagent(workerId);
       }
     },
   });
@@ -127,8 +132,19 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
+      const reviewerId = `${params.task_id}-reviewer-step${params.step_number}`;
+      registerSubagent(reviewerId, {
+        id: reviewerId,
+        name: reviewerId,
+        type: "reviewer",
+        status: "running",
+        model,
+        step: params.step_number,
+        taskId: params.task_id,
+      });
+
       const spec: ReviewerSpec = {
-        name: `${params.task_id}-reviewer-step${params.step_number}`,
+        name: reviewerId,
         systemPrompt: reviewerPrompt,
         model,
         tools,
@@ -139,6 +155,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         cwd: ctx.cwd,
       };
 
+      try {
       const result = await spawnSubagent(spec, signal, (output) => {
         if (onUpdate) {
           onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
@@ -163,6 +180,10 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         details: { reviewJson, result: { exitCode: result.exitCode, usage: result.usage } },
         isError: isError && !reviewJson,
       };
+      } finally {
+        updateSubagentStatus(reviewerId, isError ? "error" : "completed");
+        removeSubagent(reviewerId);
+      }
     },
   });
 
@@ -239,6 +260,122 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       return {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
         details: { artifact_path: params.artifact_path },
+      };
+    },
+  });
+
+  // Tool: Run localization guard on files from files-to-commit.json
+  pi.registerTool({
+    name: "loom_run_localization_guard",
+    label: "Run Localization Guard",
+    description: "Run localization guard on files listed in files-to-commit.json. Returns pass/fail with guard output.",
+    parameters: Type.Object({
+      task_id: Type.String(),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const ftcPath = path.join(ctx.cwd, "files-to-commit.json");
+      const ftc = readJson<{ files?: string[] }>(ftcPath);
+      const files = ftc?.files ?? [];
+
+      if (files.length === 0) {
+        return {
+          content: [{ type: "text", text: "No files to check in files-to-commit.json" }],
+          details: { passed: true, files: [] },
+        };
+      }
+
+      const scriptPath = path.join(ctx.cwd, "scripts", "check-docs-localization.sh");
+
+      try {
+        const result = spawnSync("bash", [scriptPath, ...files], {
+          cwd: ctx.cwd,
+          encoding: "utf-8",
+          timeout: 30000,
+        });
+        if (result.status === 0) {
+          return {
+            content: [{ type: "text", text: `✅ Localization guard passed.\n\n${result.stdout}` }],
+            details: { passed: true, files, output: result.stdout },
+          };
+        }
+        return {
+          content: [{ type: "text", text: `❌ Localization guard FAILED.\n\nstdout:\n${result.stdout}\n\nstderr:\n${result.stderr}` }],
+          details: { passed: false, files, stdout: result.stdout, stderr: result.stderr },
+          isError: true,
+        };
+      } catch (err: any) {
+        return {
+          content: [{ type: "text", text: `❌ Localization guard FAILED with exception: ${err.message}` }],
+          details: { passed: false, files, error: err.message },
+          isError: true,
+        };
+      }
+    },
+  });
+
+  // Tool: Generate verification matrix
+  pi.registerTool({
+    name: "loom_verify_invariants",
+    label: "Verify Invariants",
+    description: "Generate verification matrix from all task invariants. Writes to knowledge/project/artifacts/verification-matrix.json.",
+    parameters: Type.Object({}),
+
+    async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
+      const matrix = generateVerificationMatrix(ctx.cwd);
+      const lines = [
+        `Verification matrix generated: ${matrix.summary.total} invariants`,
+        `  ✅ verified: ${matrix.summary.verified}`,
+        `  🟡 defined: ${matrix.summary.defined}`,
+        `  ❌ failed: ${matrix.summary.failed}`,
+        `  ⚪ unknown: ${matrix.summary.unknown}`,
+        ``,
+        `Written to: knowledge/project/artifacts/verification-matrix.json`,
+      ];
+      return {
+        content: [{ type: "text", text: lines.join("\n") }],
+        details: { summary: matrix.summary },
+      };
+    },
+  });
+
+  // Tool: Edit execution-config or subagent-config
+  pi.registerTool({
+    name: "loom_edit_config",
+    label: "Edit Config",
+    description: "Edit execution-config.json or subagent-config.json with partial updates. Deep-merges updates into existing config.",
+    parameters: Type.Object({
+      config_type: Type.String({ description: "execution | subagent" }),
+      updates: Type.Record(Type.String(), Type.Any(), { description: "Partial JSON object to merge" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const configsDir = path.join(ctx.cwd, "knowledge", "project", "configs");
+      const fileName = params.config_type === "subagent" ? "subagent-config.json" : "execution-config.json";
+      const filePath = path.join(configsDir, fileName);
+
+      const existing = readJson<Record<string, unknown>>(filePath) ?? {};
+
+      function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
+        const result = { ...target };
+        for (const key of Object.keys(source)) {
+          const sv = source[key];
+          const tv = result[key];
+          if (sv !== null && typeof sv === "object" && !Array.isArray(sv) && tv !== null && typeof tv === "object" && !Array.isArray(tv)) {
+            result[key] = deepMerge(tv as Record<string, unknown>, sv as Record<string, unknown>);
+          } else {
+            result[key] = sv;
+          }
+        }
+        return result;
+      }
+
+      const merged = deepMerge(existing, params.updates as Record<string, unknown>);
+      writeJson(filePath, merged);
+
+      return {
+        content: [{ type: "text", text: `Updated ${fileName} at ${filePath}` }],
+        details: { config_type: params.config_type, filePath },
       };
     },
   });

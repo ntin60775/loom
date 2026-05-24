@@ -1,0 +1,143 @@
+{
+  "task_id": "TASK-2026-0006-polish-impl",
+  "invariant_set": [
+    {
+      "id": "INV-5",
+      "text": "Operator layers: read-only TUI, docs-as-code",
+      "verification": "TUI widgets do not allow code editing; operator interacts via commands and read-only reports"
+    },
+    {
+      "id": "INV-10",
+      "text": "Models are configurable: no hardcode",
+      "verification": "Model config in subagent-config.json; no hardcoded model strings in extension code"
+    },
+    {
+      "id": "INV-12",
+      "text": "Localization: UI and user artifacts in Russian; AI documentation in English",
+      "verification": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts"
+    },
+    {
+      "id": "INV-13",
+      "text": "Git commit safety: staged list, not git add -A",
+      "verification": "Worker commits only files listed in files-to-commit.json"
+    }
+  ],
+  "components": [
+    {
+      "id": "COMP-task-widget",
+      "name": "Task Widget",
+      "responsibilities": ["Display current task status", "Show plan steps and progress", "Show active subagent states", "Update reactively on executor events"],
+      "interfaces": ["ctx.ui.setWidget API", "Widget ID: loom-task-widget", "Render: task title, step list, progress bar, subagent badges"],
+      "dependencies": ["COMP-knowledge-io", "COMP-executor"],
+      "files": [".pi/extensions/loom/ui/task-widget.ts"],
+      "status": "planned"
+    },
+    {
+      "id": "COMP-subagent-widget",
+      "name": "Subagent Widget",
+      "responsibilities": ["List running subagents with status", "Show model and domain for each", "Provide /subagents, /subagent-focus, /subagent-kill commands"],
+      "interfaces": ["ctx.ui.setWidget API", "Widget ID: loom-subagent-widget", "Commands: /subagents, /subagent-focus <id>, /subagent-kill <id>"],
+      "dependencies": ["COMP-spawner", "COMP-executor"],
+      "files": [".pi/extensions/loom/ui/subagent-widget.ts"],
+      "status": "planned"
+    },
+    {
+      "id": "COMP-localization-guard",
+      "name": "Localization Guard Integration",
+      "responsibilities": ["Run localization guard after each worker commit", "Parse guard output", "Auto-reject review if guard fails with correction directive"],
+      "interfaces": ["bash: scripts/check-docs-localization.sh", "Integration point in executor loop after worker commit", "Correction WorkerSpec with localization fixes"],
+      "dependencies": ["COMP-executor", "COMP-worker"],
+      "files": [".pi/extensions/loom/agent-mode/executor-loop.ts"],
+      "status": "planned"
+    },
+    {
+      "id": "COMP-verification-matrix",
+      "name": "Verification Matrix",
+      "responsibilities": ["Track invariant status across all delivery units", "Auto-check invariants after step completion", "Generate artifacts/verification-matrix.json"],
+      "interfaces": ["verification-matrix.json schema", "Check function: verifyInvariant(inv, evidence)", "Report: passed/failed/unknown per invariant"],
+      "dependencies": ["COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/knowledge/verification.ts"],
+      "status": "planned"
+    },
+    {
+      "id": "COMP-config-editor",
+      "name": "Subagent Config Editor",
+      "responsibilities": ["Edit execution-config.json via TUI", "Edit subagent-config.json via TUI", "Validate JSON schema on save"],
+      "interfaces": ["/loom-config command", "TUI form with fields for config keys", "Schema validation via knowledge/schemas.ts"],
+      "dependencies": ["COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/ui/config-editor.ts"],
+      "status": "planned"
+    }
+  ],
+  "data_model_refs": [
+    "knowledge/project/schemas/task.schema.json",
+    "knowledge/project/schemas/plan.schema.json",
+    "knowledge/project/schemas/sdd.schema.json",
+    "knowledge/project/schemas/review.schema.json",
+    "knowledge/project/schemas/rule.schema.json",
+    "knowledge/project/schemas/architecture-component.schema.json",
+    "knowledge/project/configs/execution-config.json",
+    "knowledge/project/configs/subagent-config.json"
+  ],
+  "flows": [
+    {
+      "id": "FLOW-tui-render",
+      "name": "TUI Widget Render",
+      "type": "ui",
+      "steps": [
+        "Executor emits event: step_started, worker_spawned, review_done",
+        "Widget listens to events via ctx.onEvent or polling",
+        "Widget reads task.json + plan.json",
+        "Widget calls ctx.ui.setWidget(id, content)",
+        "Pi TUI renders widget in sidebar or panel"
+      ]
+    },
+    {
+      "id": "FLOW-localization-guard-review",
+      "name": "Localization Guard in Review",
+      "type": "agent_mode",
+      "steps": [
+        "Worker completes step and writes files-to-commit.json",
+        "Worker makes git commit",
+        "Executor runs: bash scripts/check-docs-localization.sh",
+        "If exit 0: proceed to reviewer spawn",
+        "If exit != 0: form correction WorkerSpec with guard output",
+        "Spawn correction worker -> new commit -> re-run guard",
+        "If max iter exceeded: escalate to operator"
+      ]
+    },
+    {
+      "id": "FLOW-verification",
+      "name": "Verification Matrix Check",
+      "type": "agent_mode",
+      "steps": [
+        "After each DU completion: executor reads all task.json invariants",
+        "For each invariant: check verification_method against evidence",
+        "Update verification-matrix.json with status: verified/defined/failed",
+        "If any critical invariant failed: block next DU, escalate"
+      ]
+    }
+  ],
+  "mvp_scope": [
+    {
+      "id": "DU-4",
+      "name": "Polish: TUI, localization, verification matrix",
+      "status": "in_progress"
+    }
+  ],
+  "deferred_scope": [
+    {
+      "id": "DEF-1",
+      "name": "Memory Layer (session/episodic/semantic/procedural)",
+      "rationale": "Deferred to v2 (TASK-2026-0002-loom-vnext). Active context management beyond passive files."
+    },
+    {
+      "id": "DEF-2",
+      "name": "Scout Retrieval (search_knowledge tool)",
+      "rationale": "Deferred to v2. Manual reading sufficient for <50 tasks."
+    }
+  ],
+  "created_at": "2026-05-23",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}

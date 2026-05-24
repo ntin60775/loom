@@ -61,7 +61,7 @@
       "task_id": "TASK-2026-0006-polish-impl",
       "slug": "polish-impl",
       "title": "DU-4: Polish + TUI",
-      "status": "draft",
+      "status": "completed",
       "priority": "medium",
       "branch": "task/task-2026-0006-polish-impl",
       "parent_task_id": "TASK-2026-0001-bootstrap",

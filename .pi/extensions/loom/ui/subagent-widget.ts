@@ -6,16 +6,9 @@
  */
 
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { SubagentRecord } from "../shared/subagent-state";
 
-export interface SubagentInfo {
-  name: string;
-  status: "running" | "completed" | "error" | "aborted";
-  model?: string;
-  step?: number;
-  taskId?: string;
-}
-
-export function updateSubagentWidget(ctx: ExtensionContext, subagents: SubagentInfo[]): void {
+export function updateSubagentWidget(ctx: ExtensionContext, subagents: SubagentRecord[]): void {
   if (subagents.length === 0) {
     ctx.ui.setWidget("loom-subagents", undefined);
     return;
@@ -24,7 +17,11 @@ export function updateSubagentWidget(ctx: ExtensionContext, subagents: SubagentI
   const lines = ["🤖 Субагенты:"];
   for (const s of subagents) {
     const icon = s.status === "running" ? "⏳" : s.status === "completed" ? "✓" : "✗";
-    lines.push(`  ${icon} ${s.name}${s.model ? ` [${s.model}]` : ""}`);
+    const meta: string[] = [];
+    if (s.type) meta.push(s.type);
+    if (s.model) meta.push(s.model);
+    if (s.step) meta.push(`step-${s.step}`);
+    lines.push(`  ${icon} ${s.name}${meta.length > 0 ? ` [${meta.join(", ")}]` : ""}`);
   }
 
   ctx.ui.setWidget("loom-subagents", lines);
