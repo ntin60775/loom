@@ -127,12 +127,12 @@
     },
     {
       "id": "DU-4",
-      "status": "planned",
+      "status": "in_progress",
       "purpose": "Polish: TUI widgets, localization guard integration, verification matrix, subagent config editor",
       "base_branch": "main"
     }
   ],
   "created_at": "2026-05-21",
-  "updated_at": "2026-05-23",
+  "updated_at": "2026-05-24",
   "schema_version": "1.0.0"
 }
