@@ -3,7 +3,7 @@
   "slug": "polish-impl",
   "title": "DU-4: Полировка — TUI, localization guard, verification matrix",
   "description": "Реализовать TUI widgets, интегрировать localization guard в review pipeline, добавить verification matrix, subagent config editor. Эта подзадача изолирована из TASK-2026-0001-bootstrap.",
-  "status": "in_progress",
+  "status": "completed",
   "priority": "medium",
   "branch": "task/task-2026-0006-polish-impl",
   "parent_task_id": "TASK-2026-0001-bootstrap",
@@ -41,7 +41,7 @@
   "delivery_units": [
     {
       "id": "DU-4",
-      "status": "in_progress",
+      "status": "merged",
       "purpose": "Polish: TUI widgets, localization guard integration, verification matrix, subagent config editor",
       "base_branch": "main"
     }

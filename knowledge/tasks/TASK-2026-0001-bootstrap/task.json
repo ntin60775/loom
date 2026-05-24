@@ -127,7 +127,7 @@
     },
     {
       "id": "DU-4",
-      "status": "in_progress",
+      "status": "merged",
       "purpose": "Polish: TUI widgets, localization guard integration, verification matrix, subagent config editor",
       "base_branch": "main"
     }

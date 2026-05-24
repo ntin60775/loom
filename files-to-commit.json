@@ -1,9 +1,12 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": "review-fixes",
+  "step": "finalize",
   "files": [
-    ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/ui/config-editor.ts",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/task.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/reviews/review-DU-4.json",
+    "knowledge/tasks/TASK-2026-0001-bootstrap/task.json",
+    "knowledge/tasks/registry.json",
     "files-to-commit.json"
   ]
 }
