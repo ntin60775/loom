@@ -13,6 +13,8 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { updateModeWidget } from "./ui/mode-widget";
 import { updateTaskWidget } from "./ui/task-widget";
+import { updateSubagentWidget } from "./ui/subagent-widget";
+import { getActiveSubagents, killSubagent } from "./shared/subagent-state";
 import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readRegistryFile, readJson, writeJson } from "./knowledge/io";
@@ -288,6 +290,65 @@ export default function loomExtension(pi: ExtensionAPI): void {
     },
   });
 
+  pi.registerCommand("subagents", {
+    description: "Показать список активных субагентов",
+    handler: async (_args, ctx) => {
+      const subagents = getActiveSubagents();
+      updateSubagentWidget(ctx, subagents);
+      if (subagents.length === 0) {
+        ctx.ui.notify("Нет активных субагентов.", "info");
+        return;
+      }
+      const lines = subagents.map((s) => `• ${s.name} [${s.type}] ${s.status} ${s.model ? `(${s.model})` : ""}`);
+      ctx.ui.notify(`Активные субагенты (${subagents.length}):\n${lines.join("\n")}`, "info");
+    },
+  });
+
+  pi.registerCommand("subagent-focus", {
+    description: "Показать детали субагента по ID",
+    handler: async (args, ctx) => {
+      const id = args?.trim();
+      if (!id) {
+        ctx.ui.notify("Укажите ID субагента: /subagent-focus <id>", "warning");
+        return;
+      }
+      const subagents = getActiveSubagents();
+      const s = subagents.find((x) => x.id === id || x.name === id);
+      if (!s) {
+        ctx.ui.notify(`Субагент "${id}" не найден.`, "error");
+        return;
+      }
+      const lines = [
+        `ID: ${s.id}`,
+        `Type: ${s.type}`,
+        `Status: ${s.status}`,
+        `Model: ${s.model ?? "default"}`,
+        `Task: ${s.taskId ?? "n/a"}`,
+        `Step: ${s.step ?? "n/a"}`,
+        `Started: ${new Date(s.startTime).toLocaleTimeString()}`,
+      ];
+      ctx.ui.notify(lines.join("\n"), "info");
+    },
+  });
+
+  pi.registerCommand("subagent-kill", {
+    description: "Прервать субагента по ID",
+    handler: async (args, ctx) => {
+      const id = args?.trim();
+      if (!id) {
+        ctx.ui.notify("Укажите ID субагента: /subagent-kill <id>", "warning");
+        return;
+      }
+      const ok = killSubagent(id);
+      if (ok) {
+        ctx.ui.notify(`Субагент "${id}" помечен как aborted.`, "warning");
+        updateSubagentWidget(ctx, getActiveSubagents());
+      } else {
+        ctx.ui.notify(`Субагент "${id}" не найден.`, "error");
+      }
+    },
+  });
+
   pi.registerCommand("arch-list", {
     description: "Показать список архитектурных компонентов",
     handler: async (_args, ctx) => {
@@ -312,6 +373,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     state = loadState(ctx);
     updateModeWidget(ctx, state.mode);
     updateTaskWidget(ctx, state.currentTaskId, ctx.cwd);
+    updateSubagentWidget(ctx, getActiveSubagents());
 
     // Restore tools based on persisted mode
     if (state.mode === "plan") {

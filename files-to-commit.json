@@ -1,8 +1,11 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": "plan-adjust",
+  "step": 2,
   "files": [
-    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json",
+    ".pi/extensions/loom/shared/subagent-state.ts",
+    ".pi/extensions/loom/agent-mode/tools.ts",
+    ".pi/extensions/loom/ui/subagent-widget.ts",
+    ".pi/extensions/loom/index.ts",
     "files-to-commit.json"
   ]
 }

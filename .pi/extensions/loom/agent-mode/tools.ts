@@ -16,6 +16,7 @@ import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
+import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -92,6 +93,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         };
       } finally {
         activeWorkerId = null;
+        updateSubagentStatus(workerId, "completed");
+        removeSubagent(workerId);
       }
     },
   });
@@ -127,8 +130,19 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
+      const reviewerId = `${params.task_id}-reviewer-step${params.step_number}`;
+      registerSubagent(reviewerId, {
+        id: reviewerId,
+        name: reviewerId,
+        type: "reviewer",
+        status: "running",
+        model,
+        step: params.step_number,
+        taskId: params.task_id,
+      });
+
       const spec: ReviewerSpec = {
-        name: `${params.task_id}-reviewer-step${params.step_number}`,
+        name: reviewerId,
         systemPrompt: reviewerPrompt,
         model,
         tools,
@@ -139,6 +153,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         cwd: ctx.cwd,
       };
 
+      try {
       const result = await spawnSubagent(spec, signal, (output) => {
         if (onUpdate) {
           onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
@@ -163,6 +178,10 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         details: { reviewJson, result: { exitCode: result.exitCode, usage: result.usage } },
         isError: isError && !reviewJson,
       };
+      } finally {
+        updateSubagentStatus(reviewerId, isError ? "error" : "completed");
+        removeSubagent(reviewerId);
+      }
     },
   });
 
