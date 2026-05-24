@@ -2,6 +2,6 @@
   "task_id": "TASK-2026-0008-memory-layer",
   "step": 9,
   "files": [
-    ".pi/extensions/loom/knowledge/schemas.ts"
+    ".pi/extensions/loom/index.ts"
   ]
 }

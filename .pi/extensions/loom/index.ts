@@ -22,6 +22,7 @@ import { onboardProject, listRules, listArchitectureComponents } from "./knowled
 import { generateVerificationMatrix } from "./knowledge/verification";
 import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
+import { Key } from "@earendil-works/pi-tui";
 
 interface LoomState {
   mode: "idle" | "plan" | "agent";
@@ -459,31 +460,40 @@ export default function loomExtension(pi: ExtensionAPI): void {
     return undefined;
   });
 
-  pi.registerShortcut("ctrl+shift+m", {
-    description: "Циклическое переключение режимов loom: idle → plan → agent → idle",
-    handler: async (ctx) => {
-      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
-      if (!knowledgeRoot) {
-        ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
-        return;
-      }
+  const cycleModesHandler = async (ctx: ExtensionContext): Promise<void> => {
+    const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+    if (!knowledgeRoot) {
+      ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
+      return;
+    }
 
-      if (state.mode === "idle") {
-        await enterPlanMode(ctx);
-      } else if (state.mode === "plan") {
-        const registry = readRegistryFile(knowledgeRoot);
-        const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
-        if (activeTask) {
-          await enterAgentMode(ctx);
-        } else {
-          ctx.ui.notify("Нет активной задачи для Agent Mode. Сброс в idle.", "warning");
-          await enterIdleMode(ctx);
-        }
+    if (state.mode === "idle") {
+      await enterPlanMode(ctx);
+    } else if (state.mode === "plan") {
+      const registry = readRegistryFile(knowledgeRoot);
+      const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
+      if (activeTask) {
+        await enterAgentMode(ctx);
       } else {
-        // agent → idle
+        ctx.ui.notify("Нет активной задачи для Agent Mode. Сброс в idle.", "warning");
         await enterIdleMode(ctx);
       }
-    },
+    } else {
+      // agent → idle
+      await enterIdleMode(ctx);
+    }
+  };
+
+  // Primary: ctrl+shift+m (works in Kitty/modern terminals)
+  pi.registerShortcut(Key.ctrlShift("m"), {
+    description: "Циклическое переключение режимов loom: idle → plan → agent → idle",
+    handler: cycleModesHandler,
+  });
+
+  // Fallback: alt+m (works in legacy terminals where ctrl+shift+letter is not distinct)
+  pi.registerShortcut(Key.alt("m"), {
+    description: "Циклическое переключение режимов loom (fallback)",
+    handler: cycleModesHandler,
   });
 
   pi.on("agent_end", async (_event, ctx) => {
