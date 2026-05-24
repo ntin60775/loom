@@ -13,10 +13,16 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
-import { getFinalOutput, loadPrompt } from "../shared/utils";
+import type { WorkerSpec } from "../subagent/specs";
+import { getFinalOutput, loadPrompt, sanitizeId } from "../shared/utils";
+import {
+  validateStackModuleShape,
+  validateContextResearchShape,
+  validateMigrationAnalysisShape,
+} from "../knowledge/schemas";
 import {
   getStackJsonPath,
   getContextResearchPath,
@@ -48,6 +54,7 @@ export async function runOnboardingSubagent(
   model: string | undefined,
   cwd: string,
   signal?: AbortSignal,
+  validator?: (data: unknown) => string | null,
 ): Promise<{ parsed: unknown; outputPath: string; result: import("../subagent/specs").SubagentResult }> {
   const prompt = loadPrompt(promptPath);
   const spec: WorkerSpec = {
@@ -72,7 +79,16 @@ export async function runOnboardingSubagent(
   }
 
   if (parsed) {
-    writeJson(outputPath, parsed);
+    if (validator) {
+      const err = validator(parsed);
+      if (err) {
+        console.error(`[loom] ${name} output validation failed: ${err}`);
+        parsed = null;
+      }
+    }
+    if (parsed) {
+      writeJson(outputPath, parsed);
+    }
   }
 
   return { parsed, outputPath, result };
@@ -273,11 +289,9 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const dir = taskDir(ctx.cwd, params.task_id);
-      const taskPath = path.join(dir, "task.json");
-      const planPath = path.join(dir, "plan.json");
 
-      const task = readJson<any>(taskPath);
-      const plan = readJson<any>(planPath);
+      const task = readTask(dir);
+      const plan = readPlan(dir);
 
       if (!task) {
         return { content: [{ type: "text", text: `Task ${params.task_id} not found` }], isError: true };
@@ -289,11 +303,11 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       // Update task status
       task.status = "draft";
       task.updated_at = new Date().toISOString().split("T")[0];
-      writeJson(taskPath, task);
+      writeJson(path.join(dir, "task.json"), task);
 
       // Update registry
-      const registryPath = path.join(ctx.cwd, "knowledge", "tasks", "registry.json");
-      const registry = readJson<any>(registryPath) ?? { schema_version: "1.0.0", tasks: [] };
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd) ?? path.join(ctx.cwd, "knowledge");
+      const registry = readRegistryFile(knowledgeRoot) ?? { schema_version: "1.0.0", tasks: [] };
       const existingIndex = registry.tasks.findIndex((t) => t.task_id === params.task_id);
       const entry = {
         task_id: params.task_id,
@@ -313,7 +327,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       } else {
         registry.tasks.push(entry);
       }
-      writeJson(registryPath, registry);
+      writeJson(path.join(knowledgeRoot, "tasks", "registry.json"), registry);
 
       // Generate derivative markdown (basic)
       const taskMd = `# ${task.title}\n\n**Task ID:** ${task.task_id}\n\n**Status:** ${task.status}\n**Priority:** ${task.priority}\n**Branch:** ${task.branch}\n\n## Description\n\n${task.description}\n\n## Invariants\n\n${task.invariants.map((i) => `- **${i.id}**: ${i.text}`).join("\n")}\n\n## Delivery Units\n\n${task.delivery_units.map((d) => `- **${d.id}**: ${d.purpose} (status: ${d.status})`).join("\n")}\n\n---\n\n*Generated from task.json*\n`;
@@ -343,8 +357,6 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     }),
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
-      const config = readSubagentConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
-
       const scoutModel = params.model ?? resolveModelArg("scout", params.instruction, ctx.cwd);
 
       const spec: WorkerSpec = {
@@ -389,6 +401,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         model,
         ctx.cwd,
         signal,
+        validateStackModuleShape,
       );
       return {
         content: [{ type: "text", text: `Scout completed. Output saved to ${out}.` }],
@@ -409,7 +422,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getContextResearchPath(ctx.cwd);
-      const model = params.model ?? resolveModelArg("scout", "documentation research", ctx.cwd);
+      const model = params.model ?? resolveModelArg("general", "documentation research", ctx.cwd);
       const { parsed, outputPath: out, result } = await runOnboardingSubagent(
         "loom-researcher",
         "subagent/prompts/researcher",
@@ -418,6 +431,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         model,
         ctx.cwd,
         signal,
+        validateContextResearchShape,
       );
       return {
         content: [{ type: "text", text: `Researcher completed. Output saved to ${out}.` }],
@@ -438,7 +452,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getMigrationAnalysisPath(ctx.cwd);
-      const model = params.model ?? resolveModelArg("scout", "migration analysis", ctx.cwd);
+      const model = params.model ?? resolveModelArg("general", "migration analysis", ctx.cwd);
       const { parsed, outputPath: out, result } = await runOnboardingSubagent(
         "loom-migrator",
         "subagent/prompts/migrator",
@@ -447,6 +461,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         model,
         ctx.cwd,
         signal,
+        validateMigrationAnalysisShape,
       );
       return {
         content: [{ type: "text", text: `Migrator completed. Output saved to ${out}.` }],
@@ -492,7 +507,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         version: 1,
       };
 
-      const safeId = params.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeId = sanitizeId(params.id);
       const sanitizedRule = { ...rule, id: safeId };
       const filePath = writeRule(ctx.cwd, sanitizedRule);
       return {
@@ -559,7 +574,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         },
       };
 
-      const safeId = params.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeId = sanitizeId(params.id);
       const sanitizedComp = { ...comp, id: safeId };
       const filePath = writeArchitectureComponent(ctx.cwd, sanitizedComp);
       return {
@@ -601,7 +616,8 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       const research = readJson<Record<string, unknown>>(getContextResearchPath(ctx.cwd));
       const rulesRaw = listRules(ctx.cwd);
       const compsRaw = listArchitectureComponents(ctx.cwd);
-      const registry = readRegistryFile(ctx.cwd);
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd) ?? path.join(ctx.cwd, "knowledge");
+      const registry = readRegistryFile(knowledgeRoot);
 
       const rules = rulesRaw.map((r) => {
         const full = readJson(path.join(ctx.cwd, "knowledge", "project", "rules", `${r.id}.json`));
@@ -612,19 +628,40 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         return full ?? c;
       });
 
-      const md = generateAgentsMd({
-        projectName: params.project_name,
-        stack,
-        research,
-        rules,
-        components,
-        tasks: registry?.tasks?.map((t) => ({
+      // Auto-detect project name: stack.json name > package.json name > directory basename
+      let projectName = params.project_name ?? "Project";
+      if (projectName === "Project") {
+        const stackName = stack?.name as string | undefined;
+        if (stackName) {
+          projectName = stackName;
+        } else {
+          const pkgJson = readJson<{ name?: string }>(path.join(ctx.cwd, "package.json"));
+          if (pkgJson?.name) projectName = pkgJson.name;
+          else projectName = path.basename(ctx.cwd);
+        }
+      }
+
+      // Load invariants from task.json for each task
+      const tasksWithInvariants = registry?.tasks?.map((t) => {
+        const taskJsonPath = path.join(ctx.cwd, "knowledge", "tasks", t.task_id, "task.json");
+        const taskJson = readJson<{ invariants?: Array<{ id: string; text: string; marker: string; status: string }> }>(taskJsonPath);
+        return {
           task_id: t.task_id,
           title: t.title,
           status: t.status,
           priority: t.priority,
           branch: t.branch,
-        })) ?? undefined,
+          invariants: taskJson?.invariants,
+        };
+      }) ?? undefined;
+
+      const md = generateAgentsMd({
+        projectName,
+        stack,
+        research,
+        rules,
+        components,
+        tasks: tasksWithInvariants,
       });
 
       const outPath = getGeneratedAgentsMdPath(ctx.cwd);

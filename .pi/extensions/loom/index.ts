@@ -15,7 +15,7 @@ import { updateModeWidget } from "./ui/mode-widget";
 import { updateTaskWidget } from "./ui/task-widget";
 import { registerPlanMode } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
-import { findKnowledgeRoot, readRegistryFile } from "./knowledge/io";
+import { findKnowledgeRoot, readRegistryFile, readJson, writeJson } from "./knowledge/io";
 import { onboardProject, listRules, listArchitectureComponents } from "./knowledge/onboarding";
 import { loadPrompt } from "./shared/utils";
 import * as path from "node:path";
@@ -26,6 +26,17 @@ interface LoomState {
 }
 
 function loadState(ctx: ExtensionContext): LoomState {
+  // Prefer file-based persistence (N2 fix: avoids unbounded session growth)
+  const statePath = path.join(ctx.cwd, "knowledge", ".loom-state.json");
+  const fileState = readJson<LoomState>(statePath);
+  if (fileState && typeof fileState.mode === "string") {
+    return {
+      mode: fileState.mode,
+      currentTaskId: fileState.currentTaskId ?? null,
+    };
+  }
+
+  // Fallback: legacy session-based state (backward compatibility)
   const entries = ctx.sessionManager.getEntries();
   const loomEntry = entries
     .filter((e: any) => e.type === "custom" && e.customType === "loom-state")
@@ -41,66 +52,95 @@ function loadState(ctx: ExtensionContext): LoomState {
   return { mode: "idle", currentTaskId: null };
 }
 
-function saveState(pi: ExtensionAPI, state: LoomState): void {
-  pi.appendEntry("loom-state", state);
+function saveState(cwd: string, state: LoomState): void {
+  const statePath = path.join(cwd, "knowledge", ".loom-state.json");
+  writeJson(statePath, state);
 }
 
 export default function loomExtension(pi: ExtensionAPI): void {
   let state: LoomState = { mode: "idle", currentTaskId: null };
+  let isTransitioning = false;
 
   // ── Mode Switch Helpers (DRY) ─────────────────────────────────────────
 
   async function enterPlanMode(ctx: ExtensionContext, args?: string): Promise<void> {
-    const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
-    if (!knowledgeRoot) {
-      ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
+    if (isTransitioning) {
+      ctx.ui.notify("Переключение режима уже выполняется. Подождите.", "warning");
       return;
     }
+    isTransitioning = true;
+    try {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
+        return;
+      }
 
-    state.mode = "plan";
-    state.currentTaskId = null;
-    saveState(pi, state);
-    pi.setActiveTools(PLAN_MODE_TOOLS);
-    updateModeWidget(ctx, "plan");
-    ctx.ui.notify("[PLAN] Режим планирования активирован. Опишите задачу или начните декомпозицию.", "info");
+      state.mode = "plan";
+      state.currentTaskId = null;
+      saveState(ctx.cwd, state);
+      pi.setActiveTools(PLAN_MODE_TOOLS);
+      updateModeWidget(ctx, "plan");
+      ctx.ui.notify("[PLAN] Режим планирования активирован. Опишите задачу или начните декомпозицию.", "info");
 
-    if (args && args.trim()) {
-      pi.sendUserMessage(args.trim());
+      if (args && args.trim()) {
+        pi.sendUserMessage(args.trim());
+      }
+    } finally {
+      isTransitioning = false;
     }
   }
 
   async function enterAgentMode(ctx: ExtensionContext): Promise<void> {
-    const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
-    if (!knowledgeRoot) {
-      ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
+    if (isTransitioning) {
+      ctx.ui.notify("Переключение режима уже выполняется. Подождите.", "warning");
       return;
     }
+    isTransitioning = true;
+    try {
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
+      if (!knowledgeRoot) {
+        ctx.ui.notify("loom: knowledge/ не найден. Запустите /loom-init сначала.", "error");
+        return;
+      }
 
-    const registry = readRegistryFile(knowledgeRoot);
-    const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
+      const registry = readRegistryFile(knowledgeRoot);
+      const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
 
-    if (!activeTask) {
-      ctx.ui.notify("Нет активной задачи in_progress. Создайте задачу через /plan или обновите registry.json.", "warning");
-      return;
+      if (!activeTask) {
+        ctx.ui.notify("Нет активной задачи in_progress. Создайте задачу через /plan или обновите registry.json.", "warning");
+        return;
+      }
+
+      state.mode = "agent";
+      state.currentTaskId = activeTask.task_id;
+      saveState(ctx.cwd, state);
+      pi.setActiveTools(AGENT_MODE_TOOLS);
+      updateModeWidget(ctx, "agent");
+      updateTaskWidget(ctx, activeTask.task_id, ctx.cwd);
+      ctx.ui.notify(`[AGENT] Режим исполнения активирован. Задача: ${activeTask.title}`, "info");
+    } finally {
+      isTransitioning = false;
     }
-
-    state.mode = "agent";
-    state.currentTaskId = activeTask.task_id;
-    saveState(pi, state);
-    pi.setActiveTools(AGENT_MODE_TOOLS);
-    updateModeWidget(ctx, "agent");
-    updateTaskWidget(ctx, activeTask.task_id, ctx.cwd);
-    ctx.ui.notify(`[AGENT] Режим исполнения активирован. Задача: ${activeTask.title}`, "info");
   }
 
   async function enterIdleMode(ctx: ExtensionContext): Promise<void> {
-    state.mode = "idle";
-    state.currentTaskId = null;
-    saveState(pi, state);
-    pi.setActiveTools(NORMAL_MODE_TOOLS);
-    updateModeWidget(ctx, "idle");
-    updateTaskWidget(ctx, null, ctx.cwd);
-    ctx.ui.notify("[IDLE] Режим сброшен. Используйте /plan или /agent для входа в режим.", "info");
+    if (isTransitioning) {
+      ctx.ui.notify("Переключение режима уже выполняется. Подождите.", "warning");
+      return;
+    }
+    isTransitioning = true;
+    try {
+      state.mode = "idle";
+      state.currentTaskId = null;
+      saveState(ctx.cwd, state);
+      pi.setActiveTools(NORMAL_MODE_TOOLS);
+      updateModeWidget(ctx, "idle");
+      updateTaskWidget(ctx, null, ctx.cwd);
+      ctx.ui.notify("[IDLE] Режим сброшен. Используйте /plan или /agent для входа в режим.", "info");
+    } finally {
+      isTransitioning = false;
+    }
   }
 
   // ── Commands ───────────────────────────────────────────────────────────

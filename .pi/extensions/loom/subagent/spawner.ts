@@ -165,7 +165,7 @@ export async function spawnSubagent(
       try { fs.unlinkSync(tmpPromptPath); } catch { /* ignore */ }
     }
     if (tmpPromptDir) {
-      try { fs.rmdirSync(tmpPromptDir); } catch { /* ignore */ }
+      try { fs.rmSync(tmpPromptDir, { recursive: true, force: true }); } catch { /* ignore */ }
     }
   }
 }

@@ -5,6 +5,8 @@ import {
   validatePlanShape,
   validateRegistryShape,
   validateReviewShape,
+  validateSubagentConfigShape,
+  validateExecutionConfigShape,
 } from "./schemas";
 import type {
   TaskData,
@@ -64,9 +66,9 @@ export function readReview(reviewPath: string): ReviewData | null {
 }
 
 export function readSubagentConfig(configPath: string): SubagentConfigData | null {
-  return readJson<SubagentConfigData>(configPath);
+  return readJson<SubagentConfigData>(configPath, validateSubagentConfigShape);
 }
 
 export function readExecutionConfig(configPath: string): ExecutionConfigData | null {
-  return readJson<ExecutionConfigData>(configPath);
+  return readJson<ExecutionConfigData>(configPath, validateExecutionConfigShape);
 }

@@ -1,0 +1,92 @@
+{
+  "review_id": "REV-2026-0005-DU-3-comprehensive",
+  "target": {
+    "type": "git-diff",
+    "base_commit": "0dfee70",
+    "task_id": "TASK-2026-0005-onboarding-impl",
+    "branch": "task/task-2026-0005-onboarding-impl"
+  },
+  "verdict": "approve",
+  "criteria_checks": [
+    {
+      "criterion": "C1: WorkerSpec import in plan-mode/tools.ts",
+      "status": "pass",
+      "comment": "import type { WorkerSpec } from \"../subagent/specs\" добавлен. Тип используется на стр.53 и 350."
+    },
+    {
+      "criterion": "C2: readRegistry → readRegistryFile in agent-mode/tools.ts",
+      "status": "pass",
+      "comment": "Импорт исправлен: readRegistry → readRegistryFile. Вызов на стр.195 корректен."
+    },
+    {
+      "criterion": "W3: Мёртвый код инвариантов в generateAgentsMd",
+      "status": "pass",
+      "comment": "Реализована загрузка инвариантов из task.json в loom_generate_agents_md и вывод секции «Инварианты» с дедупликацией по ID."
+    },
+    {
+      "criterion": "W4: Валидация onboarding-артефактов",
+      "status": "pass",
+      "comment": "runOnboardingSubagent принимает опциональный validator. Scout/Researcher/Migrator передают validateStackModuleShape/validateContextResearchShape/validateMigrationAnalysisShape. При ошибке валидации parsed=null → isError=true."
+    },
+    {
+      "criterion": "W5: Формат files-to-commit.json",
+      "status": "pass",
+      "comment": "Восстановлен объектный формат {task_id, step, files: [...]}. Все 20 файлов существуют."
+    },
+    {
+      "criterion": "W6: Scout domain selection в model-resolver.ts",
+      "status": "pass",
+      "comment": "Приоритет доменов: 'scout' → 'general' → domainKeys[0]. Позволяет указать отдельный провайдер для scout."
+    },
+    {
+      "criterion": "N7: Дублирование sanitization ID",
+      "status": "pass",
+      "comment": "Функция sanitizeId() вынесена в shared/utils.ts. loom_add_rule и loom_add_architecture_component используют sanitizeId(params.id)."
+    },
+    {
+      "criterion": "N8: Валидация config-файлов",
+      "status": "pass",
+      "comment": "Добавлен validateExecutionConfigShape в schemas.ts. readSubagentConfig и readExecutionConfig в io.ts передают валидаторы в readJson()."
+    },
+    {
+      "criterion": "N9: Авто-определение projectName",
+      "status": "pass",
+      "comment": "loom_generate_agents_md: если projectName='Project', пробует stack.json.name → package.json.name → path.basename(cwd)."
+    },
+    {
+      "criterion": "N10: Пустая _proposed/ директория",
+      "status": "pass",
+      "comment": "knowledge/project/rules/_proposed/ удалена (rmdir). ensureKnowledgeStructure не создаёт эту директорию."
+    },
+    {
+      "criterion": "Инварианты: код не сломан",
+      "status": "pass",
+      "comment": "Все изменения обратно-совместимы. Сигнатура runOnboardingSubagent расширена опциональным параметром. Интерфейс AgentsMdInput расширен опциональным полем invariants. readRegistry переименован в readRegistryFile — все точки вызова обновлены."
+    },
+    {
+      "criterion": "Локализация",
+      "status": "pass",
+      "comment": "Все пользовательские строки на русском. Системные комментарии на английском. Новый код в generateAgentsMd генерирует русские заголовки секций."
+    },
+    {
+      "criterion": "Безопасность",
+      "status": "pass",
+      "comment": "sanitizeId вынесен в shared/utils, переиспользуется. Валидаторы не пропускают данные с отсутствующими обязательными полями. isError корректно обрабатывает ошибки валидации."
+    }
+  ],
+  "general_comments": [
+    "Все 10 замечаний из comprehensive review исправлены: 2 CRITICAL, 4 WARNING, 4 NOTE.",
+    "Изменения минимальны и таргетированы: только те строки, которые требовали исправления.",
+    "8 файлов изменено, +134/−43 строк.",
+    "Обратная совместимость сохранена: сигнатуры расширены опциональными параметрами, формат files-to-commit.json восстановлен.",
+    "Валидация onboarding-артефактов теперь происходит на двух уровнях: при чтении (io.ts) и при записи (runOnboardingSubagent)."
+  ],
+  "corrections": [],
+  "confidence": 0.97,
+  "reviewer_model": "comprehensive-human-assisted",
+  "created_at": "2026-05-24",
+  "previous_reviews": [
+    "review-DU-3.json (approve, self-review)",
+    "review-DU-3-v2.json (approve, self-review)"
+  ]
+}

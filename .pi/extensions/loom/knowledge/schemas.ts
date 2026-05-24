@@ -279,6 +279,23 @@ export const ArchitectureComponentSchema = Type.Object({
   }),
 });
 
+export const ExecutionConfigSchema = Type.Object({
+  schema_version: Type.String({ default: "1.0.0" }),
+  git_safety: Type.Optional(Type.Object({
+    require_files_to_commit: Type.Boolean({ default: true }),
+    validate_against_plan: Type.Boolean({ default: true }),
+  })),
+  recovery: Type.Optional(Type.Object({
+    max_worker_iterations: Type.Number({ default: 10 }),
+    timeout_reviewer_seconds: Type.Number({ default: 300 }),
+    on_worker_crash: Type.String({ default: "retry_once" }),
+  })),
+  localization_guard: Type.Optional(Type.Object({
+    enabled: Type.Boolean({ default: true }),
+    command: Type.String(),
+  })),
+});
+
 // ── Runtime Validators ────────────────────────────────────────────────────
 // Simple structural checks without TypeGuard dependency
 
@@ -333,6 +350,56 @@ export function validateSubagentConfigShape(data: unknown): string | null {
     if (!val || typeof val !== "object") return `domain ${key} must be an object`;
     const d = val as Record<string, unknown>;
     if (!("provider" in d) || !("model" in d)) return `domain ${key} missing provider or model`;
+  }
+  return null;
+}
+
+export function validateExecutionConfigShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  const hasGitSafety = "git_safety" in obj;
+  const hasRecovery = "recovery" in obj;
+  const hasLocalization = "localization_guard" in obj;
+  const hasSchemaVersion = "schema_version" in obj;
+  if (!hasGitSafety && !hasRecovery && !hasLocalization && !hasSchemaVersion) {
+    return "missing expected config sections (git_safety, recovery, localization_guard, or schema_version)";
+  }
+  if (hasSchemaVersion && typeof obj.schema_version !== "string") {
+    return "schema_version must be a string";
+  }
+  if (hasRecovery) {
+    const rec = obj.recovery as Record<string, unknown>;
+    if (typeof rec.max_worker_iterations !== "number" || rec.max_worker_iterations < 1) {
+      return "recovery.max_worker_iterations must be a number >= 1";
+    }
+    if (typeof rec.timeout_reviewer_seconds !== "number" || rec.timeout_reviewer_seconds < 1) {
+      return "recovery.timeout_reviewer_seconds must be a number >= 1";
+    }
+    if (typeof rec.on_worker_crash !== "string") {
+      return "recovery.on_worker_crash must be a string";
+    }
+    const validCrashActions = ["retry_once", "retry_twice", "abort", "escalate"];
+    if (!validCrashActions.includes(rec.on_worker_crash)) {
+      return `recovery.on_worker_crash must be one of ${validCrashActions.join(", ")}`;
+    }
+  }
+  if (hasGitSafety) {
+    const gs = obj.git_safety as Record<string, unknown>;
+    if (typeof gs.require_files_to_commit !== "boolean") {
+      return "git_safety.require_files_to_commit must be a boolean";
+    }
+    if (typeof gs.validate_against_plan !== "boolean") {
+      return "git_safety.validate_against_plan must be a boolean";
+    }
+  }
+  if (hasLocalization) {
+    const loc = obj.localization_guard as Record<string, unknown>;
+    if (typeof loc.enabled !== "boolean") {
+      return "localization_guard.enabled must be a boolean";
+    }
+    if (typeof loc.command !== "string" || loc.command.length === 0) {
+      return "localization_guard.command must be a non-empty string";
+    }
   }
   return null;
 }
