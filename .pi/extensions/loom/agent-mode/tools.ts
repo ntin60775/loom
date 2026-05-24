@@ -11,7 +11,7 @@
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson, readTask, readPlan, readRegistry, findKnowledgeRoot } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";

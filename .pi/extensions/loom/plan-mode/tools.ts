@@ -16,7 +16,13 @@ import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
-import { getFinalOutput, loadPrompt } from "../shared/utils";
+import type { WorkerSpec } from "../subagent/specs";
+import { getFinalOutput, loadPrompt, sanitizeId } from "../shared/utils";
+import {
+  validateStackModuleShape,
+  validateContextResearchShape,
+  validateMigrationAnalysisShape,
+} from "../knowledge/schemas";
 import {
   getStackJsonPath,
   getContextResearchPath,
@@ -48,6 +54,7 @@ export async function runOnboardingSubagent(
   model: string | undefined,
   cwd: string,
   signal?: AbortSignal,
+  validator?: (data: unknown) => string | null,
 ): Promise<{ parsed: unknown; outputPath: string; result: import("../subagent/specs").SubagentResult }> {
   const prompt = loadPrompt(promptPath);
   const spec: WorkerSpec = {
@@ -72,7 +79,16 @@ export async function runOnboardingSubagent(
   }
 
   if (parsed) {
-    writeJson(outputPath, parsed);
+    if (validator) {
+      const err = validator(parsed);
+      if (err) {
+        console.error(`[loom] ${name} output validation failed: ${err}`);
+        parsed = null;
+      }
+    }
+    if (parsed) {
+      writeJson(outputPath, parsed);
+    }
   }
 
   return { parsed, outputPath, result };
@@ -389,6 +405,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         model,
         ctx.cwd,
         signal,
+        validateStackModuleShape,
       );
       return {
         content: [{ type: "text", text: `Scout completed. Output saved to ${out}.` }],
@@ -418,6 +435,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         model,
         ctx.cwd,
         signal,
+        validateContextResearchShape,
       );
       return {
         content: [{ type: "text", text: `Researcher completed. Output saved to ${out}.` }],
@@ -447,6 +465,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         model,
         ctx.cwd,
         signal,
+        validateMigrationAnalysisShape,
       );
       return {
         content: [{ type: "text", text: `Migrator completed. Output saved to ${out}.` }],
@@ -492,7 +511,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         version: 1,
       };
 
-      const safeId = params.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeId = sanitizeId(params.id);
       const sanitizedRule = { ...rule, id: safeId };
       const filePath = writeRule(ctx.cwd, sanitizedRule);
       return {
@@ -559,7 +578,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         },
       };
 
-      const safeId = params.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeId = sanitizeId(params.id);
       const sanitizedComp = { ...comp, id: safeId };
       const filePath = writeArchitectureComponent(ctx.cwd, sanitizedComp);
       return {
@@ -612,19 +631,40 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         return full ?? c;
       });
 
-      const md = generateAgentsMd({
-        projectName: params.project_name,
-        stack,
-        research,
-        rules,
-        components,
-        tasks: registry?.tasks?.map((t) => ({
+      // Auto-detect project name: stack.json name > package.json name > directory basename
+      let projectName = params.project_name;
+      if (projectName === "Project") {
+        const stackName = stack?.name as string | undefined;
+        if (stackName) {
+          projectName = stackName;
+        } else {
+          const pkgJson = readJson<{ name?: string }>(path.join(ctx.cwd, "package.json"));
+          if (pkgJson?.name) projectName = pkgJson.name;
+          else projectName = path.basename(ctx.cwd);
+        }
+      }
+
+      // Load invariants from task.json for each task
+      const tasksWithInvariants = registry?.tasks?.map((t) => {
+        const taskJsonPath = path.join(ctx.cwd, "knowledge", "tasks", t.task_id, "task.json");
+        const taskJson = readJson<{ invariants?: Array<{ id: string; text: string; marker: string; status: string }> }>(taskJsonPath);
+        return {
           task_id: t.task_id,
           title: t.title,
           status: t.status,
           priority: t.priority,
           branch: t.branch,
-        })) ?? undefined,
+          invariants: taskJson?.invariants,
+        };
+      }) ?? undefined;
+
+      const md = generateAgentsMd({
+        projectName,
+        stack,
+        research,
+        rules,
+        components,
+        tasks: tasksWithInvariants,
       });
 
       const outPath = getGeneratedAgentsMdPath(ctx.cwd);

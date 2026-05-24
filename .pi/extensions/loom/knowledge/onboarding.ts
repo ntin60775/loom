@@ -188,7 +188,14 @@ export interface AgentsMdInput {
   rules: Array<Record<string, unknown>>;
   components: Array<Record<string, unknown>>;
   /** Optional task data for generating navigation and invariants section */
-  tasks?: Array<{ task_id: string; title: string; status: string; priority: string; branch: string }>;
+  tasks?: Array<{
+    task_id: string;
+    title: string;
+    status: string;
+    priority: string;
+    branch: string;
+    invariants?: Array<{ id: string; text: string; marker: string; status: string }>;
+  }>;
   active_task_id?: string | null;
 }
 
@@ -237,9 +244,32 @@ export function generateAgentsMd(input: AgentsMdInput): string {
   // ── Invariants ────────────────────────────────────────────────────────
 
   if (input.tasks && input.tasks.length > 0) {
-    const allInvariants: Array<{ id: string; text: string; marker: string }> = [];
+    const allInvariants: Array<{ id: string; text: string; marker: string; taskTitle: string }> = [];
+    const seenIds = new Set<string>();
     for (const t of input.tasks) {
-      // invariants are in task.json, not the registry entry — skip if not loaded
+      if (t.invariants) {
+        for (const inv of t.invariants) {
+          if (!seenIds.has(inv.id)) {
+            seenIds.add(inv.id);
+            allInvariants.push({
+              id: inv.id,
+              text: inv.text,
+              marker: inv.marker,
+              taskTitle: t.title,
+            });
+          }
+        }
+      }
+    }
+    if (allInvariants.length > 0) {
+      lines.push("## Инварианты");
+      lines.push("");
+      for (const inv of allInvariants) {
+        lines.push(`- **${inv.id}**: ${inv.text}`);
+        lines.push(`  - Маркер: \`${inv.marker}\``);
+        lines.push(`  - Задача: ${inv.taskTitle}`);
+      }
+      lines.push("");
     }
   }
 

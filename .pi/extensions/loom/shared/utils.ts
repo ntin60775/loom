@@ -32,6 +32,13 @@ export function loadPrompt(relativePath: string): string {
 }
 
 /**
+ * Sanitize an ID for use in file paths. Replaces unsafe characters with underscores.
+ */
+export function sanitizeId(id: string): string {
+  return id.replace(/[^a-zA-Z0-9_-]/g, "_");
+}
+
+/**
  * Extract final assistant text from a subagent result's messages array.
  */
 export function getFinalOutput(messages: Array<{ role: string; content: Array<{ type: string; text?: string }> }>): string {

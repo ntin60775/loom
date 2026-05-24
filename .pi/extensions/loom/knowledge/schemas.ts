@@ -337,6 +337,13 @@ export function validateSubagentConfigShape(data: unknown): string | null {
   return null;
 }
 
+export function validateExecutionConfigShape(data: unknown): string | null {
+  if (!data || typeof data !== "object") return "not an object";
+  const obj = data as Record<string, unknown>;
+  if (!("review" in obj) && !("recovery" in obj) && !("git" in obj)) return "missing expected config sections";
+  return null;
+}
+
 export function validateStackModuleShape(data: unknown): string | null {
   if (!data || typeof data !== "object") return "not an object";
   const obj = data as Record<string, unknown>;

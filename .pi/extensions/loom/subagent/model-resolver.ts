@@ -71,11 +71,12 @@ export function resolveModel(
   const domainKeys = Object.keys(domains);
   if (domainKeys.length === 0) return null;
 
-  // Scout: use dedicated scout config or fallback to first domain
+  // Scout: use dedicated scout domain, fallback to general, then first domain
   if (agentType === "scout") {
     const scoutConfig = config.scout;
-    // Scout doesn't have domain_rules — use first domain or a 'general' domain
-    const domainName = domainKeys.includes("general") ? "general" : domainKeys[0];
+    const domainName = domainKeys.includes("scout") ? "scout"
+                     : domainKeys.includes("general") ? "general"
+                     : domainKeys[0];
     const domain = domains[domainName];
     return {
       model: domain.model,
