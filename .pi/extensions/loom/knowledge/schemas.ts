@@ -109,6 +109,12 @@ export const ReviewSchema = Type.Object({
   reviewed_at: Type.String(),
 });
 
+export const DomainRuleSchema = Type.Object({
+  extension: Type.Optional(Type.String()),
+  domain: Type.String(),
+  default: Type.Optional(Type.String()),
+});
+
 export const SubagentConfigSchema = Type.Object({
   domains: Type.Record(
     Type.String(),
@@ -265,12 +271,6 @@ export const ArchitectureComponentSchema = Type.Object({
     type: Type.String({ enum: ["auto-detected", "agent-documented", "operator-defined"] }),
     ref: Type.String(),
   }),
-});
-
-export const DomainRuleSchema = Type.Object({
-  extension: Type.Optional(Type.String()),
-  domain: Type.String(),
-  default: Type.Optional(Type.String()),
 });
 
 export const ExecutionConfigSchema = Type.Object({
