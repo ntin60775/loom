@@ -68,6 +68,18 @@
       "parent_delivery_unit": "DU-4",
       "created_at": "2026-05-23",
       "updated_at": "2026-05-23"
+    },
+    {
+      "task_id": "TASK-2026-0007-polish-fixes",
+      "slug": "polish-fixes",
+      "title": "DU-4: Post-review tech-debt fixes (P1-P5)",
+      "status": "completed",
+      "priority": "medium",
+      "branch": "task/task-2026-0007-polish-fixes",
+      "parent_task_id": "TASK-2026-0006-polish-impl",
+      "parent_delivery_unit": "DU-4",
+      "created_at": "2026-05-24",
+      "updated_at": "2026-05-24"
     }
   ]
 }

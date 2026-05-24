@@ -20,15 +20,15 @@ export function resolveExtensionRoot(): string {
 /**
  * Load a prompt file relative to the extension root.
  * @param relativePath — path relative to extension root, e.g. "prompts/plan-orchestrator" or "subagent/prompts/worker"
+ * @throws Error if prompt file not found — never returns fallback string (P4 fix)
  */
 export function loadPrompt(relativePath: string): string {
   const baseDir = resolveExtensionRoot();
   const fullPath = path.join(baseDir, `${relativePath}.md`);
-  try {
-    return fs.readFileSync(fullPath, "utf-8");
-  } catch {
-    return `[LOAD ERROR: Prompt ${relativePath} not found at ${fullPath}]`;
+  if (!fs.existsSync(fullPath)) {
+    throw new Error(`Prompt file not found: ${fullPath}`);
   }
+  return fs.readFileSync(fullPath, "utf-8");
 }
 
 /**

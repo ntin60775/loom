@@ -1,0 +1,52 @@
+{
+  "task_id": "TASK-2026-0007-polish-fixes",
+  "slug": "polish-fixes",
+  "title": "DU-4: Post-review tech-debt fixes (P1-P5)",
+  "description": "Исправление 5 проблем, найденных при комплексном ревью DU-4: P1 — rollback шага при ошибке worker, P2 — реальный kill субагента через AbortController, P3 — авто-генерация verification matrix, P4 — loadPrompt выбрасывает ошибку вместо fallback-строки, P5 — документация практик files-to-commit.json.",
+  "status": "completed",
+  "priority": "medium",
+  "branch": "task/task-2026-0007-polish-fixes",
+  "parent_task_id": "TASK-2026-0006-polish-impl",
+  "parent_delivery_unit": "DU-4",
+  "invariants": [
+    {
+      "id": "INV-5",
+      "text": "Operator слои: read-only TUI, docs-as-code",
+      "marker": "INVARIANT: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
+      "status": "verified",
+      "verification_method": "Code review: изменения не затрагивают TUI widgets"
+    },
+    {
+      "id": "INV-10",
+      "text": "Модели конфигурируются: не хардкод",
+      "marker": "INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "status": "verified",
+      "verification_method": "Code review: изменения не добавляют хардкод model строк"
+    },
+    {
+      "id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "marker": "INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian",
+      "status": "verified",
+      "verification_method": "Localization guard после commit"
+    },
+    {
+      "id": "INV-13",
+      "text": "Git commit safety: не git add -A, а staged по списку",
+      "marker": "INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
+      "status": "verified",
+      "verification_method": "files-to-commit.json при коммите"
+    }
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-4",
+      "status": "merged",
+      "purpose": "Polish fixes: P1-P5 post-review tech-debt",
+      "base_branch": "main"
+    }
+  ],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}

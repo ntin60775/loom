@@ -13,6 +13,8 @@ export interface SubagentRecord {
   step?: number;
   taskId?: string;
   startTime: number;
+  /** P2 fix: AbortController для реального убийства процесса */
+  controller?: AbortController;
 }
 
 const activeSubagents = new Map<string, SubagentRecord>();
@@ -34,9 +36,18 @@ export function getActiveSubagents(): SubagentRecord[] {
   return Array.from(activeSubagents.values());
 }
 
+/**
+ * Kill subagent by ID.
+ * P2 fix: calls AbortController.abort() to actually kill the child process,
+ * then marks status as 'aborted'. Falls back to status-only for subagents
+ * without a controller (backward compatibility).
+ */
 export function killSubagent(id: string): boolean {
   const s = activeSubagents.get(id);
   if (!s) return false;
+  if (s.controller) {
+    s.controller.abort();
+  }
   s.status = "aborted";
   return true;
 }

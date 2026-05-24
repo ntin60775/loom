@@ -45,10 +45,17 @@
 5. Review — через git diff → `reviews/` в knowledge/.
 
 ## Git Flow
-- Worker делает task-scoped commits по staged-списку (files-to-commit.json).
+- Worker делает task-scoped commits по staged-списку (`files-to-commit.json`).
 - Reviewer анализирует git diff + файлы.
 - Executor: `approve → следующий шаг`, `reject → доработка` (макс 10 iter).
 - Human-in-the-loop только при reject+max_iter, timeout, ambiguity.
+
+### Практика работы с files-to-commit.json
+- `files-to-commit.json` — единственный источник списка файлов для коммита.
+- Перед каждым коммитом worker формирует актуальный список изменённых файлов.
+- Файл должен содержать `task_id`, `step` и массив `files` с абсолютными или относительными (от корня репозитория) путями.
+- После выполнения задачи `files-to-commit.json` отражает последнее состояние коммита.
+- Для новой задачи — создаётся заново, предыдущее содержимое не релевантно.
 
 ## Decision Making
 - Агент принимает решения автономно, если контекст однозначен.

@@ -1,0 +1,53 @@
+{
+  "review_id": "review-PF-1",
+  "task_id": "TASK-2026-0007-polish-fixes",
+  "delivery_unit": "DU-4",
+  "target_commit": "pending",
+  "reviewer": "self-review (agent)",
+  "date": "2026-05-24",
+  "verdict": "approved",
+  "findings": [
+    {
+      "id": "PF-OK-1",
+      "severity": "note",
+      "category": "verification",
+      "file": ".pi/extensions/loom/shared/utils.ts",
+      "description": "P4: loadPrompt теперь выбрасывает Error при отсутствии файла. Вызывающий код (tools.ts, index.ts) корректно пробрасывает ошибку через pi tool error handling."
+    },
+    {
+      "id": "PF-OK-2",
+      "severity": "note",
+      "category": "verification",
+      "file": ".pi/extensions/loom/agent-mode/tools.ts",
+      "description": "P1: Rollback при workerError — step.status возвращается в 'pending' через writeJson. Предотвращает застревание шага в in_progress."
+    },
+    {
+      "id": "PF-OK-3",
+      "severity": "note",
+      "category": "verification",
+      "file": ".pi/extensions/loom/shared/subagent-state.ts",
+      "description": "P2: SubagentRecord.controller (AbortController) добавлен. killSubagent вызывает controller.abort() для реального убийства процесса. Каскадное слушание tool signal."
+    },
+    {
+      "id": "PF-OK-4",
+      "severity": "note",
+      "category": "verification",
+      "file": ".pi/extensions/loom/agent-mode/tools.ts",
+      "description": "P3: loom_update_task авто-генерирует verification matrix при task_status === 'completed'."
+    },
+    {
+      "id": "PF-OK-5",
+      "severity": "note",
+      "category": "verification",
+      "file": "AGENTS.md",
+      "description": "P5: Добавлена секция «Практика работы с files-to-commit.json» с правилами формирования и обновления."
+    }
+  ],
+  "invariant_checks": [
+    { "id": "INV-5", "status": "pass", "note": "Изменения не затрагивают TUI widgets" },
+    { "id": "INV-10", "status": "pass", "note": "Нет новых хардкодов model строк" },
+    { "id": "INV-12", "status": "pass", "note": "UI-строки на русском, code comments на английском" },
+    { "id": "INV-13", "status": "pass", "note": "files-to-commit.json сформирован" }
+  ],
+  "schema_version": "1.0.0"
+}

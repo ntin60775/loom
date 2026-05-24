@@ -101,6 +101,24 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const workerId = `${params.task_id}-worker-step${params.step_number}`;
       activeWorkerId = workerId;
 
+      // P2 fix: create AbortController for real subagent kill
+      const abortController = new AbortController();
+      // Cascade: if tool signal fires, abort our controller too
+      if (signal) {
+        if (signal.aborted) abortController.abort();
+        else signal.addEventListener("abort", () => abortController.abort(), { once: true });
+      }
+      registerSubagent(workerId, {
+        id: workerId,
+        name: workerId,
+        type: "worker",
+        status: "running",
+        model,
+        step: params.step_number,
+        taskId: params.task_id,
+        controller: abortController,
+      });
+
       try {
         const spec: WorkerSpec = {
           name: workerId,
@@ -111,7 +129,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           cwd: ctx.cwd,
         };
 
-        const result = await spawnSubagent(spec, signal, (output) => {
+        const result = await spawnSubagent(spec, abortController.signal, (output) => {
           if (onUpdate) {
             onUpdate({ content: [{ type: "text", text: output }], details: { phase: "worker", step: params.step_number } });
           }
@@ -127,6 +145,13 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           if (guardResult.isError) {
             workerError = true;
           }
+        }
+
+        // P1 fix: rollback step to "pending" on worker error
+        if (workerError && step) {
+          const planPath = path.join(dir, "plan.json");
+          step.status = "pending";
+          writeJson(planPath, plan);
         }
 
         const lines = [
@@ -179,6 +204,13 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
       const reviewerId = `${params.task_id}-reviewer-step${params.step_number}`;
+
+      // P2 fix: create AbortController for real subagent kill
+      const reviewAbortController = new AbortController();
+      if (signal) {
+        if (signal.aborted) reviewAbortController.abort();
+        else signal.addEventListener("abort", () => reviewAbortController.abort(), { once: true });
+      }
       registerSubagent(reviewerId, {
         id: reviewerId,
         name: reviewerId,
@@ -187,6 +219,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         model,
         step: params.step_number,
         taskId: params.task_id,
+        controller: reviewAbortController,
       });
 
       const spec: ReviewerSpec = {
@@ -204,7 +237,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       let reviewerError = false;
       let reviewJson: Record<string, unknown> | null = null;
       try {
-        const result = await spawnSubagent(spec, signal, (output) => {
+        const result = await spawnSubagent(spec, reviewAbortController.signal, (output) => {
           if (onUpdate) {
             onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
           }
@@ -268,6 +301,11 @@ export function registerAgentTools(pi: ExtensionAPI): void {
             entry.updated_at = task?.updated_at ?? new Date().toISOString().split("T")[0];
             writeJson(registryPath, registry);
           }
+        }
+
+        // P3 fix: auto-regenerate verification matrix on task completion
+        if (params.task_status === "completed") {
+          generateVerificationMatrix(ctx.cwd);
         }
       }
 

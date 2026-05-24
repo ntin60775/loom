@@ -1,0 +1,74 @@
+{
+  "task_id": "TASK-2026-0007-polish-fixes",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "P4: loadPrompt выбрасывает ошибку вместо fallback-строки",
+      "description": "Изменить loadPrompt в shared/utils.ts: при отсутствии файла выбрасывать Error. Убрать возврат '[LOAD ERROR: ...]' строки, которая попадает в system prompt агента.",
+      "expected_output": "shared/utils.ts — loadPrompt throws Error; вызывающий код корректно передаёт ошибку пользователю",
+      "constraints": ["INV-12"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "done"
+    },
+    {
+      "step_number": 2,
+      "title": "P1: Rollback шага в pending при ошибке worker",
+      "description": "В loom_spawn_worker (agent-mode/tools.ts): при workerError откатить статус шага в 'pending' через writeJson. Предотвращает застревание шага в статусе in_progress без фактического выполнения.",
+      "expected_output": "agent-mode/tools.ts — rollback логика в loom_spawn_worker",
+      "constraints": ["INV-13"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "done"
+    },
+    {
+      "step_number": 3,
+      "title": "P2: Реальный kill субагента через AbortController",
+      "description": "Добавить AbortController tracking в SubagentRecord. В loom_spawn_worker создавать AbortController, регистрировать в subagent-state, передавать signal в spawnSubagent. В killSubagent вызывать controller.abort() для реального убийства процесса.",
+      "expected_output": "shared/subagent-state.ts — controller field + kill через abort(); agent-mode/tools.ts — создание и передача AbortController",
+      "constraints": ["INV-5"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "done"
+    },
+    {
+      "step_number": 4,
+      "title": "P3: Авто-генерация verification matrix",
+      "description": "В loom_update_task при task_status === 'completed' автоматически вызывать generateVerificationMatrix. Устраняет расхождение с SDD, где заявлено 'Auto-check invariants after step completion'.",
+      "expected_output": "agent-mode/tools.ts — авто-вызов generateVerificationMatrix в loom_update_task",
+      "constraints": ["INV-13"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "done"
+    },
+    {
+      "step_number": 5,
+      "title": "P5: Документирование практик files-to-commit.json",
+      "description": "Обновить документацию: добавить в AGENTS.md рекомендацию обновлять files-to-commit.json перед каждым коммитом.",
+      "expected_output": "AGENTS.md — секция о files-to-commit.json best practices",
+      "constraints": ["INV-12"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "done"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-PF-1",
+      "description": "AbortController может конфликтовать с tool-level signal от pi",
+      "severity": "low",
+      "mitigation": "Слушаем tool signal для каскадного abort нашего контроллера"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-PF-1",
+      "description": "Все 5 проблем исправлены",
+      "after_step": 5,
+      "verification": "git diff проверка"
+    }
+  ],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}

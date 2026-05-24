@@ -1,15 +1,15 @@
 {
-  "task_id": "TASK-2026-0006-polish-impl",
-  "step": "post-review-audit-fixes",
+  "task_id": "TASK-2026-0007-polish-fixes",
+  "step": "all-steps-done",
   "files": [
+    ".pi/extensions/loom/shared/utils.ts",
+    ".pi/extensions/loom/shared/subagent-state.ts",
     ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/ui/subagent-widget.ts",
-    "knowledge/project/artifacts/verification-matrix.json",
-    "knowledge/tasks/TASK-2026-0001-bootstrap/task.json",
-    "knowledge/tasks/TASK-2026-0004-agent-mode-impl/task.json",
-    "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/reviews/review-DU-4.json",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/task.json",
+    "AGENTS.md",
+    "knowledge/tasks/registry.json",
+    "knowledge/tasks/TASK-2026-0007-polish-fixes/task.json",
+    "knowledge/tasks/TASK-2026-0007-polish-fixes/plan.json",
+    "knowledge/tasks/TASK-2026-0007-polish-fixes/reviews/review-PF-1.json",
     "files-to-commit.json"
   ]
 }
