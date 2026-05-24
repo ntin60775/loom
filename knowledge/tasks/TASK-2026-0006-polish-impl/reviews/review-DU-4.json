@@ -50,5 +50,56 @@
     { "id": "INV-12", "status": "pass", "note": "All UI text in Russian; system/code comments in English" },
     { "id": "INV-13", "status": "pass", "note": "files-to-commit.json still drives staged commits" }
   ],
+  "follow_up_resolutions": [
+    {
+      "id": "FU-1",
+      "priority": "critical",
+      "description": "Verification matrix не сгенерирован в artifacts/",
+      "resolution": "FIXED: generated knowledge/project/artifacts/verification-matrix.json with 43 entries. Improved heuristic: defined → needs_audit (not failed) for completed tasks.",
+      "files_changed": [".pi/extensions/loom/knowledge/verification.ts", "knowledge/project/artifacts/verification-matrix.json"]
+    },
+    {
+      "id": "FU-2",
+      "priority": "major",
+      "description": "Localization guard не интегрирован в executor flow автоматически",
+      "resolution": "FIXED: loom_spawn_worker now auto-runs localization guard after successful worker commit via runLocalizationGuard() helper. Guard result appended to worker output.",
+      "files_changed": [".pi/extensions/loom/agent-mode/tools.ts"]
+    },
+    {
+      "id": "FU-3",
+      "priority": "major",
+      "description": "Config editor — пустой placeholder ui/config-editor.ts",
+      "resolution": "FIXED: removed placeholder. SDD updated: COMP-config-editor.files now points to agent-mode/tools.ts (loom_edit_config). TUI form deferred to v2.",
+      "files_changed": [".pi/extensions/loom/ui/config-editor.ts", "knowledge/tasks/TASK-2026-0006-polish-impl/sdd.json"]
+    },
+    {
+      "id": "FU-4",
+      "priority": "minor",
+      "description": "loom_edit_config не валидирует JSON schema",
+      "resolution": "FIXED: added schema validation via validateExecutionConfigShape / validateSubagentConfigShape before write. Returns isError on validation failure without saving.",
+      "files_changed": [".pi/extensions/loom/agent-mode/tools.ts"]
+    },
+    {
+      "id": "FU-5",
+      "priority": "minor",
+      "description": "getNextPendingStep содержит side-effect (mark in_progress)",
+      "resolution": "ACCEPTED: current code already separates pure getNextPendingStep from side-effects in tool execute. No change required.",
+      "files_changed": []
+    },
+    {
+      "id": "FU-6",
+      "priority": "minor",
+      "description": "SDD: COMP-localization-guard указывает executor-loop.ts вместо tools.ts",
+      "resolution": "FIXED: updated COMP-localization-guard.files to [agent-mode/tools.ts, agent-mode/executor-loop.ts].",
+      "files_changed": ["knowledge/tasks/TASK-2026-0006-polish-impl/sdd.json"]
+    },
+    {
+      "id": "FU-7",
+      "priority": "minor",
+      "description": "Эвристика verification matrix: defined → failed для completed tasks",
+      "resolution": "FIXED: changed to defined → needs_audit for completed tasks. Added needs_audit to VerificationMatrix summary and all UI outputs.",
+      "files_changed": [".pi/extensions/loom/knowledge/verification.ts", ".pi/extensions/loom/index.ts", ".pi/extensions/loom/agent-mode/tools.ts"]
+    }
+  ],
   "schema_version": "1.0.0"
 }

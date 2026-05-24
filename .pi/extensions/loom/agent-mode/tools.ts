@@ -19,6 +19,7 @@ import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
 import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
 import { generateVerificationMatrix } from "../knowledge/verification";
+import type { PlanStepData, InvariantData } from "../knowledge/types";
 import { validateExecutionConfigShape, validateSubagentConfigShape } from "../knowledge/schemas";
 
 function taskDir(cwd: string, taskId: string): string {
@@ -200,33 +201,34 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         cwd: ctx.cwd,
       };
 
-      try {
-      const result = await spawnSubagent(spec, signal, (output) => {
-        if (onUpdate) {
-          onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
-        }
-      });
-
-      const output = getFinalOutput(result.messages);
-      const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
-
-      // Attempt to parse review JSON from output
+      let reviewerError = false;
       let reviewJson: Record<string, unknown> | null = null;
       try {
-        const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
-        if (jsonMatch) reviewJson = JSON.parse(jsonMatch[1]);
-        else reviewJson = JSON.parse(output);
-      } catch {
-        reviewJson = null;
-      }
+        const result = await spawnSubagent(spec, signal, (output) => {
+          if (onUpdate) {
+            onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
+          }
+        });
 
-      return {
-        content: [{ type: "text", text: output || "(no output)" }],
-        details: { reviewJson, result: { exitCode: result.exitCode, usage: result.usage } },
-        isError: isError && !reviewJson,
-      };
+        const output = getFinalOutput(result.messages);
+        reviewerError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+
+        // Attempt to parse review JSON from output
+        try {
+          const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
+          if (jsonMatch) reviewJson = JSON.parse(jsonMatch[1]);
+          else reviewJson = JSON.parse(output);
+        } catch {
+          reviewJson = null;
+        }
+
+        return {
+          content: [{ type: "text", text: output || "(no output)" }],
+          details: { reviewJson, result: { exitCode: result.exitCode, usage: result.usage } },
+          isError: reviewerError && !reviewJson,
+        };
       } finally {
-        updateSubagentStatus(reviewerId, isError ? "error" : "completed");
+        updateSubagentStatus(reviewerId, reviewerError ? "error" : "completed");
         removeSubagent(reviewerId);
       }
     },

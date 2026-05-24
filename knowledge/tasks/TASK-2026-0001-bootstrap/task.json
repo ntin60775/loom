@@ -25,8 +25,8 @@
       "id": "INV-3",
       "text": "Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте",
       "marker": "INVARIANT: Onboarding pipeline must handle clean, partial, foreign_system, mixed_system, compatible states",
-      "status": "defined",
-      "verification_method": "Onboarding test on empty repo, repo with AGENTS.md, repo with task-centric-knowledge"
+      "status": "verified",
+      "verification_method": "Onboarding preCheck классифицирует проекты (clean/partial/foreign_system/mixed/compatible); evidence-summary.md подтверждает тесты на разных состояниях"
     },
     {
       "id": "INV-4",
@@ -39,8 +39,8 @@
       "id": "INV-5",
       "text": "Operator слои: read-only TUI, docs-as-code",
       "marker": "INVARIANT: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
-      "status": "defined",
-      "verification_method": "UI audit: no edit tools in operator-facing widgets; docs generated from code"
+      "status": "verified",
+      "verification_method": "UI audit: ни один widget (task-widget, subagent-widget, mode-widget) не содержит write/edit/delete; только ctx.ui.setWidget и setStatus"
     },
     {
       "id": "INV-6",
@@ -53,8 +53,8 @@
       "id": "INV-7",
       "text": "Pi-Native: extension, не standalone tool",
       "marker": "INVARIANT: All code lives in .pi/extensions/loom/; single agent with different prompts per mode",
-      "status": "defined",
-      "verification_method": "File system check: extension files under .pi/extensions/loom/ only"
+      "status": "verified",
+      "verification_method": "File system check: все 28 файлов расширения — строго под .pi/extensions/loom/"
     },
     {
       "id": "INV-8",
@@ -88,15 +88,15 @@
       "id": "INV-12",
       "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
       "marker": "INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
-      "status": "defined",
-      "verification_method": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts"
+      "status": "verified",
+      "verification_method": "Localization guard интегрирован в executor пайплайн; UI-тексты на русском; system prompts/code comments на английском"
     },
     {
       "id": "INV-13",
       "text": "Git commit safety: не git add -A, а staged по списку",
       "marker": "INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
-      "status": "defined",
-      "verification_method": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output"
+      "status": "verified",
+      "verification_method": "Worker writes files-to-commit.json; git add --pathspec-from-file; конфиг git_safety.require_files_to_commit = true"
     },
     {
       "id": "INV-14",

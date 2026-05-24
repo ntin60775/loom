@@ -1,13 +1,15 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": "follow-up-review-fixes",
+  "step": "post-review-audit-fixes",
   "files": [
     ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/index.ts",
-    ".pi/extensions/loom/knowledge/verification.ts",
-    ".pi/extensions/loom/ui/config-editor.ts",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/sdd.json",
+    ".pi/extensions/loom/ui/subagent-widget.ts",
     "knowledge/project/artifacts/verification-matrix.json",
+    "knowledge/tasks/TASK-2026-0001-bootstrap/task.json",
+    "knowledge/tasks/TASK-2026-0004-agent-mode-impl/task.json",
+    "knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/reviews/review-DU-4.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/task.json",
     "files-to-commit.json"
   ]
 }

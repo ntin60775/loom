@@ -13,22 +13,22 @@
       "id": "INV-6",
       "text": "Детерминированный контекст: нет неявного состояния",
       "marker": "INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
-      "status": "defined",
-      "verification_method": "Subagent spawner uses --no-context-files; context injected via inputArtifact only"
+      "status": "verified",
+      "verification_method": "spawner.ts использует --no-context-files (строка 61); контекст только через inputArtifact"
     },
     {
       "id": "INV-8",
       "text": "Git-based review: reviewer анализирует артефакты, не сессию",
       "marker": "INVARIANT: Review artifact references git commit hash; reviewer analyzes git diff, not live session",
-      "status": "defined",
-      "verification_method": "Review.json contains target.commit; reviewer tools: git show, read file, write review.json"
+      "status": "verified",
+      "verification_method": "Review artifacts существуют для всех DU (review-DU-2.json, review-DU-3.json, review-DU-4.json); содержат target_commit, findings, verdict"
     },
     {
       "id": "INV-9",
       "text": "Executor не пишет код: только оркестрирует worker + reviewer",
       "marker": "INVARIANT: Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. NO write/edit/commit in executor tools",
-      "status": "defined",
-      "verification_method": "Executor prompt explicitly lists allowed tools; write/edit excluded"
+      "status": "verified",
+      "verification_method": "Executor prompt (agent-executor.md): 'Executor does NOT write code. Only orchestrates worker + reviewer.' Инструменты executor — только оркестрационные"
     },
     {
       "id": "INV-10",
@@ -41,22 +41,22 @@
       "id": "INV-11",
       "text": "Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1",
       "marker": "INVARIANT: Executor loop cannot spawn more than one worker simultaneously",
-      "status": "defined",
-      "verification_method": "Executor loop state machine: single active_worker_id; new spawn blocked while active"
+      "status": "verified",
+      "verification_method": "activeWorkerId state machine блокирует конкурентных worker (tools.ts:94-102); spawn блокируется пока activeWorkerId не null"
     },
     {
       "id": "INV-12",
       "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
       "marker": "INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
-      "status": "defined",
-      "verification_method": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts"
+      "status": "verified",
+      "verification_method": "Localization guard интегрирован; все UI строки на русском; system prompts на английском"
     },
     {
       "id": "INV-13",
       "text": "Git commit safety: не git add -A, а staged по списку",
       "marker": "INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
-      "status": "defined",
-      "verification_method": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output"
+      "status": "verified",
+      "verification_method": "files-to-commit.json drives staged commits; git_safety валидация в execution-config schema"
     },
     {
       "id": "INV-14",

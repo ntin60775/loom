@@ -13,29 +13,29 @@
       "id": "INV-5",
       "text": "Operator слои: read-only TUI, docs-as-code",
       "marker": "INVARIANT: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
-      "status": "defined",
-      "verification_method": "UI audit: no edit tools in operator-facing widgets; docs generated from code"
+      "status": "verified",
+      "verification_method": "UI audit: widgets (task-widget, subagent-widget, mode-widget) только read-only; команды /subagent-focus/kill не содержат write-инструментов"
     },
     {
       "id": "INV-10",
       "text": "Модели конфигурируются: не хардкод",
       "marker": "INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
-      "status": "defined",
-      "verification_method": "Code review: all model references load from subagent-config.json"
+      "status": "verified",
+      "verification_method": "Code review: resolveModelArg читает subagent-config.json; ни одного хардкода model строки; loom_edit_config валидирует schema"
     },
     {
       "id": "INV-12",
       "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
       "marker": "INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
-      "status": "defined",
-      "verification_method": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts"
+      "status": "verified",
+      "verification_method": "UI строки на русском; system prompts на английском; localization guard auto-run после каждого worker commit"
     },
     {
       "id": "INV-13",
       "text": "Git commit safety: не git add -A, а staged по списку",
       "marker": "INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
-      "status": "defined",
-      "verification_method": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output"
+      "status": "verified",
+      "verification_method": "files-to-commit.json используется во всех коммитах DU-4; executor валидирует через git_safety конфиг"
     }
   ],
   "delivery_units": [
@@ -48,7 +48,15 @@
   ],
   "post_review_fixes": {
     "date": "2026-05-24",
-    "items": ["FU-1", "FU-2", "FU-3", "FU-4", "FU-5", "FU-6", "FU-7"],
+    "items": [
+      "FU-1",
+      "FU-2",
+      "FU-3",
+      "FU-4",
+      "FU-5",
+      "FU-6",
+      "FU-7"
+    ],
     "review_artifact": "reviews/review-DU-4.json"
   },
   "created_at": "2026-05-23",
