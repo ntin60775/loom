@@ -79,7 +79,7 @@
       "constraints": ["INV-3"],
       "depends_on": [7],
       "estimated_effort": "medium",
-      "status": "in_progress"
+      "status": "done"
     },
     {
       "step_number": 9,
@@ -89,7 +89,7 @@
       "constraints": ["INV-1", "INV-3", "INV-4", "INV-5", "INV-6"],
       "depends_on": [8],
       "estimated_effort": "small",
-      "status": "pending"
+      "status": "done"
     }
   ],
   "risks": [
