@@ -109,10 +109,10 @@ export default function loomExtension(pi: ExtensionAPI): void {
       }
 
       const registry = readRegistryFile(knowledgeRoot);
-      const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
+      const activeTask = registry?.tasks?.find((t) => t.status === "active");
 
       if (!activeTask) {
-        ctx.ui.notify("Нет активной задачи in_progress. Создайте задачу через /plan или обновите registry.json.", "warning");
+        ctx.ui.notify("Нет активной задачи. Создайте задачу через /plan или обновите registry.json.", "warning");
         return;
       }
 
@@ -228,7 +228,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
         return;
       }
 
-      const active = registry.tasks.filter((t) => t.status === "in_progress");
+      const active = registry.tasks.filter((t) => t.status === "active");
       const drafts = registry.tasks.filter((t) => t.status === "draft");
       const completed = registry.tasks.filter((t) => t.status === "completed");
 
@@ -461,6 +461,8 @@ export default function loomExtension(pi: ExtensionAPI): void {
   });
 
   const cycleModesHandler = async (ctx: ExtensionContext): Promise<void> => {
+    if (isTransitioning) return;
+
     const knowledgeRoot = findKnowledgeRoot(ctx.cwd);
     if (!knowledgeRoot) {
       ctx.ui.notify("loom не инициализирован. Запустите /loom-init.", "error");
@@ -471,7 +473,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
       await enterPlanMode(ctx);
     } else if (state.mode === "plan") {
       const registry = readRegistryFile(knowledgeRoot);
-      const activeTask = registry?.tasks?.find((t) => t.status === "in_progress");
+      const activeTask = registry?.tasks?.find((t) => t.status === "active");
       if (activeTask) {
         await enterAgentMode(ctx);
       } else {
@@ -484,15 +486,9 @@ export default function loomExtension(pi: ExtensionAPI): void {
     }
   };
 
-  // Primary: ctrl+shift+m (works in Kitty/modern terminals)
-  pi.registerShortcut(Key.ctrlShift("m"), {
-    description: "Циклическое переключение режимов loom: idle → plan → agent → idle",
-    handler: cycleModesHandler,
-  });
-
-  // Fallback: alt+m (works in legacy terminals where ctrl+shift+letter is not distinct)
+  // alt+m — единый шорткат переключения режимов (корректно работает в русской раскладке)
   pi.registerShortcut(Key.alt("m"), {
-    description: "Циклическое переключение режимов loom (fallback)",
+    description: "Циклическое переключение режимов loom: idle → plan → agent → idle",
     handler: cycleModesHandler,
   });
 

@@ -225,7 +225,7 @@ export function generateAgentsMd(input: AgentsMdInput): string {
   if (input.tasks && input.tasks.length > 0) {
     lines.push("## Задачи");
     lines.push("");
-    const active = input.tasks.filter((t) => t.status === "in_progress");
+    const active = input.tasks.filter((t) => t.status === "active");
     const drafts = input.tasks.filter((t) => t.status === "draft");
     const completed = input.tasks.filter((t) => t.status === "completed");
     lines.push(`- Всего задач: ${input.tasks.length}`);

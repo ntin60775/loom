@@ -175,8 +175,8 @@
     {
       "id": "COMP-mode-switcher",
       "name": "Mode Switcher",
-      "responsibilities": ["Switch between idle/plan/agent modes", "Provide keyboard shortcut ctrl+shift+m", "Persist and restore mode across sessions"],
-      "interfaces": ["/plan command", "/agent command", "ctrl+shift+m shortcut", "enterPlanMode(), enterAgentMode(), enterIdleMode() helpers"],
+      "responsibilities": ["Switch between idle/plan/agent modes", "Provide keyboard shortcut alt+m", "Persist and restore mode across sessions"],
+      "interfaces": ["/plan command", "/agent command", "alt+m shortcut", "enterPlanMode(), enterAgentMode(), enterIdleMode() helpers"],
       "dependencies": ["COMP-orchestrator", "COMP-executor"],
       "files": [".pi/extensions/loom/index.ts"],
       "status": "verified"

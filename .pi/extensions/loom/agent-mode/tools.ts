@@ -298,7 +298,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       task_id: Type.String(),
       step_number: Type.Optional(Type.Number()),
       step_status: Type.Optional(Type.String({ description: "pending | in_progress | done | blocked" })),
-      task_status: Type.Optional(Type.String({ description: "draft | in_progress | completed | rejected" })),
+      task_status: Type.Optional(Type.String({ description: "draft | active | completed | rejected" })),
     }),
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
