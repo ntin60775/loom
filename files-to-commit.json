@@ -1,10 +1,9 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": 5,
+  "step": "review-fixes",
   "files": [
     ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/index.ts",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json",
+    ".pi/extensions/loom/ui/config-editor.ts",
     "files-to-commit.json"
   ]
 }

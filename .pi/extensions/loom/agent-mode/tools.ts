@@ -9,7 +9,7 @@
  */
 
 import * as path from "node:path";
-import { execSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig } from "../knowledge/io";
@@ -286,24 +286,28 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
 
       const scriptPath = path.join(ctx.cwd, "scripts", "check-docs-localization.sh");
-      const args = [scriptPath, ...files];
 
       try {
-        const output = execSync(`bash ${args.map((a) => `"${a}"`).join(" ")}`, {
+        const result = spawnSync("bash", [scriptPath, ...files], {
           cwd: ctx.cwd,
           encoding: "utf-8",
           timeout: 30000,
         });
+        if (result.status === 0) {
+          return {
+            content: [{ type: "text", text: `✅ Localization guard passed.\n\n${result.stdout}` }],
+            details: { passed: true, files, output: result.stdout },
+          };
+        }
         return {
-          content: [{ type: "text", text: `✅ Localization guard passed.\n\n${output}` }],
-          details: { passed: true, files, output },
+          content: [{ type: "text", text: `❌ Localization guard FAILED.\n\nstdout:\n${result.stdout}\n\nstderr:\n${result.stderr}` }],
+          details: { passed: false, files, stdout: result.stdout, stderr: result.stderr },
+          isError: true,
         };
       } catch (err: any) {
-        const stderr = err.stderr?.toString() ?? "";
-        const stdout = err.stdout?.toString() ?? "";
         return {
-          content: [{ type: "text", text: `❌ Localization guard FAILED.\n\nstdout:\n${stdout}\n\nstderr:\n${stderr}` }],
-          details: { passed: false, files, stdout, stderr },
+          content: [{ type: "text", text: `❌ Localization guard FAILED with exception: ${err.message}` }],
+          details: { passed: false, files, error: err.message },
           isError: true,
         };
       }
