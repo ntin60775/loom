@@ -1,9 +1,9 @@
 {
   "task_id": "TASK-2026-0008-memory-layer",
-  "step": 3,
+  "step": 4,
   "files": [
     "knowledge/tasks/TASK-2026-0008-memory-layer/plan.json",
-    ".pi/extensions/loom/memory/utils.ts",
-    ".pi/extensions/loom/memory/episodic-store.ts"
+    ".pi/extensions/loom/memory/semantic-store.ts",
+    "knowledge/project/memory/semantic.json"
   ]
 }
