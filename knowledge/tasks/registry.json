@@ -25,7 +25,7 @@
       "task_id": "TASK-2026-0008-memory-layer",
       "slug": "memory-layer",
       "title": "DU-1: Memory Layer",
-      "status": "draft",
+      "status": "in_progress",
       "priority": "medium",
       "branch": "task/task-2026-0008-memory-layer",
       "parent_task_id": "TASK-2026-0002-loom-vnext",
