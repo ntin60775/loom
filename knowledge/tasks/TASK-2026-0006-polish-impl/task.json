@@ -46,6 +46,11 @@
       "base_branch": "main"
     }
   ],
+  "post_review_fixes": {
+    "date": "2026-05-24",
+    "items": ["FU-1", "FU-2", "FU-3", "FU-4", "FU-5", "FU-6", "FU-7"],
+    "review_artifact": "reviews/review-DU-4.json"
+  },
   "created_at": "2026-05-23",
   "updated_at": "2026-05-24",
   "schema_version": "1.0.0"

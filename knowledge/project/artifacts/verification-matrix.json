@@ -1,0 +1,398 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-05-24",
+  "entries": [
+    {
+      "invariant_id": "INV-1",
+      "text": "AI-First: JSON primary, markdown derivative",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "All knowledge files exist as JSON in knowledge/; markdown files are derivatives with 'Generated from {json_path}' header",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-2",
+      "text": "Stack-Agnostic: система не знает о языке/фреймворке",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Code review: no if (language === 'rust') in extension; domain detection via file extensions only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-3",
+      "text": "Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "Onboarding test on empty repo, repo with AGENTS.md, repo with task-centric-knowledge",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-4",
+      "text": "Task-Centric накопление: каждая задача = атом, знания наследуются",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-5",
+      "text": "Operator слои: read-only TUI, docs-as-code",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "UI audit: no edit tools in operator-facing widgets; docs generated from code",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-6",
+      "text": "Детерминированный контекст: нет неявного состояния",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Subagent spawner uses --no-context-files; context injected via inputArtifact only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-7",
+      "text": "Pi-Native: extension, не standalone tool",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "File system check: extension files under .pi/extensions/loom/ only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-8",
+      "text": "Git-based review: reviewer анализирует артефакты, не сессию",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Review.json contains target.commit; reviewer tools: git show, read file, write review.json",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-9",
+      "text": "Executor не пишет код: только оркестрирует worker + reviewer",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Executor prompt explicitly lists allowed tools; write/edit excluded",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-10",
+      "text": "Модели конфигурируются: не хардкод",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Code review: resolveModelArg reads subagent-config.json; domain_rules matching by file extension",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-11",
+      "text": "Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "Executor loop state machine: single active_worker_id; new spawn blocked while active",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-13",
+      "text": "Git commit safety: не git add -A, а staged по списку",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-14",
+      "text": "Pi CLI верифицирован: все флаги для subagent spawner подтверждены PoC",
+      "task_id": "TASK-2026-0001-bootstrap",
+      "delivery_unit": "unknown",
+      "status": "verified",
+      "evidence": "PoC report: artifacts/poc-pi-cli-report.md; flags tested: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools, --no-context-files",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-1",
+      "text": "Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту",
+      "task_id": "TASK-2026-0002-loom-vnext",
+      "delivery_unit": "unknown",
+      "status": "defined",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-2",
+      "text": "Retrieval через scout subagent, не эмбеддинги",
+      "task_id": "TASK-2026-0002-loom-vnext",
+      "delivery_unit": "unknown",
+      "status": "defined",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-3",
+      "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
+      "task_id": "TASK-2026-0002-loom-vnext",
+      "delivery_unit": "unknown",
+      "status": "defined",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-1",
+      "text": "AI-First: JSON primary, markdown derivative",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "All knowledge files exist as JSON in knowledge/; markdown files are derivatives",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-2",
+      "text": "Stack-Agnostic: система не знает о языке/фреймворке",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "Code review: no if (language === 'rust') in extension",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-4",
+      "text": "Task-Centric накопление: каждая задача = атом, знания наследуются",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-6",
+      "text": "Детерминированный контекст: нет неявного состояния",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "Subagent spawner uses --no-context-files; context injected via inputArtifact only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-7",
+      "text": "Pi-Native: extension, не standalone tool",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "File system check: extension files under .pi/extensions/loom/ only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-10",
+      "text": "Модели конфигурируются: не хардкод",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "Code review: all model references load from subagent-config.json",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-11",
+      "text": "Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "Executor loop state machine: single active_worker_id; new spawn blocked while active",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "task_id": "TASK-2026-0003-core-design",
+      "delivery_unit": "DU-1",
+      "status": "verified",
+      "evidence": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-6",
+      "text": "Детерминированный контекст: нет неявного состояния",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "needs_audit",
+      "evidence": "Subagent spawner uses --no-context-files; context injected via inputArtifact only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-8",
+      "text": "Git-based review: reviewer анализирует артефакты, не сессию",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "needs_audit",
+      "evidence": "Review.json contains target.commit; reviewer tools: git show, read file, write review.json",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-9",
+      "text": "Executor не пишет код: только оркестрирует worker + reviewer",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "needs_audit",
+      "evidence": "Executor prompt explicitly lists allowed tools; write/edit excluded",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-10",
+      "text": "Модели конфигурируются: не хардкод",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "verified",
+      "evidence": "Code review: resolveModelArg reads subagent-config.json; domain_rules matching by file extension; no hardcoded model strings",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-11",
+      "text": "Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "needs_audit",
+      "evidence": "Executor loop state machine: single active_worker_id; new spawn blocked while active",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "needs_audit",
+      "evidence": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-13",
+      "text": "Git commit safety: не git add -A, а staged по списку",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "needs_audit",
+      "evidence": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-14",
+      "text": "Pi CLI верифицирован: все флаги для subagent spawner подтверждены PoC",
+      "task_id": "TASK-2026-0004-agent-mode-impl",
+      "delivery_unit": "DU-2",
+      "status": "verified",
+      "evidence": "PoC report: artifacts/poc-pi-cli-report.md; flags tested: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools, --no-context-files",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-2",
+      "text": "Stack-Agnostic: система не знает о языке/фреймворке",
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "delivery_unit": "DU-3",
+      "status": "needs_audit",
+      "evidence": "Code review: no if (language === 'rust') in extension; domain detection via file extensions only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-3",
+      "text": "Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте",
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "delivery_unit": "DU-3",
+      "status": "needs_audit",
+      "evidence": "Onboarding test on empty repo, repo with AGENTS.md, repo with task-centric-knowledge",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-4",
+      "text": "Task-Centric накопление: каждая задача = атом, знания наследуются",
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "delivery_unit": "DU-3",
+      "status": "needs_audit",
+      "evidence": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-6",
+      "text": "Детерминированный контекст: нет неявного состояния",
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "delivery_unit": "DU-3",
+      "status": "needs_audit",
+      "evidence": "Subagent spawner uses --no-context-files; context injected via inputArtifact only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-7",
+      "text": "Pi-Native: extension, не standalone tool",
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "delivery_unit": "DU-3",
+      "status": "needs_audit",
+      "evidence": "File system check: extension files under .pi/extensions/loom/ only",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "task_id": "TASK-2026-0005-onboarding-impl",
+      "delivery_unit": "DU-3",
+      "status": "needs_audit",
+      "evidence": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-5",
+      "text": "Operator слои: read-only TUI, docs-as-code",
+      "task_id": "TASK-2026-0006-polish-impl",
+      "delivery_unit": "DU-4",
+      "status": "needs_audit",
+      "evidence": "UI audit: no edit tools in operator-facing widgets; docs generated from code",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-10",
+      "text": "Модели конфигурируются: не хардкод",
+      "task_id": "TASK-2026-0006-polish-impl",
+      "delivery_unit": "DU-4",
+      "status": "needs_audit",
+      "evidence": "Code review: all model references load from subagent-config.json",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-12",
+      "text": "Локализация: UI и пользовательские артефакты — русский; AI-документация — английский",
+      "task_id": "TASK-2026-0006-polish-impl",
+      "delivery_unit": "DU-4",
+      "status": "needs_audit",
+      "evidence": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts",
+      "checked_at": "2026-05-24"
+    },
+    {
+      "invariant_id": "INV-13",
+      "text": "Git commit safety: не git add -A, а staged по списку",
+      "task_id": "TASK-2026-0006-polish-impl",
+      "delivery_unit": "DU-4",
+      "status": "needs_audit",
+      "evidence": "Worker writes files-to-commit.json; git add --pathspec-from-file; executor validates against plan expected_output",
+      "checked_at": "2026-05-24"
+    }
+  ],
+  "summary": {
+    "total": 43,
+    "verified": 19,
+    "defined": 3,
+    "failed": 0,
+    "unknown": 0,
+    "needs_audit": 21
+  }
+}

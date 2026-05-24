@@ -19,9 +19,40 @@ import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
 import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
 import { generateVerificationMatrix } from "../knowledge/verification";
+import { validateExecutionConfigShape, validateSubagentConfigShape } from "../knowledge/schemas";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
+}
+
+/**
+ * Run localization guard on files-to-commit.json.
+ * Returns pass/fail with guard output. Used automatically after worker commit.
+ */
+function runLocalizationGuard(cwd: string): { passed: boolean; output: string; isError: boolean } {
+  const ftcPath = path.join(cwd, "files-to-commit.json");
+  const ftc = readJson<{ files?: string[] }>(ftcPath);
+  const files = ftc?.files ?? [];
+
+  if (files.length === 0) {
+    return { passed: true, output: "No files to check in files-to-commit.json", isError: false };
+  }
+
+  const scriptPath = path.join(cwd, "scripts", "check-docs-localization.sh");
+
+  try {
+    const result = spawnSync("bash", [scriptPath, ...files], {
+      cwd,
+      encoding: "utf-8",
+      timeout: 30000,
+    });
+    if (result.status === 0) {
+      return { passed: true, output: result.stdout, isError: false };
+    }
+    return { passed: false, output: `stdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`, isError: true };
+  } catch (err: any) {
+    return { passed: false, output: `Localization guard exception: ${err.message}`, isError: true };
+  }
 }
 
 // INV-11: Strictly sequential execution — state machine
@@ -86,12 +117,26 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         });
 
         const output = getFinalOutput(result.messages);
-        const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+        let workerError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+
+        // Auto-run localization guard after successful worker commit
+        let guardResult: { passed: boolean; output: string; isError: boolean } | undefined;
+        if (!workerError) {
+          guardResult = runLocalizationGuard(ctx.cwd);
+          if (guardResult.isError) {
+            workerError = true;
+          }
+        }
+
+        const lines = [
+          output || "(no output)",
+          guardResult ? `\n--- Localization Guard ---\n${guardResult.passed ? "✅ PASSED" : "❌ FAILED"}\n${guardResult.output}` : "",
+        ].filter(Boolean).join("\n");
 
         return {
-          content: [{ type: "text", text: output || "(no output)" }],
-          details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason } },
-          isError,
+          content: [{ type: "text", text: lines }],
+          details: { result: { exitCode: result.exitCode, usage: result.usage, model: result.model, stopReason: result.stopReason }, guardResult },
+          isError: workerError,
         };
       } finally {
         activeWorkerId = null;
@@ -327,6 +372,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         `Verification matrix generated: ${matrix.summary.total} invariants`,
         `  ✅ verified: ${matrix.summary.verified}`,
         `  🟡 defined: ${matrix.summary.defined}`,
+        `  🔍 needs_audit: ${matrix.summary.needs_audit}`,
         `  ❌ failed: ${matrix.summary.failed}`,
         `  ⚪ unknown: ${matrix.summary.unknown}`,
         ``,
@@ -371,6 +417,18 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
 
       const merged = deepMerge(existing, params.updates as Record<string, unknown>);
+
+      // Schema validation
+      const validate = params.config_type === "subagent" ? validateSubagentConfigShape : validateExecutionConfigShape;
+      const validationError = validate(merged);
+      if (validationError) {
+        return {
+          content: [{ type: "text", text: `❌ Schema validation FAILED for ${fileName}:\n${validationError}\n\nMerged config was NOT saved.` }],
+          details: { config_type: params.config_type, filePath, validationError },
+          isError: true,
+        };
+      }
+
       writeJson(filePath, merged);
 
       return {

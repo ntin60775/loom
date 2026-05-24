@@ -384,6 +384,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
         `📊 Verification Matrix: ${matrix.summary.total} инвариантов`,
         `  ✅ verified: ${matrix.summary.verified}`,
         `  🟡 defined: ${matrix.summary.defined}`,
+        `  🔍 needs_audit: ${matrix.summary.needs_audit}`,
         `  ❌ failed: ${matrix.summary.failed}`,
         `  ⚪ unknown: ${matrix.summary.unknown}`,
       ];

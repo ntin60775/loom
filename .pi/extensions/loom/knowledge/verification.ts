@@ -12,7 +12,7 @@ export interface VerificationEntry {
   text: string;
   task_id: string;
   delivery_unit: string;
-  status: "verified" | "defined" | "failed" | "unknown";
+  status: "verified" | "defined" | "failed" | "unknown" | "needs_audit";
   evidence?: string;
   checked_at: string;
 }
@@ -27,6 +27,7 @@ export interface VerificationMatrix {
     defined: number;
     failed: number;
     unknown: number;
+    needs_audit: number;
   };
 }
 
@@ -63,15 +64,18 @@ export function generateVerificationMatrix(cwd: string): VerificationMatrix {
     const allStepsDone = plan?.steps?.every((s) => s.status === "done") ?? true;
 
     for (const inv of invariants) {
-      // Heuristic: if task is completed and all steps done, mark as verified if task says so
-      // otherwise preserve the task.json status
+      // Heuristic:
+      // - verified  → stays verified
+      // - failed    → stays failed
+      // - defined   → stays defined if task in progress;
+      //               becomes needs_audit if task completed (audit required, not a failure)
       let status: VerificationEntry["status"] = "unknown";
       if (inv.status === "verified") {
         status = "verified";
-      } else if (inv.status === "defined") {
-        status = task.status === "completed" && allStepsDone ? "failed" : "defined";
       } else if (inv.status === "failed") {
         status = "failed";
+      } else if (inv.status === "defined") {
+        status = task.status === "completed" && allStepsDone ? "needs_audit" : "defined";
       }
 
       entries.push({
@@ -92,6 +96,7 @@ export function generateVerificationMatrix(cwd: string): VerificationMatrix {
     defined: entries.filter((e) => e.status === "defined").length,
     failed: entries.filter((e) => e.status === "failed").length,
     unknown: entries.filter((e) => e.status === "unknown").length,
+    needs_audit: entries.filter((e) => e.status === "needs_audit").length,
   };
 
   const matrix: VerificationMatrix = {

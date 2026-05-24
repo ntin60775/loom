@@ -1,9 +1,13 @@
 {
-  "task_id": "TASK-2026-0001-bootstrap",
-  "step": "finalize",
+  "task_id": "TASK-2026-0006-polish-impl",
+  "step": "follow-up-review-fixes",
   "files": [
-    "knowledge/tasks/TASK-2026-0001-bootstrap/task.json",
-    "knowledge/tasks/registry.json",
+    ".pi/extensions/loom/agent-mode/tools.ts",
+    ".pi/extensions/loom/index.ts",
+    ".pi/extensions/loom/knowledge/verification.ts",
+    ".pi/extensions/loom/ui/config-editor.ts",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/sdd.json",
+    "knowledge/project/artifacts/verification-matrix.json",
     "files-to-commit.json"
   ]
 }

@@ -47,7 +47,7 @@
       "responsibilities": ["Run localization guard after each worker commit", "Parse guard output", "Auto-reject review if guard fails with correction directive"],
       "interfaces": ["bash: scripts/check-docs-localization.sh", "Integration point in executor loop after worker commit", "Correction WorkerSpec with localization fixes"],
       "dependencies": ["COMP-executor", "COMP-worker"],
-      "files": [".pi/extensions/loom/agent-mode/executor-loop.ts"],
+      "files": [".pi/extensions/loom/agent-mode/tools.ts", ".pi/extensions/loom/agent-mode/executor-loop.ts"],
       "status": "planned"
     },
     {
@@ -65,7 +65,7 @@
       "responsibilities": ["Edit execution-config.json via TUI", "Edit subagent-config.json via TUI", "Validate JSON schema on save"],
       "interfaces": ["/loom-config command", "TUI form with fields for config keys", "Schema validation via knowledge/schemas.ts"],
       "dependencies": ["COMP-knowledge-io"],
-      "files": [".pi/extensions/loom/ui/config-editor.ts"],
+      "files": [".pi/extensions/loom/agent-mode/tools.ts (loom_edit_config tool)"],
       "status": "planned"
     }
   ],
