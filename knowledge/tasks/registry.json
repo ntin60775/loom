@@ -15,11 +15,35 @@
       "task_id": "TASK-2026-0002-loom-vnext",
       "slug": "loom-vnext",
       "title": "Когнитивные слои loom v2",
-      "status": "draft",
+      "status": "active",
       "priority": "medium",
       "branch": "task/task-2026-0002-loom-vnext",
       "created_at": "2026-05-23",
-      "updated_at": "2026-05-23"
+      "updated_at": "2026-05-24"
+    },
+    {
+      "task_id": "TASK-2026-0008-memory-layer",
+      "slug": "memory-layer",
+      "title": "DU-1: Memory Layer",
+      "status": "draft",
+      "priority": "medium",
+      "branch": "task/task-2026-0008-memory-layer",
+      "parent_task_id": "TASK-2026-0002-loom-vnext",
+      "parent_delivery_unit": "DU-1",
+      "created_at": "2026-05-24",
+      "updated_at": "2026-05-24"
+    },
+    {
+      "task_id": "TASK-2026-0009-scout-retrieval",
+      "slug": "scout-retrieval",
+      "title": "DU-2: Scout Retrieval",
+      "status": "draft",
+      "priority": "medium",
+      "branch": "task/task-2026-0009-scout-retrieval",
+      "parent_task_id": "TASK-2026-0002-loom-vnext",
+      "parent_delivery_unit": "DU-2",
+      "created_at": "2026-05-24",
+      "updated_at": "2026-05-24"
     },
     {
       "task_id": "TASK-2026-0003-core-design",

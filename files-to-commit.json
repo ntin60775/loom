@@ -1,15 +1,20 @@
 {
-  "task_id": "TASK-2026-0007-polish-fixes",
-  "step": "all-steps-done",
+  "task_id": "TASK-2026-0002-loom-vnext",
+  "step": "create-docs-and-subtasks",
   "files": [
-    ".pi/extensions/loom/shared/utils.ts",
-    ".pi/extensions/loom/shared/subagent-state.ts",
-    ".pi/extensions/loom/agent-mode/tools.ts",
-    "AGENTS.md",
+    ".localization-guard.yml",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/task.json",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/plan.json",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/sdd.json",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/task.md",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/artifacts/verification-matrix.md",
+    "knowledge/tasks/TASK-2026-0008-memory-layer/task.json",
+    "knowledge/tasks/TASK-2026-0008-memory-layer/plan.json",
+    "knowledge/tasks/TASK-2026-0008-memory-layer/task.md",
+    "knowledge/tasks/TASK-2026-0009-scout-retrieval/task.json",
+    "knowledge/tasks/TASK-2026-0009-scout-retrieval/plan.json",
+    "knowledge/tasks/TASK-2026-0009-scout-retrieval/task.md",
     "knowledge/tasks/registry.json",
-    "knowledge/tasks/TASK-2026-0007-polish-fixes/task.json",
-    "knowledge/tasks/TASK-2026-0007-polish-fixes/plan.json",
-    "knowledge/tasks/TASK-2026-0007-polish-fixes/reviews/review-PF-1.json",
     "files-to-commit.json"
   ]
 }

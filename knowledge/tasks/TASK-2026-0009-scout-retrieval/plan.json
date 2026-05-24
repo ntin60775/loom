@@ -1,0 +1,122 @@
+{
+  "task_id": "TASK-2026-0009-scout-retrieval",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Спроектировать search_knowledge API",
+      "description": "Определить сигнатуру search_knowledge(query, scope, limit). Scope: 'task' | 'project' | 'domain'. Limit: max results. Создать JSON schema search-result.schema.json. Зафиксировать формат ответа scout: ranked list с reasoning.",
+      "expected_output": "artifacts/search-api-design.md, knowledge/project/schemas/search-result.schema.json",
+      "constraints": ["INV-2", "INV-4"],
+      "depends_on": [],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 2,
+      "title": "Реализовать Scout Search Prompt",
+      "description": "Создать специализированный prompt для scout subagent: поиск по knowledge/. Scout должен читать файлы, ранжировать по relevance, объяснять выбор. Не использовать эмбеддинги.",
+      "expected_output": ".pi/extensions/loom/subagent/prompts/scout-search.md",
+      "constraints": ["INV-2"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 3,
+      "title": "Реализовать Scout Retrieval Engine",
+      "description": "Модуль, который формирует ScoutSpec, spawn scout, парсит результат, валидирует schema. API: search_knowledge(query, scope, limit) -> SearchResult[]. Обработка ошибок scout (timeout, invalid JSON, empty result).",
+      "expected_output": ".pi/extensions/loom/retrieval/scout-retrieval.ts",
+      "constraints": ["INV-2", "INV-4"],
+      "depends_on": [2],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Реализовать Cache Layer",
+      "description": "Кэширование результатов scout по query_hash (SHA-256 нормализованного query + scope). Хранилище: knowledge/project/cache/retrieval.json. TTL: configurable. API: store, get, invalidate.",
+      "expected_output": ".pi/extensions/loom/retrieval/cache.ts, knowledge/project/cache/retrieval.json",
+      "constraints": ["INV-7"],
+      "depends_on": [1],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Scope Restriction и Path Filtering",
+      "description": "Реализовать ограничение scope: 'task' — только текущая task dir, 'project' — knowledge/project/, 'domain' — + .pi/extensions/loom/. Path filtering: исключать build artifacts, secrets, large binaries.",
+      "expected_output": ".pi/extensions/loom/retrieval/scope-filter.ts",
+      "constraints": ["INV-2", "INV-4"],
+      "depends_on": [3],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Интеграция с Plan Mode",
+      "description": "Добавить вызов search_knowledge в orchestrator: при brainstorm или перед create_plan — искать релевантные closed tasks, rules, architecture. Opt-in через флаг.",
+      "expected_output": "Обновлённый .pi/extensions/loom/plan-mode/orchestrator.ts",
+      "constraints": ["INV-3"],
+      "depends_on": [3, 4],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 7,
+      "title": "Интеграция с Agent Mode",
+      "description": "Добавить search_knowledge tool в executor: перед spawn_worker — искать релевантный контекст из closed tasks. Opt-in через use_memory_v2.",
+      "expected_output": "Обновлённый .pi/extensions/loom/agent-mode/executor.ts или executor-v2.ts",
+      "constraints": ["INV-3"],
+      "depends_on": [3, 4],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 8,
+      "title": "Тесты и verification matrix",
+      "description": "Прогнать автопроверки: cache hit/miss, scope filtering, backward compatibility, schema validation. Создать artifacts/verification-matrix.md и review.json.",
+      "expected_output": "artifacts/verification-matrix.md, reviews/review-SR-1.json",
+      "constraints": ["INV-2", "INV-3", "INV-4", "INV-7"],
+      "depends_on": [5, 6, 7],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-1",
+      "description": "Scout subagent медленный: каждый поиск = spawn + чтение файлов + reasoning",
+      "severity": "medium",
+      "mitigation": "Кэш с TTL; ограничение scope; async pre-fetch для частых запросов"
+    },
+    {
+      "id": "RISK-2",
+      "description": "Scout может вернуть некорректный JSON или невалидный ranking",
+      "severity": "medium",
+      "mitigation": "Schema validation; retry с упрощённым prompt; fallback на пустой result set"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-1",
+      "description": "search_knowledge API спроектирован и задокументирован",
+      "after_step": 1,
+      "verification": "artifacts/search-api-design.md содержит сигнатуру, scope enum, response schema"
+    },
+    {
+      "id": "CHK-2",
+      "description": "Кэш работает: повторный запрос не spawn scout",
+      "after_step": 4,
+      "verification": "Unit test: два одинаковых query -> первый spawn, второй cache hit"
+    },
+    {
+      "id": "CHK-3",
+      "description": "Backward compatibility: v1 flow без search_knowledge работает",
+      "after_step": 7,
+      "verification": "Все v1 tools работают без вызова search_knowledge"
+    }
+  ],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}

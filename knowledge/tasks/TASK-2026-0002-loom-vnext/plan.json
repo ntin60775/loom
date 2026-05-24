@@ -1,0 +1,108 @@
+{
+  "task_id": "TASK-2026-0002-loom-vnext",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Создать SDD когнитивных слоёв",
+      "description": "Спроектировать архитектуру Memory Layer (4 дорожки) и Scout Retrieval. Зафиксировать инварианты, компоненты, потоки данных, границы совместимости с v1.",
+      "expected_output": "sdd.json + artifacts/sdd.md — полный дизайн документ",
+      "constraints": ["INV-1", "INV-2", "INV-3", "INV-4", "INV-5"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "done"
+    },
+    {
+      "step_number": 2,
+      "title": "Изолировать DU в подзадачи",
+      "description": "Создать TASK-2026-0008 (Memory Layer) и TASK-2026-0009 (Scout Retrieval) как изолированные подзадачи со своими task.json, plan.json, task.md. Обновить registry.json.",
+      "expected_output": "knowledge/tasks/TASK-2026-0008-memory-layer/*, knowledge/tasks/TASK-2026-0009-scout-retrieval/*, обновлённый registry.json",
+      "constraints": ["INV-3", "INV-4"],
+      "depends_on": [1],
+      "estimated_effort": "small",
+      "status": "in_progress"
+    },
+    {
+      "step_number": 3,
+      "title": "Реализовать Memory Layer (DU-1)",
+      "description": "Выполнить подзадачу TASK-2026-0008: реализовать 4 дорожки памяти (session, episodic, semantic, procedural) с активным управлением контекстом. Ранжирование, суммаризация, retention policy.",
+      "expected_output": "Реализация в .pi/extensions/loom/memory/, review.json подзадачи",
+      "constraints": ["INV-1", "INV-3", "INV-4", "INV-5"],
+      "depends_on": [2],
+      "estimated_effort": "large",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Реализовать Scout Retrieval (DU-2)",
+      "description": "Выполнить подзадачу TASK-2026-0009: реализовать search_knowledge tool, scout-based поиск по project knowledge без эмбеддингов.",
+      "expected_output": "Реализация в .pi/extensions/loom/retrieval/, review.json подзадачи",
+      "constraints": ["INV-2", "INV-3", "INV-4"],
+      "depends_on": [2],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Интеграция и совместимость v1",
+      "description": "Интегрировать Memory Layer и Scout Retrieval в существующий executor. Проверить обратную совместимость: все v1 форматы, API, инструменты работают без изменений.",
+      "expected_output": "Обновлённый executor, прохождение regression-проверок",
+      "constraints": ["INV-3"],
+      "depends_on": [3, 4],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Verification matrix и финализация",
+      "description": "Создать artifacts/verification-matrix.md. Прогнать все автопроверки. Зафиксировать ручной checklist. Закрыть TASK-2026-0002.",
+      "expected_output": "artifacts/verification-matrix.md, обновлённый task.json (status: completed)",
+      "constraints": ["INV-1", "INV-2", "INV-3", "INV-4", "INV-5"],
+      "depends_on": [5],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-1",
+      "description": "Memory Layer может перегрузить контекст агента, если retention policy неагрессивна",
+      "severity": "medium",
+      "mitigation": "Жёсткие лимиты на размер контекста; ранжирование по relevance score; обрезка по token budget"
+    },
+    {
+      "id": "RISK-2",
+      "description": "Scout retrieval медленнее эмбеддингов: каждый поиск = отдельный subagent spawn",
+      "severity": "medium",
+      "mitigation": "Кэширование результатов scout; индексация по file paths и task IDs; ограничение scope поиска"
+    },
+    {
+      "id": "RISK-3",
+      "description": "Совместимость с v1: изменение executor loop может сломать существующий flow",
+      "severity": "high",
+      "mitigation": "Executor v2 — opt-in через флаг или отдельный режим; v1 flow остаётся default до явного перехода"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-1",
+      "description": "SDD создан и содержит все компоненты, потоки, границы",
+      "after_step": 1,
+      "verification": "read sdd.json — components >= 6, flows >= 2, deferred_scope задокументирован"
+    },
+    {
+      "id": "CHK-2",
+      "description": "Подзадачи изолированы, registry.json обновлён",
+      "after_step": 2,
+      "verification": "registry.json содержит TASK-2026-0008 и TASK-2026-0009; каждая подзадача имеет task.json и plan.json"
+    },
+    {
+      "id": "CHK-3",
+      "description": "v1 regression пройден после интеграции",
+      "after_step": 5,
+      "verification": "Все инструменты v1 (/plan, /agent, /loom-init, /rule-add, /arch-add) работают без изменений"
+    }
+  ],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}

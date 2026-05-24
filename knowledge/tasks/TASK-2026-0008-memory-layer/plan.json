@@ -1,0 +1,132 @@
+{
+  "task_id": "TASK-2026-0008-memory-layer",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Спроектировать data model для 4 дорожек",
+      "description": "Определить форматы хранения для session, episodic, semantic, procedural. Создать JSON schema memory-entry.schema.json. Зафиксировать поля: task_id, timestamp, track_type, content, relevance_score, source_ref.",
+      "expected_output": "knowledge/project/schemas/memory-entry.schema.json, artifacts/data-model.md",
+      "constraints": ["INV-1", "INV-4", "INV-5"],
+      "depends_on": [],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 2,
+      "title": "Реализовать Session Track",
+      "description": "Кратковременный контекст текущей сессии. In-memory хранилище. Очистка при закрытии. Не персистентен. API: append, get_context(budget), clear.",
+      "expected_output": ".pi/extensions/loom/memory/session-track.ts",
+      "constraints": ["INV-4", "INV-5"],
+      "depends_on": [1],
+      "estimated_effort": "small",
+      "status": "pending"
+    },
+    {
+      "step_number": 3,
+      "title": "Реализовать Episodic Store",
+      "description": "Хранение событий и решений по задачам. Файловое хранилище: knowledge/tasks/{task_id}/artifacts/memory-episodic.json. Индексация по дате, task_id, step_number. API: record, query, summarize.",
+      "expected_output": ".pi/extensions/loom/memory/episodic-store.ts",
+      "constraints": ["INV-1", "INV-5"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "Реализовать Semantic Store",
+      "description": "Хранение фактов, правил, архитектурных компонентов. Источники: rules/, architecture/, task invariants. Файловое хранилище: knowledge/project/memory/semantic.json. API: index, query, update.",
+      "expected_output": ".pi/extensions/loom/memory/semantic-store.ts, knowledge/project/memory/semantic.json",
+      "constraints": ["INV-1", "INV-5"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "Реализовать Procedural Store",
+      "description": "Хранение проверенных практик и паттернов из closed tasks. Файловое хранилище: knowledge/project/memory/procedural.json. Ручное извлечение на старте (авто — deferred). API: learn, query, validate.",
+      "expected_output": ".pi/extensions/loom/memory/procedural-store.ts, knowledge/project/memory/procedural.json",
+      "constraints": ["INV-1", "INV-5"],
+      "depends_on": [1],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "Реализовать Memory Manager",
+      "description": "Оркестратор 4 дорожек. Retention policy: max_entries per track, max_age, min_relevance. Relevance scoring: комбинация freshness, frequency, explicit operator rating. Summarization: при превышении threshold — compact.",
+      "expected_output": ".pi/extensions/loom/memory/manager.ts",
+      "constraints": ["INV-1", "INV-6"],
+      "depends_on": [2, 3, 4, 5],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 7,
+      "title": "Реализовать Context Assembler",
+      "description": "Сборка контекста для агента. Приоритет: semantic > episodic > procedural > session. Token budget: configurable в execution-config.json. Truncation: по приоритету, с lossy summarization для низкоприоритетных дорожек.",
+      "expected_output": ".pi/extensions/loom/memory/context-assembler.ts",
+      "constraints": ["INV-4", "INV-6"],
+      "depends_on": [6],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 8,
+      "title": "Интеграция с Executor v1 (backward compat)",
+      "description": "Добавить opt-in флаг use_memory_v2 в execution-config.json. При false — executor работает как v1 без изменений. При true — ContextAssembler вызывается перед spawn_worker/spawn_reviewer.",
+      "expected_output": "Обновлённый .pi/extensions/loom/agent-mode/executor.ts, execution-config.json",
+      "constraints": ["INV-3"],
+      "depends_on": [7],
+      "estimated_effort": "medium",
+      "status": "pending"
+    },
+    {
+      "step_number": 9,
+      "title": "Тесты и verification matrix",
+      "description": "Прогнать автопроверки: JSON schema валидность, token budget respect, backward compatibility. Создать artifacts/verification-matrix.md и review.json.",
+      "expected_output": "artifacts/verification-matrix.md, reviews/review-ML-1.json",
+      "constraints": ["INV-1", "INV-3", "INV-4", "INV-5", "INV-6"],
+      "depends_on": [8],
+      "estimated_effort": "small",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-1",
+      "description": "Semantic Store может разрастись: все правила и архитектура в одном файле",
+      "severity": "medium",
+      "mitigation": "Разбиение по domain/ в semantic/; compaction при > 1000 entries"
+    },
+    {
+      "id": "RISK-2",
+      "description": "Procedural Store пуст на старте: нет закрытых задач для извлечения паттернов",
+      "severity": "low",
+      "mitigation": "Ручное seed из существующих closed tasks (TASK-2026-0001..0007). Автоизвлечение — deferred."
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CHK-1",
+      "description": "Data model для 4 дорожек задокументирован и валиден",
+      "after_step": 1,
+      "verification": "memory-entry.schema.json проходит валидацию через python3 -m json.tool"
+    },
+    {
+      "id": "CHK-2",
+      "description": "Все 4 дорожки реализованы и имеют API",
+      "after_step": 5,
+      "verification": "Каждый store имеет read/write/query методы; файлы существуют"
+    },
+    {
+      "id": "CHK-3",
+      "description": "Backward compatibility: v1 flow работает без use_memory_v2",
+      "after_step": 8,
+      "verification": "Все v1 tools (/plan, /agent) работают при use_memory_v2 = false"
+    }
+  ],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}

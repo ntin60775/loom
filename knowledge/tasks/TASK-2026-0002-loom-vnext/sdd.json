@@ -1,0 +1,188 @@
+{
+  "task_id": "TASK-2026-0002-loom-vnext",
+  "invariant_set": [
+    {
+      "id": "INV-1",
+      "text": "Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту",
+      "verification": "MemoryManager имеет retention policy, relevance scoring, summarization. Контекст агенту собирается явно через ContextAssembler, а не через неявное состояние."
+    },
+    {
+      "id": "INV-2",
+      "text": "Retrieval через scout subagent, не эмбеддинги",
+      "verification": "search_knowledge tool запускает scout subagent с явным reasoning. Нет vector DB, нет embedding model, нет similarity search по векторам."
+    },
+    {
+      "id": "INV-3",
+      "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
+      "verification": "Все v1 tools (/plan, /agent, /loom-init, /rule-add, /arch-add) работают без изменений. task.json, plan.json, sdd.json schemas не ломаются. Executor v1 flow остаётся default."
+    },
+    {
+      "id": "INV-4",
+      "text": "Детерминированный контекст: контекст агенту собирается явно, без неявного состояния",
+      "verification": "ContextAssembler читает файлы из knowledge/ явно. Нет global mutable state. Subagent получает inputArtifact с полным контекстом."
+    },
+    {
+      "id": "INV-5",
+      "text": "Task-Centric накопление: память привязана к задачам и project knowledge, не к сессии агента",
+      "verification": "Все записи памяти имеют task_id и project_id. Session track — только дорожка, не первичный источник. Агентская сессия не хранит state между запусками."
+    }
+  ],
+  "components": [
+    {
+      "id": "COMP-memory-manager",
+      "name": "Memory Manager",
+      "responsibilities": ["Управление 4 дорожками памяти", "Retention policy", "Relevance scoring", "Summarization", "Контроль размера контекста (token budget)"],
+      "interfaces": ["memory.write(track, entry)", "memory.read(query, budget)", "memory.summarize(track, threshold)", "memory.prune(track, policy)"],
+      "dependencies": ["COMP-session-track", "COMP-episodic-store", "COMP-semantic-store", "COMP-procedural-store", "COMP-context-assembler"],
+      "files": [".pi/extensions/loom/memory/manager.ts"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-session-track",
+      "name": "Session Track",
+      "responsibilities": ["Кратковременный контекст текущей сессии", "Очистка при закрытии сессии", "Не персистентен между запусками pi"],
+      "interfaces": ["session.append(entry)", "session.get_context(budget)", "session.clear()"],
+      "dependencies": ["COMP-memory-manager"],
+      "files": [".pi/extensions/loom/memory/session-track.ts"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-episodic-store",
+      "name": "Episodic Store",
+      "responsibilities": ["Хранение событий и решений по задачам", "Временная шкала (timeline) по task_id", "Индексация по дате, task_id, step_number"],
+      "interfaces": ["episodic.record(task_id, step, event)", "episodic.query(task_id, range)", "episodic.summarize(task_id, depth)"],
+      "dependencies": ["COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/memory/episodic-store.ts", "knowledge/tasks/*/artifacts/memory-episodic.json"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-semantic-store",
+      "name": "Semantic Store",
+      "responsibilities": ["Хранение фактов, правил, архитектурных компонентов", "Извлечение из task.json, rules, architecture catalogs", "Индексация по topic, tag, component_id"],
+      "interfaces": ["semantic.index(source, facts)", "semantic.query(topic, limit)", "semantic.update(source, facts)"],
+      "dependencies": ["COMP-knowledge-io", "COMP-catalogs"],
+      "files": [".pi/extensions/loom/memory/semantic-store.ts", "knowledge/project/rules/*", "knowledge/project/architecture/*"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-procedural-store",
+      "name": "Procedural Store",
+      "responsibilities": ["Хранение проверенных практик и паттернов", "Извлечение из closed tasks (worklog, review, decisions)", "Индексация по pattern_id, applicability_domain"],
+      "interfaces": ["procedural.learn(task_id, pattern)", "procedural.query(domain, limit)", "procedural.validate(pattern_id, evidence)"],
+      "dependencies": ["COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/memory/procedural-store.ts", "knowledge/tasks/*/artifacts/memory-procedural.json"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-context-assembler",
+      "name": "Context Assembler",
+      "responsibilities": ["Сборка контекста для агента из 4 дорожек", "Уважение token budget", "Приоритизация: семантика > эпизодика > процедуральная > сессия"],
+      "interfaces": ["assemble(agent_mode, task_id, budget) -> contextArtifact", "rank(entries, query) -> scored_entries", "truncate(entries, budget) -> entries"],
+      "dependencies": ["COMP-memory-manager", "COMP-session-track", "COMP-episodic-store", "COMP-semantic-store", "COMP-procedural-store"],
+      "files": [".pi/extensions/loom/memory/context-assembler.ts"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-scout-retrieval",
+      "name": "Scout Retrieval",
+      "responsibilities": ["Поиск релевантных знаний через scout subagent", "Формирование search query из user intent", "Кэширование результатов", "Ограничение scope поиска (task/project/domain)"],
+      "interfaces": ["search_knowledge(query, scope, limit) -> results", "scout.spawn_search(query, scope) -> scout_report", "cache.store(query_hash, results)", "cache.get(query_hash) -> results | null"],
+      "dependencies": ["COMP-spawner", "COMP-scout", "COMP-knowledge-io"],
+      "files": [".pi/extensions/loom/retrieval/scout-retrieval.ts", ".pi/extensions/loom/retrieval/cache.ts"],
+      "status": "designed"
+    },
+    {
+      "id": "COMP-executor-v2",
+      "name": "Executor v2 (Integration Layer)",
+      "responsibilities": ["Интеграция Memory Layer и Scout Retrieval в executor loop", "Opt-in переключение v1/v2", "Backward compatibility guarantee"],
+      "interfaces": ["executor.run(step, mode: 'v1' | 'v2')", "executor.assemble_context(step) -> contextArtifact", "executor.search_knowledge(query) -> results"],
+      "dependencies": ["COMP-executor", "COMP-context-assembler", "COMP-scout-retrieval"],
+      "files": [".pi/extensions/loom/agent-mode/executor-v2.ts"],
+      "status": "designed"
+    }
+  ],
+  "data_model_refs": [
+    "knowledge/project/schemas/task.schema.json",
+    "knowledge/project/schemas/plan.schema.json",
+    "knowledge/project/schemas/sdd.schema.json",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/artifacts/memory-schema.json (to be created in DU-1)",
+    "knowledge/tasks/TASK-2026-0002-loom-vnext/artifacts/retrieval-schema.json (to be created in DU-2)"
+  ],
+  "flows": [
+    {
+      "id": "FLOW-context-assembly",
+      "name": "Context Assembly for Agent",
+      "type": "agent_mode",
+      "steps": [
+        "Executor определяет agent_mode и task_id",
+        "ContextAssembler запрашивает данные из 4 дорожек",
+        "Semantic Store: правила, архитектура, факты проекта",
+        "Episodic Store: история шагов текущей задачи",
+        "Procedural Store: паттерны из закрытых задач",
+        "Session Track: текущий разговор (если v2 mode)",
+        "Rank & truncate по token budget",
+        "Сформировать inputArtifact для subagent"
+      ]
+    },
+    {
+      "id": "FLOW-scout-search",
+      "name": "Scout-based Knowledge Search",
+      "type": "retrieval",
+      "steps": [
+        "Operator или Agent вызывает search_knowledge(query, scope)",
+        "Проверка кэша (query_hash)",
+        "Если miss: формировать ScoutSpec с search prompt",
+        "Spawn scout subagent через COMP-spawner",
+        "Scout читает файлы из scope (task/project/domain)",
+        "Scout возвращает ranked list с reasoning",
+        "Сохранить в кэш",
+        "Вернуть results вызывающей стороне"
+      ]
+    },
+    {
+      "id": "FLOW-memory-write",
+      "name": "Memory Write After Task Closure",
+      "type": "memory",
+      "steps": [
+        "Task переводится в status: completed",
+        "Memory Manager извлекает факты из task.json, plan.json, review.json",
+        "Semantic Store: индексировать правила, архитектуру, решения",
+        "Episodic Store: записать timeline задачи",
+        "Procedural Store: извлечь паттерны (если review confidence > 0.9)",
+        "Session Track: очистить (task closed)"
+      ]
+    }
+  ],
+  "mvp_scope": [
+    {
+      "id": "DU-1",
+      "name": "Memory Layer: 4 дорожки + ContextAssembler",
+      "status": "planned"
+    },
+    {
+      "id": "DU-2",
+      "name": "Scout Retrieval: search_knowledge tool + cache",
+      "status": "planned"
+    }
+  ],
+  "deferred_scope": [
+    {
+      "id": "DEF-1",
+      "name": "Cross-task procedural learning (автоизвлечение паттернов)",
+      "rationale": "Требует накопления 20+ closed tasks для статистической значимости. Пока — ручное извлечение через review."
+    },
+    {
+      "id": "DEF-2",
+      "name": "Embedding-based fallback для Scout Retrieval",
+      "rationale": "Scout subagent достаточен до 100 задач. Если производительность упадёт — рассмотреть гибрид."
+    },
+    {
+      "id": "DEF-3",
+      "name": "Parallel workers в Agent Mode",
+      "rationale": "Intentionally excluded. Sequential execution prevents git conflicts. Memory layer не меняет этот инвариант."
+    }
+  ],
+  "created_at": "2026-05-24",
+  "updated_at": "2026-05-24",
+  "schema_version": "1.0.0"
+}
