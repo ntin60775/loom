@@ -1,8 +1,8 @@
 {
   "task_id": "TASK-2026-0008-memory-layer",
-  "step": 6,
+  "step": 7,
   "files": [
     "knowledge/tasks/TASK-2026-0008-memory-layer/plan.json",
-    ".pi/extensions/loom/memory/manager.ts"
+    ".pi/extensions/loom/memory/context-assembler.ts"
   ]
 }
