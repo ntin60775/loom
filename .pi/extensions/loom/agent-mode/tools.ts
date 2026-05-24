@@ -9,6 +9,7 @@
  */
 
 import * as path from "node:path";
+import { execSync } from "node:child_process";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig } from "../knowledge/io";
@@ -259,6 +260,52 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
         details: { artifact_path: params.artifact_path },
       };
+    },
+  });
+
+  // Tool: Run localization guard on files from files-to-commit.json
+  pi.registerTool({
+    name: "loom_run_localization_guard",
+    label: "Run Localization Guard",
+    description: "Run localization guard on files listed in files-to-commit.json. Returns pass/fail with guard output.",
+    parameters: Type.Object({
+      task_id: Type.String(),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const ftcPath = path.join(ctx.cwd, "files-to-commit.json");
+      const ftc = readJson<{ files?: string[] }>(ftcPath);
+      const files = ftc?.files ?? [];
+
+      if (files.length === 0) {
+        return {
+          content: [{ type: "text", text: "No files to check in files-to-commit.json" }],
+          details: { passed: true, files: [] },
+        };
+      }
+
+      const scriptPath = path.join(ctx.cwd, "scripts", "check-docs-localization.sh");
+      const args = [scriptPath, ...files];
+
+      try {
+        const output = execSync(`bash ${args.map((a) => `"${a}"`).join(" ")}`, {
+          cwd: ctx.cwd,
+          encoding: "utf-8",
+          timeout: 30000,
+        });
+        return {
+          content: [{ type: "text", text: `✅ Localization guard passed.\n\n${output}` }],
+          details: { passed: true, files, output },
+        };
+      } catch (err: any) {
+        const stderr = err.stderr?.toString() ?? "";
+        const stdout = err.stdout?.toString() ?? "";
+        return {
+          content: [{ type: "text", text: `❌ Localization guard FAILED.\n\nstdout:\n${stdout}\n\nstderr:\n${stderr}` }],
+          details: { passed: false, files, stdout, stderr },
+          isError: true,
+        };
+      }
     },
   });
 }

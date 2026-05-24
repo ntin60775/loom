@@ -1,11 +1,10 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": 2,
+  "step": 3,
   "files": [
-    ".pi/extensions/loom/shared/subagent-state.ts",
     ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/ui/subagent-widget.ts",
     ".pi/extensions/loom/index.ts",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json",
     "files-to-commit.json"
   ]
 }

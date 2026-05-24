@@ -162,6 +162,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_get_next_step", "loom_check_iteration",
     "loom_spawn_worker", "loom_spawn_reviewer",
     "loom_update_task", "loom_read_artifact",
+    "loom_run_localization_guard",
   ];
   const NORMAL_MODE_TOOLS = [
     "read", "bash", "edit", "write", "grep", "find", "ls",
