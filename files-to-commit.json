@@ -1,9 +1,8 @@
 {
   "task_id": "TASK-2026-0008-memory-layer",
-  "step": 5,
+  "step": 6,
   "files": [
     "knowledge/tasks/TASK-2026-0008-memory-layer/plan.json",
-    ".pi/extensions/loom/memory/procedural-store.ts",
-    "knowledge/project/memory/procedural.json"
+    ".pi/extensions/loom/memory/manager.ts"
   ]
 }
