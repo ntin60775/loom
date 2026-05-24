@@ -62,5 +62,10 @@
   ],
   "created_at": "2026-05-23",
   "updated_at": "2026-05-24",
+  "post_review_fixes": {
+    "date": "2026-05-24",
+    "items": ["W1", "W2", "N1", "N2", "N3"],
+    "review_artifact": "reviews/review-DU-3-post-fixes.json"
+  },
   "schema_version": "1.0.0"
 }

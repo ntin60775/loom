@@ -364,21 +364,42 @@ export function validateExecutionConfigShape(data: unknown): string | null {
   if (!hasGitSafety && !hasRecovery && !hasLocalization && !hasSchemaVersion) {
     return "missing expected config sections (git_safety, recovery, localization_guard, or schema_version)";
   }
+  if (hasSchemaVersion && typeof obj.schema_version !== "string") {
+    return "schema_version must be a string";
+  }
   if (hasRecovery) {
     const rec = obj.recovery as Record<string, unknown>;
-    if (typeof rec.max_worker_iterations !== "number") return "recovery.max_worker_iterations must be a number";
-    if (typeof rec.timeout_reviewer_seconds !== "number") return "recovery.timeout_reviewer_seconds must be a number";
-    if (typeof rec.on_worker_crash !== "string") return "recovery.on_worker_crash must be a string";
+    if (typeof rec.max_worker_iterations !== "number" || rec.max_worker_iterations < 1) {
+      return "recovery.max_worker_iterations must be a number >= 1";
+    }
+    if (typeof rec.timeout_reviewer_seconds !== "number" || rec.timeout_reviewer_seconds < 1) {
+      return "recovery.timeout_reviewer_seconds must be a number >= 1";
+    }
+    if (typeof rec.on_worker_crash !== "string") {
+      return "recovery.on_worker_crash must be a string";
+    }
+    const validCrashActions = ["retry_once", "retry_twice", "abort", "escalate"];
+    if (!validCrashActions.includes(rec.on_worker_crash)) {
+      return `recovery.on_worker_crash must be one of ${validCrashActions.join(", ")}`;
+    }
   }
   if (hasGitSafety) {
     const gs = obj.git_safety as Record<string, unknown>;
-    if (typeof gs.require_files_to_commit !== "boolean") return "git_safety.require_files_to_commit must be a boolean";
-    if (typeof gs.validate_against_plan !== "boolean") return "git_safety.validate_against_plan must be a boolean";
+    if (typeof gs.require_files_to_commit !== "boolean") {
+      return "git_safety.require_files_to_commit must be a boolean";
+    }
+    if (typeof gs.validate_against_plan !== "boolean") {
+      return "git_safety.validate_against_plan must be a boolean";
+    }
   }
   if (hasLocalization) {
     const loc = obj.localization_guard as Record<string, unknown>;
-    if (typeof loc.enabled !== "boolean") return "localization_guard.enabled must be a boolean";
-    if (typeof loc.command !== "string") return "localization_guard.command must be a string";
+    if (typeof loc.enabled !== "boolean") {
+      return "localization_guard.enabled must be a boolean";
+    }
+    if (typeof loc.command !== "string" || loc.command.length === 0) {
+      return "localization_guard.command must be a non-empty string";
+    }
   }
   return null;
 }

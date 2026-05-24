@@ -70,6 +70,18 @@ knowledge/tasks/TASK-2026-0005-onboarding-impl/task.json — task metadata
 knowledge/tasks/registry.json                            — task registry
 ```
 
+## Post-Review Fixes (W1, W2, N1–N3)
+
+| ID | Проблема | Исправление |
+|---|---|---|
+| **W1** | `spawner.ts`: `fs.rmdirSync(tmpPromptDir)` не удаляет непустые каталоги | Заменено на `fs.rmSync(tmpPromptDir, { recursive: true, force: true })` |
+| **W2** | `index.ts`: race condition при быстром переключении режимов (`ctrl+shift+m`) | Добавлен `isTransitioning` мьютекс в `enterPlanMode`, `enterAgentMode`, `enterIdleMode` |
+| **N1** | `schemas.ts`: `validateExecutionConfigShape` проверял только наличие секций | Усилен: проверка `schema_version` как string, `max_worker_iterations >= 1`, `timeout_reviewer_seconds >= 1`, enum для `on_worker_crash`, non-empty `command` |
+| **N2** | `index.ts`: `saveState` через `pi.appendEntry` → бесконечный рост session entries | Переход на файл `knowledge/.loom-state.json` (`readJson`/`writeJson`), legacy fallback сохранён |
+| **N3** | `scout.md`: поля `description` не содержали указания языка | Добавлен `in Russian` в оба поля `description` |
+
+Дополнительно: `.gitignore` обновлён (`**/.loom-state.json`), чтобы runtime state не попадал в git.
+
 ---
 
 *Evidence collected for comprehensive review of DU-03*

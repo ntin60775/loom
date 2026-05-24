@@ -12,7 +12,7 @@
 | INV-4 | Task-Centric: каждая задача = атом | Registry не обновлён после создания задачи | `readRegistry()` содержит все созданные задачи; artifacts/ не пуст | ✅ PASS | Registry содержит 6 задач; artifacts/ заполнен (см. artifacts/) |
 | INV-6 | Детерминированный контекст: чистые сессии | Subagent получает неявный контекст из сессии | Subagent spawner использует `--no-context-files` | ✅ PASS | `spawnSubagent` в spawner.ts передаёт `--no-context-files` |
 | INV-7 | Pi-Native: extension, не standalone | Код лежит вне `.pi/extensions/loom/` | `find .pi/extensions/loom -name '*.ts'` — все файлы расширения | ✅ PASS | Все 16 .ts файлов внутри `.pi/extensions/loom/` |
-| INV-12 | Локализация: русский UI, английский system | System prompt содержит русский текст | `grep -rn 'description in Russian' .pi/extensions/loom/subagent/prompts/scout.md` | ✅ PASS | scout.md исправлен: "short description" (без "in Russian") |
+| INV-12 | Локализация: русский UI, английский system | System prompt содержит русский текст | `grep -rn 'description in Russian' .pi/extensions/loom/subagent/prompts/scout.md` | ✅ PASS | scout.md исправлен: оба `description` теперь явно `in Russian` |
 
 ## Проверка шагов плана
 
@@ -26,6 +26,16 @@
 | 6. Onboarding pipeline | ✅ DONE | `/loom-init` with pre-check, classification, wizard |
 | 7. Review & finalize | ✅ DONE | Review artifacts в reviews/, task.json status=completed |
 
+## Исправления по ревью (post-review fixes)
+
+| ID | Описание | Файл | Статус |
+|---|---|---|---|
+| W1 | Небезопасная очистка temp-директории (`rmdirSync` не удаляет непустые) | `subagent/spawner.ts` | ✅ `fs.rmSync(..., { recursive: true, force: true })` |
+| W2 | Race condition в mode switcher (быстрое `ctrl+shift+m`) | `index.ts` | ✅ `isTransitioning` мьютекс во всех helpers |
+| N1 | Слабый `validateExecutionConfigShape` (только проверка наличия секций) | `knowledge/schemas.ts` | ✅ Строгая проверка типов, bounds, enum для `on_worker_crash` |
+| N2 | `saveState` использует `appendEntry` → неограниченный рост | `index.ts` | ✅ Переход на файл `knowledge/.loom-state.json` + `.gitignore` |
+| N3 | Неконсистентность языка в scout prompt (description без `in Russian`) | `subagent/prompts/scout.md` | ✅ Оба поля `description` теперь с `in Russian` |
+
 ## Остаточные риски
 
 | Риск | Описание | Принятие |
@@ -36,4 +46,4 @@
 
 ---
 
-*Generated for comprehensive review of DU-03*
+*Updated after post-review fixes — DU-03*

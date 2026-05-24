@@ -1,0 +1,51 @@
+{
+  "review_id": "REV-2026-0005-DU-3-post-fixes",
+  "target": {
+    "type": "git-diff",
+    "task_id": "TASK-2026-0005-onboarding-impl",
+    "branch": "task/task-2026-0005-onboarding-impl"
+  },
+  "verdict": "approve",
+  "confidence": 0.98,
+  "criteria_checks": [
+    {
+      "criterion": "W1: Безопасная очистка temp-директории в spawner.ts",
+      "status": "pass",
+      "comment": "fs.rmdirSync заменён на fs.rmSync(..., { recursive: true, force: true }). Непустые каталоги теперь удаляются корректно."
+    },
+    {
+      "criterion": "W2: Race condition в mode switcher",
+      "status": "pass",
+      "comment": "Добавлен флаг isTransitioning. Все три helpers (enterPlanMode, enterAgentMode, enterIdleMode) блокируют повторный вход и сбрасывают флаг в finally."
+    },
+    {
+      "criterion": "N1: Усиление validateExecutionConfigShape",
+      "status": "pass",
+      "comment": "Добавлена проверка schema_version как string, bounds (>= 1) для числовых полей, enum для on_worker_crash, non-empty string для command."
+    },
+    {
+      "criterion": "N2: Файловая персистенция состояния вместо appendEntry",
+      "status": "pass",
+      "comment": "saveState теперь пишет в knowledge/.loom-state.json через writeJson. loadState читает файл в приоритете, с fallback на legacy session entries. .gitignore обновлён."
+    },
+    {
+      "criterion": "N3: Унификация language hints в scout.md",
+      "status": "pass",
+      "comment": "Оба поля description в scout prompt теперь явно содержат 'in Russian'."
+    }
+  ],
+  "general_comments": [
+    "Все 5 замечаний из комплексного ревью (W1, W2, N1–N3) исправлены.",
+    "Изменения минимальны и таргетированы: 4 файла + .gitignore.",
+    "Обратная совместимость сохранена: legacy session fallback в loadState, сигнатуры не сломаны."
+  ],
+  "corrections": [],
+  "reviewer_model": "comprehensive-agent-review",
+  "created_at": "2026-05-24",
+  "previous_reviews": [
+    "review-DU-3.json (approve)",
+    "review-DU-3-v2.json (approve)",
+    "review-DU-3-v3.json (approve)",
+    "review-DU-3-comprehensive.json (approve)"
+  ]
+}
