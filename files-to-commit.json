@@ -1,11 +1,8 @@
 {
   "task_id": "TASK-2026-0006-polish-impl",
-  "step": "init",
+  "step": "plan-adjust",
   "files": [
-    "knowledge/tasks/TASK-2026-0006-polish-impl/task.json",
-    "knowledge/tasks/TASK-2026-0006-polish-impl/sdd.json",
-    "knowledge/tasks/TASK-2026-0001-bootstrap/task.json",
-    "knowledge/tasks/registry.json",
+    "knowledge/tasks/TASK-2026-0006-polish-impl/plan.json",
     "files-to-commit.json"
   ]
 }
