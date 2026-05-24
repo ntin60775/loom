@@ -1,0 +1,100 @@
+{
+  "review_id": "REV-2026-0005-DU-3-v3",
+  "target": {
+    "type": "git-diff",
+    "base_commit": "main",
+    "head_commit": "38e027e",
+    "task_id": "TASK-2026-0005-onboarding-impl",
+    "branch": "task/task-2026-0005-onboarding-impl"
+  },
+  "verdict": "approve",
+  "confidence": 0.94,
+  "criteria_checks": [
+    {
+      "criterion": "C1: Соответствие плану — все 7 шагов выполнены",
+      "status": "pass",
+      "comment": "Все шаги plan.json имеют status=done. Артефакты каждого шага присутствуют: scout.md/researcher.md/migrator.md, catalog tools, onboarding pipeline, mode switcher, review artifacts."
+    },
+    {
+      "criterion": "C2: Инварианты задачи — проверка на коде",
+      "status": "pass",
+      "comment": "INV-2 (stack-agnostic): нет language-specific branching. INV-3 (5 состояний): detectClassification корректна. INV-4 (task-centric): registry.json обновляется, artifacts/ заполнен. INV-6 (чистые сессии): --no-context-files в spawner.ts. INV-7 (pi-native): весь код в .pi/extensions/loom/. INV-12 (локализация): system prompts на английском, UI на русском."
+    },
+    {
+      "criterion": "C3: Валидация onboarding-артефактов",
+      "status": "pass",
+      "comment": "runOnboardingSubagent принимает validator. Scout/Researcher/Migrator передают соответствующие validate*Shape. При ошибке parsed=null → isError=true."
+    },
+    {
+      "criterion": "C4: sanitizeId — вынесен и переиспользуется",
+      "status": "pass",
+      "comment": "sanitizeId в shared/utils.ts. Используется в loom_add_rule и loom_add_architecture_component. Path traversal через ID невозможен."
+    },
+    {
+      "criterion": "C5: Invariants в AGENTS.md generator",
+      "status": "pass",
+      "comment": "generateAgentsMd загружает invariants из task.json, дедуплицирует по ID, выводит секцию «Инварианты» с taskTitle."
+    },
+    {
+      "criterion": "C6: Git diff — чистота и фокус",
+      "status": "pass",
+      "comment": "9 файлов, +226/-43 строк. Изменения минимальны и таргетированы. Нет случайных правок. Обратная совместимость сохранена."
+    },
+    {
+      "criterion": "C7: Локализация и безопасность",
+      "status": "pass",
+      "comment": "Все новые UI-строки на русском. System prompts и schemas на английском. sanitizeId защищает от path traversal."
+    },
+    {
+      "criterion": "C8: Артефакты задачи",
+      "status": "pass",
+      "comment": "task.json, plan.json, evidence-summary.md, verification-matrix.md, reviews/ (3 шт.), files-to-commit.json — все на месте."
+    },
+    {
+      "criterion": "W1: Pre-existing TS code smell в executor-loop.ts",
+      "status": "warning",
+      "comment": "Строка 175: duplicate key `cwd: cwd, cwd: cwd,` в workerSpec. Runtime работает (ES2015+ разрешает duplicate props), но TypeScript выдаст TS1117. Не внесено DU-3, но влияет на health codebase. Рекомендация: исправить в DU-4 или hotfix."
+    },
+    {
+      "criterion": "W2: Неиспользуемые переменные config",
+      "status": "warning",
+      "comment": "agent-mode/tools.ts (~стр.121) и plan-mode/tools.ts (~стр.347): результат readSubagentConfig присваивается в переменную config, которая далее не используется. Мёртвый код."
+    },
+    {
+      "criterion": "N1: Семантический mismatch типа модели для researcher/migrator",
+      "status": "note",
+      "comment": "loom_run_researcher и loom_run_migrator вызывают resolveModelArg('scout', ...). Функционально безопасно из-за fallback-цепочки, но семантически некорректно. Рекомендация: использовать 'general' или добавить dedicated типы."
+    },
+    {
+      "criterion": "N2: Отсутствует TypeBox-схема для ExecutionConfig",
+      "status": "note",
+      "comment": "В schemas.ts нет ExecutionConfigSchema как TypeBox-объекта, хотя ExecutionConfigData определён в types.ts. validateExecutionConfigShape — слишком слабый валидатор (только проверка наличия секций). Рекомендация: добавить полную TypeBox-схему для консистентности."
+    },
+    {
+      "criterion": "N3: saveState использует appendEntry без ограничения роста",
+      "status": "note",
+      "comment": "index.ts: pi.appendEntry('loom-state', state) добавляет запись каждый раз при смене режима. loadState берёт .pop(), но лог растёт бесконечно. Рекомендация: compaction или switch на setEntry, если API позволяет."
+    },
+    {
+      "criterion": "N4: project_name default в loom_generate_agents_md",
+      "status": "note",
+      "comment": "params.project_name имеет TypeBox default='Project', но если pi-ai передаёт undefined, fallback-логика projectName==='Project' не сработает. Рекомендация: `params.project_name ?? 'Project'`."
+    }
+  ],
+  "general_comments": [
+    "DU-3 реализован полностью и корректно. Все 7 шагов плана выполнены.",
+    "Изменения DU-3: 9 файлов, +226/-43. Минимальны, таргетированы, обратно совместимы.",
+    "Критичных ошибок в изменениях DU-3 не обнаружено.",
+    "Основные риски: pre-existing TS code smell в executor-loop.ts (duplicate key) и неиспользуемые переменные config в двух файлах.",
+    "Рекомендуется в DU-4 (Polish + TUI) устранить найденные code-smell и добавить недостающие TypeBox-схемы.",
+    "Рекомендуется перед merge в main убедиться, что весь extension компилируется (или хотя бы запускается) без ошибок."
+  ],
+  "corrections": [],
+  "reviewer_model": "comprehensive-agent-review",
+  "created_at": "2026-05-24",
+  "previous_reviews": [
+    "review-DU-3.json (approve, self-review)",
+    "review-DU-3-v2.json (approve, self-review)",
+    "review-DU-3-comprehensive.json (approve, post-review-fixes)"
+  ]
+}

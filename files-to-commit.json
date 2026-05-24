@@ -6,6 +6,7 @@
     ".pi/extensions/loom/knowledge/onboarding.ts",
     ".pi/extensions/loom/plan-mode/tools.ts",
     ".pi/extensions/loom/agent-mode/tools.ts",
+    ".pi/extensions/loom/agent-mode/executor-loop.ts",
     ".pi/extensions/loom/knowledge/io.ts",
     ".pi/extensions/loom/knowledge/schemas.ts",
     ".pi/extensions/loom/shared/utils.ts",
@@ -21,6 +22,7 @@
     "knowledge/project/architecture/components/COMP-researcher.json",
     "knowledge/project/architecture/components/COMP-migrator.json",
     "knowledge/project/architecture/components/COMP-catalogs.json",
-    "knowledge/project/architecture/components/COMP-mode-switcher.json"
+    "knowledge/project/architecture/components/COMP-mode-switcher.json",
+    "knowledge/tasks/TASK-2026-0005-onboarding-impl/reviews/review-DU-3-v3.json"
   ]
 }

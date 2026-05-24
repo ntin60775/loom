@@ -107,7 +107,6 @@ export function getNextPendingStep(taskId: string, cwd: string): StepInfo | null
       tools: ["read", "bash", "edit", "write"],
       task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output ?? ""}\nConstraints: ${(step.constraints ?? []).join(", ") || "none"}`,
       cwd,
-      cwd,
     };
 
     return {

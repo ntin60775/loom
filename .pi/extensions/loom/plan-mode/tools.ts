@@ -359,8 +359,6 @@ export function registerPlanTools(pi: ExtensionAPI): void {
     }),
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
-      const config = readSubagentConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "subagent-config.json"));
-
       const scoutModel = params.model ?? resolveModelArg("scout", params.instruction, ctx.cwd);
 
       const spec: WorkerSpec = {
@@ -426,7 +424,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getContextResearchPath(ctx.cwd);
-      const model = params.model ?? resolveModelArg("scout", "documentation research", ctx.cwd);
+      const model = params.model ?? resolveModelArg("general", "documentation research", ctx.cwd);
       const { parsed, outputPath: out, result } = await runOnboardingSubagent(
         "loom-researcher",
         "subagent/prompts/researcher",
@@ -456,7 +454,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       const outputPath = params.output_path ?? getMigrationAnalysisPath(ctx.cwd);
-      const model = params.model ?? resolveModelArg("scout", "migration analysis", ctx.cwd);
+      const model = params.model ?? resolveModelArg("general", "migration analysis", ctx.cwd);
       const { parsed, outputPath: out, result } = await runOnboardingSubagent(
         "loom-migrator",
         "subagent/prompts/migrator",
@@ -632,7 +630,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
       });
 
       // Auto-detect project name: stack.json name > package.json name > directory basename
-      let projectName = params.project_name;
+      let projectName = params.project_name ?? "Project";
       if (projectName === "Project") {
         const stackName = stack?.name as string | undefined;
         if (stackName) {

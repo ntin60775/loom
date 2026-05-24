@@ -42,6 +42,10 @@ function loadState(ctx: ExtensionContext): LoomState {
 }
 
 function saveState(pi: ExtensionAPI, state: LoomState): void {
+  // TODO: ExtensionAPI only exposes appendEntry; no setEntry/removeEntry.
+  // This causes unbounded growth of loom-state entries per session.
+  // Mitigation: pi session manager may add compaction; until then,
+  // loadState uses .pop() to read the latest entry.
   pi.appendEntry("loom-state", state);
 }
 
