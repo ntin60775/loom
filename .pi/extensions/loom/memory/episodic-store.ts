@@ -183,9 +183,9 @@ export class EpisodicStore {
   /**
    * Compact a task's episodic store: remove low-relevance entries and enforce maxEntriesPerTask.
    */
-  compactTask(cwd: string, taskId: string): void {
+  compact(cwd: string, taskId: string): void {
     let entries = this.readTaskEntries(cwd, taskId);
-    entries = this.compact(entries);
+    entries = this.compactEntries(entries);
     this.writeTaskEntries(cwd, taskId, entries);
   }
 
@@ -200,10 +200,10 @@ export class EpisodicStore {
         return entries; // skip compaction when under limit and no low-relevance entries
       }
     }
-    return this.compact(entries);
+    return this.compactEntries(entries);
   }
 
-  private compact(entries: MemoryEntry[]): MemoryEntry[] {
+  private compactEntries(entries: MemoryEntry[]): MemoryEntry[] {
     // Filter by min relevance
     let result = entries.filter((e) => e.relevance_score >= this.minRelevance);
 

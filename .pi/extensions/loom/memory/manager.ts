@@ -242,7 +242,7 @@ export class MemoryManager {
    * Trigger compaction for a specific task's episodic store.
    */
   compactEpisodic(taskId: string): void {
-    this.episodic.compactTask(this.cwd, taskId);
+    this.episodic.compact(this.cwd, taskId);
   }
 
   /**

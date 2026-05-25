@@ -17,7 +17,7 @@
 | Дорожка | Файл | API | Статус |
 |---------|------|-----|--------|
 | Session | `.pi/extensions/loom/memory/session-track.ts` | `append`, `getContext`, `query`, `clear`, `evict`, `stats`, `size` | ✅ |
-| Episodic | `.pi/extensions/loom/memory/episodic-store.ts` | `record`, `query`, `summarize`, `compactTask`, `stats` | ✅ |
+| Episodic | `.pi/extensions/loom/memory/episodic-store.ts` | `record`, `query`, `summarize`, `compact`, `stats` | ✅ |
 | Semantic | `.pi/extensions/loom/memory/semantic-store.ts` | `index`, `query`, `update`, `compact`, `stats` | ✅ |
 | Procedural | `.pi/extensions/loom/memory/procedural-store.ts` | `learn`, `query`, `validate`, `recordUsage`, `seedFromTasks`, `compact`, `stats` | ✅ |
 | Memory Manager | `.pi/extensions/loom/memory/manager.ts` | `append`, `query`, `recomputeRelevance`, `enforceRetention`, `compactEpisodic`, `summarizeEpisodic`, `indexSemantic`, `seedProcedural`, `stats`, `clearSession` | ✅ |
