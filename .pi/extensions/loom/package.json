@@ -2,9 +2,35 @@
   "name": "loom-extension",
   "version": "0.1.0",
   "description": "AI-Native Development Environment for pi — loom extension",
-  "private": true,
-  "dependencies": {
-    "@earendil-works/pi-coding-agent": "^0.75.0",
-    "@earendil-works/pi-ai": "^0.75.0"
+  "keywords": ["pi-package"],
+  "license": "Apache-2.0",
+  "author": "ntin60775",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ntin60775/loom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ntin60775/loom/issues"
+  },
+  "homepage": "https://github.com/ntin60775/loom#readme",
+  "files": [
+    "index.ts",
+    "agent-mode",
+    "knowledge",
+    "memory",
+    "plan-mode",
+    "prompts",
+    "shared",
+    "subagent",
+    "ui",
+    "package.json",
+    "README.md"
+  ],
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-ai": "*"
   }
 }
