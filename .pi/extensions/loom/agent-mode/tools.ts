@@ -21,6 +21,7 @@ import { registerSubagent, updateSubagentStatus, removeSubagent } from "../share
 import { generateVerificationMatrix } from "../knowledge/verification";
 import type { PlanStepData, InvariantData } from "../knowledge/types";
 import { validateExecutionConfigShape, validateSubagentConfigShape } from "../knowledge/schemas";
+import { buildMemoryContext } from "../memory";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -90,6 +91,17 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = resolveModelArg("worker", taskContext, ctx.cwd);
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
 
+      // v2 memory layer: inject assembled context if enabled
+      let memoryContext = "";
+      try {
+        const assembled = buildMemoryContext(ctx.cwd, params.task_id);
+        if (assembled) {
+          memoryContext = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
+        }
+      } catch {
+        // memory layer is opt-in; ignore errors
+      }
+
       // INV-11: Block concurrent worker spawn
       if (activeWorkerId) {
         return {
@@ -125,7 +137,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           systemPrompt: workerPrompt,
           model,
           tools,
-          task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${params.additional_context ?? ""}`,
+          task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${memoryContext}${params.additional_context ?? ""}`,
           cwd: ctx.cwd,
         };
 
@@ -203,6 +215,17 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
+      // v2 memory layer: inject assembled context for reviewer if enabled
+      let memoryContext = "";
+      try {
+        const assembled = buildMemoryContext(ctx.cwd, params.task_id);
+        if (assembled) {
+          memoryContext = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
+        }
+      } catch {
+        // memory layer is opt-in; ignore errors
+      }
+
       const reviewerId = `${params.task_id}-reviewer-step${params.step_number}`;
 
       // P2 fix: create AbortController for real subagent kill
@@ -227,7 +250,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         systemPrompt: reviewerPrompt,
         model,
         tools,
-        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output ?? ""}\nInvariants: ${invariantsStr}`,
+        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output ?? ""}\nInvariants: ${invariantsStr}${memoryContext}`,
         targetCommit: params.commit_hash,
         planJsonPath: path.join(dir, "plan.json"),
         stepNumber: params.step_number,
@@ -275,7 +298,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       task_id: Type.String(),
       step_number: Type.Optional(Type.Number()),
       step_status: Type.Optional(Type.String({ description: "pending | in_progress | done | blocked" })),
-      task_status: Type.Optional(Type.String({ description: "draft | in_progress | completed | rejected" })),
+      task_status: Type.Optional(Type.String({ description: "draft | active | completed | rejected" })),
     }),
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {

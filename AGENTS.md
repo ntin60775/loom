@@ -14,13 +14,17 @@
 - `/rule-list` — список правил проекта
 - `/arch-add` — добавить архитектурный компонент
 - `/arch-list` — список архитектурных компонентов
-- **Шорткат:** `ctrl+shift+m` — циклическое переключение режимов: idle → plan → agent → idle
+- **Шорткат:** `alt+m` — циклическое переключение режимов: idle → plan → agent → idle
 - Текущие задачи: см. `knowledge/tasks/registry.json`
 - Полный контекст: `knowledge/`
 - Правила: `knowledge/project/rules/`
 - Архитектура: `knowledge/project/architecture/`
 - Схемы: `knowledge/project/schemas/`
 - Конфиги: `knowledge/project/configs/`
+
+## Режимы работы
+
+Подробное описание режимов `idle`, `plan`, `agent` и механики переключения см. в `README.md` → **Режимы работы**.
 
 ## Инвариант
 Агент — основной исполнитель. Оператор задаёт намерение, агент реализует.

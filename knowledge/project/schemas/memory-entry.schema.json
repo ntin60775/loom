@@ -1,0 +1,210 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loom://schemas/memory-entry.schema.json",
+  "title": "MemoryEntry",
+  "description": "Unified schema for all memory tracks in loom v2 memory layer",
+  "type": "object",
+  "required": ["entry_id", "timestamp", "track_type", "content", "relevance_score", "source_ref"],
+  "properties": {
+    "entry_id": {
+      "type": "string",
+      "description": "Unique identifier for the memory entry. Semantic IDs (e.g. semantic-rule_X-...) or UUID v4.",
+      "pattern": "^[a-zA-Z0-9_-]+(-[a-zA-Z0-9_-]+)*$|^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "task_id": {
+      "type": ["string", "null"],
+      "description": "Associated task ID. Null for global/project-scoped entries.",
+      "pattern": "^TASK-[0-9]{4}-[0-9]+$"
+    },
+    "step_number": {
+      "type": ["integer", "null"],
+      "description": "Plan step number for episodic entries. Null for other tracks.",
+      "minimum": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the entry was created"
+    },
+    "track_type": {
+      "type": "string",
+      "enum": ["session", "episodic", "semantic", "procedural"],
+      "description": "Memory track classification"
+    },
+    "content": {
+      "type": "object",
+      "description": "Track-specific payload. Shape varies by track_type.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/SessionContent"
+        },
+        {
+          "$ref": "#/definitions/EpisodicContent"
+        },
+        {
+          "$ref": "#/definitions/SemanticContent"
+        },
+        {
+          "$ref": "#/definitions/ProceduralContent"
+        }
+      ]
+    },
+    "relevance_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Computed relevance score (0=irrelevant, 1=critical)"
+    },
+    "source_ref": {
+      "type": "string",
+      "description": "Reference to the origin: file path, tool call ID, or semantic identifier"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional classification tags for cross-cutting queries",
+      "default": []
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 creation timestamp (alias for timestamp)"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 last update timestamp"
+    },
+    "expires_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Expiration timestamp. Null for persistent tracks. Used by session track and retention policies.",
+      "default": null
+    },
+    "access_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of times this entry was retrieved. Used for frequency-based relevance scoring.",
+      "default": 0
+    },
+    "last_accessed_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Last access timestamp. Used for freshness scoring.",
+      "default": null
+    }
+  },
+  "definitions": {
+    "SessionContent": {
+      "type": "object",
+      "required": ["role", "message"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["user", "assistant", "system", "tool"],
+          "description": "Message originator role"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message text content"
+        },
+        "tool_calls": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Optional tool call metadata for assistant/tool messages",
+          "default": []
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Session identifier for grouping"
+        }
+      }
+    },
+    "EpisodicContent": {
+      "type": "object",
+      "required": ["event", "decision", "outcome"],
+      "properties": {
+        "event": {
+          "type": "string",
+          "description": "What happened: tool execution, file change, error, etc."
+        },
+        "decision": {
+          "type": "string",
+          "description": "Agent decision or reasoning that led to the event"
+        },
+        "outcome": {
+          "type": "string",
+          "description": "Result of the event: success, failure, partial, blocked"
+        },
+        "affected_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files affected by this episode",
+          "default": []
+        },
+        "invariants_checked": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Invariant IDs referenced during this episode",
+          "default": []
+        }
+      }
+    },
+    "SemanticContent": {
+      "type": "object",
+      "required": ["fact", "category"],
+      "properties": {
+        "fact": {
+          "type": "string",
+          "description": "The fact, rule, or architectural statement"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["rule", "architecture", "invariant", "convention", "dependency", "domain"],
+          "description": "Semantic classification"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence in the fact validity",
+          "default": 1.0
+        },
+        "domain": {
+          "type": "string",
+          "description": "Optional domain tag for filtering"
+        }
+      }
+    },
+    "ProceduralContent": {
+      "type": "object",
+      "required": ["pattern", "context"],
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Reusable pattern description: 'When X, do Y'"
+        },
+        "context": {
+          "type": "string",
+          "description": "Situations where the pattern applies"
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": ["draft", "validated", "deprecated", "rejected"],
+          "description": "Current validation state of the pattern",
+          "default": "draft"
+        },
+        "origin_task_id": {
+          "type": ["string", "null"],
+          "description": "Task ID where the pattern was extracted from"
+        },
+        "usage_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many times the pattern was successfully applied",
+          "default": 0
+        }
+      }
+    }
+  }
+}

@@ -31,6 +31,7 @@ export const TaskSchema = Type.Object({
       status: Type.String({ default: "draft" }),
       purpose: Type.String(),
       base_branch: Type.String({ default: "main" }),
+      subtask_id: Type.Optional(Type.String()),
     }),
   ),
   created_at: Type.String(),
@@ -109,6 +110,12 @@ export const ReviewSchema = Type.Object({
   reviewed_at: Type.String(),
 });
 
+export const DomainRuleSchema = Type.Object({
+  extension: Type.Optional(Type.String()),
+  domain: Type.String(),
+  default: Type.Optional(Type.String()),
+});
+
 export const SubagentConfigSchema = Type.Object({
   domains: Type.Record(
     Type.String(),
@@ -121,24 +128,12 @@ export const SubagentConfigSchema = Type.Object({
   reviewer: Type.Optional(
     Type.Object({
       thinking: Type.Optional(Type.String()),
-      domain_rules: Type.Array(
-        Type.Object({
-          extension: Type.Optional(Type.String()),
-          domain: Type.String(),
-          default: Type.Optional(Type.String()),
-        }),
-      ),
+      domain_rules: Type.Array(DomainRuleSchema),
     }),
   ),
   worker: Type.Optional(
     Type.Object({
-      domain_rules: Type.Array(
-        Type.Object({
-          extension: Type.Optional(Type.String()),
-          domain: Type.String(),
-          default: Type.Optional(Type.String()),
-        }),
-      ),
+      domain_rules: Type.Array(DomainRuleSchema),
     }),
   ),
   scout: Type.Optional(
@@ -280,19 +275,62 @@ export const ArchitectureComponentSchema = Type.Object({
 });
 
 export const ExecutionConfigSchema = Type.Object({
-  schema_version: Type.String({ default: "1.0.0" }),
-  git_safety: Type.Optional(Type.Object({
-    require_files_to_commit: Type.Boolean({ default: true }),
-    validate_against_plan: Type.Boolean({ default: true }),
+  schema_version: Type.Optional(Type.String({ default: "1.0.0" })),
+  review: Type.Optional(Type.Object({
+    enabled: Type.Boolean(),
+    max_iterations: Type.Number(),
+    auto_select_reviewer: Type.Object({
+      enabled: Type.Boolean(),
+      domain_rules: Type.Array(DomainRuleSchema),
+    }),
+  })),
+  parallelism: Type.Optional(Type.Object({
+    plan_mode_max_subagents: Type.Number(),
+  })),
+  timeout: Type.Optional(Type.Object({
+    worker: Type.Number(),
+    reviewer: Type.Number(),
+    scout: Type.Number(),
+  })),
+  session_retention_days: Type.Optional(Type.Number()),
+  human_in_the_loop: Type.Optional(Type.Object({
+    on_reject_max_iterations: Type.Boolean(),
+    on_timeout: Type.Boolean(),
+    on_ambiguity: Type.Boolean(),
+    on_worker_blocker: Type.Boolean(),
   })),
   recovery: Type.Optional(Type.Object({
-    max_worker_iterations: Type.Number({ default: 10 }),
-    timeout_reviewer_seconds: Type.Number({ default: 300 }),
-    on_worker_crash: Type.String({ default: "retry_once" }),
+    default_strategy: Type.String(),
+    max_retries_per_step: Type.Number(),
+    escalate_after_total_failures: Type.Number(),
   })),
   localization_guard: Type.Optional(Type.Object({
-    enabled: Type.Boolean({ default: true }),
-    command: Type.String(),
+    enabled: Type.Boolean(),
+    check_on_review: Type.Boolean(),
+    check_on_finalize: Type.Boolean(),
+    script_path: Type.String(),
+  })),
+  git: Type.Optional(Type.Object({
+    commit_mode: Type.String(),
+    commit_message_template: Type.String(),
+    require_clean_worktree: Type.Boolean(),
+  })),
+  use_memory_v2: Type.Optional(Type.Boolean({ default: false })),
+  memory: Type.Optional(Type.Object({
+    token_budget: Type.Optional(Type.Number({ default: 4000 })),
+    relevance_weights: Type.Optional(Type.Object({
+      freshness: Type.Number(),
+      frequency: Type.Number(),
+      explicit_rating: Type.Number(),
+    })),
+    retention: Type.Optional(Type.Object({
+      max_entries_session: Type.Optional(Type.Number()),
+      max_entries_episodic: Type.Optional(Type.Number()),
+      max_entries_semantic: Type.Optional(Type.Number()),
+      max_entries_procedural: Type.Optional(Type.Number()),
+      max_age_days: Type.Optional(Type.Number()),
+      min_relevance: Type.Optional(Type.Number()),
+    })),
   })),
 });
 
@@ -357,50 +395,72 @@ export function validateSubagentConfigShape(data: unknown): string | null {
 export function validateExecutionConfigShape(data: unknown): string | null {
   if (!data || typeof data !== "object") return "not an object";
   const obj = data as Record<string, unknown>;
-  const hasGitSafety = "git_safety" in obj;
-  const hasRecovery = "recovery" in obj;
-  const hasLocalization = "localization_guard" in obj;
-  const hasSchemaVersion = "schema_version" in obj;
-  if (!hasGitSafety && !hasRecovery && !hasLocalization && !hasSchemaVersion) {
-    return "missing expected config sections (git_safety, recovery, localization_guard, or schema_version)";
+  const knownSections = [
+    "schema_version", "review", "parallelism", "timeout", "session_retention_days",
+    "human_in_the_loop", "recovery", "localization_guard", "git", "use_memory_v2", "memory",
+  ];
+  const hasAnySection = knownSections.some((s) => s in obj);
+  if (!hasAnySection) {
+    return `missing expected config sections (${knownSections.join(", ")})`;
   }
-  if (hasSchemaVersion && typeof obj.schema_version !== "string") {
+
+  if ("schema_version" in obj && typeof obj.schema_version !== "string") {
     return "schema_version must be a string";
   }
-  if (hasRecovery) {
+
+  if ("recovery" in obj) {
     const rec = obj.recovery as Record<string, unknown>;
-    if (typeof rec.max_worker_iterations !== "number" || rec.max_worker_iterations < 1) {
+    if ("max_retries_per_step" in rec && (typeof rec.max_retries_per_step !== "number" || rec.max_retries_per_step < 1)) {
+      return "recovery.max_retries_per_step must be a number >= 1";
+    }
+    if ("max_worker_iterations" in rec && (typeof rec.max_worker_iterations !== "number" || rec.max_worker_iterations < 1)) {
       return "recovery.max_worker_iterations must be a number >= 1";
     }
-    if (typeof rec.timeout_reviewer_seconds !== "number" || rec.timeout_reviewer_seconds < 1) {
+    if ("timeout_reviewer_seconds" in rec && (typeof rec.timeout_reviewer_seconds !== "number" || rec.timeout_reviewer_seconds < 1)) {
       return "recovery.timeout_reviewer_seconds must be a number >= 1";
     }
-    if (typeof rec.on_worker_crash !== "string") {
+    if ("on_worker_crash" in rec && typeof rec.on_worker_crash !== "string") {
       return "recovery.on_worker_crash must be a string";
     }
-    const validCrashActions = ["retry_once", "retry_twice", "abort", "escalate"];
-    if (!validCrashActions.includes(rec.on_worker_crash)) {
-      return `recovery.on_worker_crash must be one of ${validCrashActions.join(", ")}`;
-    }
   }
-  if (hasGitSafety) {
-    const gs = obj.git_safety as Record<string, unknown>;
-    if (typeof gs.require_files_to_commit !== "boolean") {
-      return "git_safety.require_files_to_commit must be a boolean";
-    }
-    if (typeof gs.validate_against_plan !== "boolean") {
-      return "git_safety.validate_against_plan must be a boolean";
-    }
-  }
-  if (hasLocalization) {
+
+  if ("localization_guard" in obj) {
     const loc = obj.localization_guard as Record<string, unknown>;
     if (typeof loc.enabled !== "boolean") {
       return "localization_guard.enabled must be a boolean";
     }
-    if (typeof loc.command !== "string" || loc.command.length === 0) {
+    if ("command" in loc && (typeof loc.command !== "string" || loc.command.length === 0)) {
       return "localization_guard.command must be a non-empty string";
     }
+    if ("script_path" in loc && (typeof loc.script_path !== "string" || loc.script_path.length === 0)) {
+      return "localization_guard.script_path must be a non-empty string";
+    }
   }
+
+  if ("git" in obj) {
+    const git = obj.git as Record<string, unknown>;
+    if (typeof git.commit_mode !== "string") {
+      return "git.commit_mode must be a string";
+    }
+    if (typeof git.commit_message_template !== "string") {
+      return "git.commit_message_template must be a string";
+    }
+    if (typeof git.require_clean_worktree !== "boolean") {
+      return "git.require_clean_worktree must be a boolean";
+    }
+  }
+
+  if ("use_memory_v2" in obj && typeof obj.use_memory_v2 !== "boolean") {
+    return "use_memory_v2 must be a boolean";
+  }
+
+  if ("memory" in obj) {
+    const mem = obj.memory as Record<string, unknown>;
+    if ("token_budget" in mem && (typeof mem.token_budget !== "number" || mem.token_budget < 1)) {
+      return "memory.token_budget must be a number >= 1";
+    }
+  }
+
   return null;
 }
 

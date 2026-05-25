@@ -41,5 +41,22 @@
     "commit_mode": "staged",
     "commit_message_template": "TASK-{task_id} step-{step}: {summary}\n\nINVARIANT: {invariant_markers}\nRULE: {rule_ids}",
     "require_clean_worktree": false
+  },
+  "use_memory_v2": false,
+  "memory": {
+    "token_budget": 4000,
+    "relevance_weights": {
+      "freshness": 0.4,
+      "frequency": 0.3,
+      "explicit_rating": 0.3
+    },
+    "retention": {
+      "max_entries_session": 1000,
+      "max_entries_episodic": 500,
+      "max_entries_semantic": 2000,
+      "max_entries_procedural": 500,
+      "max_age_days": 90,
+      "min_relevance": 0.1
+    }
   }
 }

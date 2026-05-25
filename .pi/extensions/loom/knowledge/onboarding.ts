@@ -218,14 +218,18 @@ export function generateAgentsMd(input: AgentsMdInput): string {
     "- `/rule-list` — список правил проекта",
     "- `/arch-add` — добавить архитектурный компонент",
     "- `/arch-list` — список архитектурных компонентов",
-    "- **Шорткат:** `ctrl+shift+m` — циклическое переключение режимов: idle → plan → agent → idle",
+    "- **Шорткат:** `alt+m` — циклическое переключение режимов: idle → plan → agent → idle",
+    "",
+    "## Режимы работы",
+    "",
+    "Подробное описание режимов `idle`, `plan`, `agent` и механики переключения см. в `README.md` → **Режимы работы**.",
     "",
   ];
 
   if (input.tasks && input.tasks.length > 0) {
     lines.push("## Задачи");
     lines.push("");
-    const active = input.tasks.filter((t) => t.status === "in_progress");
+    const active = input.tasks.filter((t) => t.status === "active");
     const drafts = input.tasks.filter((t) => t.status === "draft");
     const completed = input.tasks.filter((t) => t.status === "completed");
     lines.push(`- Всего задач: ${input.tasks.length}`);

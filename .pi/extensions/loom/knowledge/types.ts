@@ -20,6 +20,7 @@ export interface DeliveryUnitData {
   status: string;
   purpose: string;
   base_branch: string;
+  subtask_id?: string;
 }
 
 export interface TaskData {
@@ -141,6 +142,23 @@ export interface ExecutionConfigLocalizationGuard {
   script_path: string;
 }
 
+export interface ExecutionConfigMemory {
+  token_budget?: number;
+  relevance_weights?: {
+    freshness: number;
+    frequency: number;
+    explicit_rating: number;
+  };
+  retention?: {
+    max_entries_session?: number;
+    max_entries_episodic?: number;
+    max_entries_semantic?: number;
+    max_entries_procedural?: number;
+    max_age_days?: number;
+    min_relevance?: number;
+  };
+}
+
 export interface ExecutionConfigData {
   review?: {
     enabled: boolean;
@@ -149,9 +167,18 @@ export interface ExecutionConfigData {
   };
   parallelism?: { plan_mode_max_subagents: number };
   timeout?: { worker: number; reviewer: number; scout: number };
+  session_retention_days?: number;
+  human_in_the_loop?: {
+    on_reject_max_iterations: boolean;
+    on_timeout: boolean;
+    on_ambiguity: boolean;
+    on_worker_blocker: boolean;
+  };
   recovery?: ExecutionConfigRecovery;
   localization_guard?: ExecutionConfigLocalizationGuard;
   git?: ExecutionConfigGit;
+  use_memory_v2?: boolean;
+  memory?: ExecutionConfigMemory;
 }
 
 export interface ReviewFindingData {

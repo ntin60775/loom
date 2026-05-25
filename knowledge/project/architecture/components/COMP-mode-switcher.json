@@ -4,7 +4,7 @@
   "layer": "presentation",
   "responsibilities": [
     "Switch between idle/plan/agent modes",
-    "Provide keyboard shortcut ctrl+shift+m",
+    "Provide keyboard shortcut alt+m",
     "Persist and restore mode across sessions"
   ],
   "interfaces": [
@@ -21,7 +21,7 @@
       "consumers": ["operator"]
     },
     {
-      "name": "ctrl+shift+m shortcut",
+      "name": "alt+m shortcut",
       "type": "cli",
       "contract": "idle→plan→agent→idle cyclic switch",
       "consumers": ["operator"]
