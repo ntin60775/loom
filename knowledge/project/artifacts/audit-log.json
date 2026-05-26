@@ -1,0 +1,98 @@
+[
+  {
+    "timestamp": "2026-05-26T20:00:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0001-bootstrap",
+    "target_type": "task",
+    "detail": "Ядро loom — bootstrap completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:01:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0002-loom-vnext",
+    "target_type": "task",
+    "detail": "Когнитивные слои loom v2 completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:02:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0003-core-design",
+    "target_type": "task",
+    "detail": "DU-1: Core design completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:03:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0004-agent-mode-impl",
+    "target_type": "task",
+    "detail": "DU-2: Agent Mode + Git review completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:04:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0005-onboarding-impl",
+    "target_type": "task",
+    "detail": "DU-3: Onboarding + Knowledge completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:05:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0006-polish-impl",
+    "target_type": "task",
+    "detail": "DU-4: Polish + TUI completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:06:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0007-polish-fixes",
+    "target_type": "task",
+    "detail": "Post-review tech-debt fixes completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:07:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0008-memory-layer",
+    "target_type": "task",
+    "detail": "DU-1: Memory Layer completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:08:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0009-scout-retrieval",
+    "target_type": "task",
+    "detail": "DU-2: Scout Retrieval completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:09:00.000Z",
+    "action": "task_status",
+    "target_id": "TASK-2026-0010-post-review-fixes",
+    "target_type": "task",
+    "detail": "Постревью-исправления + 155 тестов completed",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:10:00.000Z",
+    "action": "config_update",
+    "target_id": "execution-config.json",
+    "target_type": "config",
+    "detail": "Включён use_memory_v2: true (переход к v2 memory + retrieval)",
+    "operator": "agent"
+  },
+  {
+    "timestamp": "2026-05-26T20:11:00.000Z",
+    "action": "config_update",
+    "target_id": "extension-package.json",
+    "target_type": "config",
+    "detail": "Бум версии до 0.3.0, синхронизация vitest с корнем (^4.1.7)",
+    "operator": "agent"
+  }
+]

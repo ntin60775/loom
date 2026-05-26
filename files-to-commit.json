@@ -1,5 +1,18 @@
 {
-  "task_id": null,
-  "step": null,
-  "files": []
+  "task_id": "TASK-2026-0011-audit-fixes-v3",
+  "step": 1,
+  "files": [
+    ".pi/extensions/loom/package.json",
+    "knowledge/project/configs/execution-config.json",
+    "knowledge/project/memory/semantic.json",
+    "knowledge/project/memory/procedural.json",
+    "knowledge/project/artifacts/verification-matrix.json",
+    "knowledge/project/artifacts/audit-log.json",
+    "knowledge/project/onboarding/stack.json",
+    "knowledge/project/onboarding/context-research.json",
+    "knowledge/project/onboarding/migration-analysis.json",
+    ".localization-guard.yml",
+    "README.md",
+    "files-to-commit.json"
+  ]
 }

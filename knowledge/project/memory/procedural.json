@@ -1,1 +1,222 @@
-[]
+[
+  {
+    "entry_id": "pro-001",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Начало задачи: создать task.json → plan.json → update registry. Для архитектурно-сложных задач — sdd.json.",
+      "context": "Стандартный lifecycle задачи в loom. Каждый новый task-id получает директорию в knowledge/tasks/",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0001-bootstrap",
+      "usage_count": 10
+    },
+    "relevance_score": 0.95,
+    "source_ref": "plan-mode/tools.ts, AGENTS.md",
+    "tags": ["lifecycle", "task-management"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-002",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Исполнение шага плана: loom_get_next_step → loom_spawn_worker (пишет код, коммитит) → loom_spawn_reviewer (git diff → review.json) → approve (loom_update_task step-done) | reject (loom_check_iteration → коррекция).",
+      "context": "Стандартный executor loop. Worker пишет код, reviewer проверяет через git diff. При reject — до 10 итераций, затем escalation.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0004-agent-mode-impl",
+      "usage_count": 14
+    },
+    "relevance_score": 0.95,
+    "source_ref": "agent-mode/executor-loop.ts, prompts/agent-executor.md",
+    "tags": ["execution", "review-loop"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-003",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Staged-коммиты: worker пишет files-to-commit.json → git add --pathspec-from-file files-to-commit.json → git commit. Только файлы из списка. Никогда git add -A.",
+      "context": "Git safety (INV-13). Предотвращает случайные коммиты лишних файлов.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0004-agent-mode-impl",
+      "usage_count": 97
+    },
+    "relevance_score": 0.9,
+    "source_ref": "AGENTS.md, execution-config.json",
+    "tags": ["git", "safety"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-004",
+    "task_id": "TASK-2026-0005-onboarding-impl",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Onboarding нового проекта: /loom-init → если проект не 'clean' → loom_run_scout → loom_run_researcher → loom_run_migrator → loom_generate_agents_md. Результат: stack.json, context-research.json, migration-analysis.json, AGENTS.md",
+      "context": "Полный onboarding pipeline. Анализирует стек, документацию, внешние системы. Генерирует AGENTS.md.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0005-onboarding-impl",
+      "usage_count": 1
+    },
+    "relevance_score": 0.85,
+    "source_ref": "knowledge/onboarding.ts, plan-mode/tools.ts",
+    "tags": ["onboarding", "pipeline"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-005",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Комплексное ревью: git log --all --oneline → git diff main → анализ всех файлов задачи → review.json с verdict (approve/reject/needs_discussion) → если reject, то findings с severity (blocker/warning/note).",
+      "context": "Стандартный review subagent pipeline. Анализирует git diff, не live session. Проверяет инварианты и правила.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0004-agent-mode-impl",
+      "usage_count": 16
+    },
+    "relevance_score": 0.9,
+    "source_ref": "subagent/prompts/reviewer.md, knowledge/schemas.ts",
+    "tags": ["review", "quality"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-006",
+    "task_id": "TASK-2026-0002-loom-vnext",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Включение v2 (memory + retrieval): установить use_memory_v2: true в execution-config.json → MemoryManager инициализируется при первом buildMemoryContext → ScoutRetrieval активируется через context-provider → контекст обогащается memory + retrieval данными.",
+      "context": "Активация Memory Layer и Scout Retrieval. При use_memory_v2: false — v1-совместимый режим без обогащения контекста.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0002-loom-vnext",
+      "usage_count": 0
+    },
+    "relevance_score": 0.85,
+    "source_ref": "shared/context-provider.ts, memory/index.ts",
+    "tags": ["v2", "memory", "retrieval"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-007",
+    "task_id": "TASK-2026-0006-polish-impl",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Localization guard: после каждого worker-коммита автоматически запускается bash scripts/check-docs-localization.sh на файлах из files-to-commit.json. При фейле — worker считается упавшим (workerError = true), шаг откатывается к pending.",
+      "context": "Интегрированная проверка локализации. Гарантирует, что UI-тексты на русском, AI-документация на английском.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0006-polish-impl",
+      "usage_count": 3
+    },
+    "relevance_score": 0.85,
+    "source_ref": "agent-mode/tools.ts (runLocalizationGuard), scripts/check-docs-localization.sh",
+    "tags": ["localization", "quality"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-008",
+    "task_id": "TASK-2026-0006-polish-impl",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Обновление конфигов: прочитать execution-config.json или subagent-config.json → предложить изменения → loom_edit_config с partial update (deep merge) → валидация schema → запись.",
+      "context": "Безопасное редактирование конфигов через TUI. Валидация перед записью предотвращает повреждение конфигурации.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0006-polish-impl",
+      "usage_count": 2
+    },
+    "relevance_score": 0.75,
+    "source_ref": "agent-mode/tools.ts (loom_edit_config), knowledge/schemas.ts",
+    "tags": ["config", "tools"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-009",
+    "task_id": "TASK-2026-0010-post-review-fixes",
+    "step_number": null,
+    "timestamp": "2026-05-26T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Расширение тестовой инфраструктуры: vitest + @vitest/coverage-v8 → тесты в .pi/extensions/loom/tests/ → setup.ts (temp dirs, knowledge fixtures) → fixtures.ts (фабрики данных) → модульные тесты для каждого модуля.",
+      "context": "Архитектура тестирования. 155 тестов в 11 файлах. Покрытие через v8 provider (быстро, без инструментирования).",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0010-post-review-fixes",
+      "usage_count": 1
+    },
+    "relevance_score": 0.85,
+    "source_ref": "vitest.config.ts, tests/",
+    "tags": ["testing", "infrastructure"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "pro-010",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "Декомпозиция задачи в delivery units (DU): определить DU → создать подзадачи для каждого DU → установить parent_task_id + parent_delivery_unit → выполнять DU последовательно (как правило) или параллельно (если независимы).",
+      "context": "Разбиение крупных задач на изолированные delivery units. Каждый DU может иметь свою подзадачу с отдельным plan.json.",
+      "validation_status": "validated",
+      "origin_task_id": "TASK-2026-0001-bootstrap",
+      "usage_count": 4
+    },
+    "relevance_score": 0.85,
+    "source_ref": "plan-mode/tools.ts, registry.json",
+    "tags": ["task-management", "decomposition"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  }
+]

@@ -42,7 +42,7 @@
     "commit_message_template": "TASK-{task_id} step-{step}: {summary}\n\nINVARIANT: {invariant_markers}\nRULE: {rule_ids}",
     "require_clean_worktree": false
   },
-  "use_memory_v2": false,
+  "use_memory_v2": true,
   "memory": {
     "token_budget": 4000,
     "relevance_weights": {

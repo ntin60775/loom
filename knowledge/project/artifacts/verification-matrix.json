@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-05-24",
+  "generated_at": "2026-05-26",
   "entries": [
     {
       "invariant_id": "INV-1",
@@ -133,27 +133,27 @@
       "text": "Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "defined",
-      "evidence": "",
-      "checked_at": "2026-05-24"
+      "status": "verified",
+      "evidence": "MemoryManager (4 tracks: session, episodic, semantic, procedural), ContextAssembler, BatchWriter — все реализованы. use_memory_v2 включён. Memory stores заполнены 15 semantic + 10 procedural записями.",
+      "checked_at": "2026-05-26"
     },
     {
       "invariant_id": "INV-2",
       "text": "Retrieval через scout subagent, не эмбеддинги",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "defined",
-      "evidence": "",
-      "checked_at": "2026-05-24"
+      "status": "verified",
+      "evidence": "ScoutRetrieval реализован: spawn scout subagent → ранжирование результатов → кэширование по query_hash. Включён через use_memory_v2: true + context-provider.ts.",
+      "checked_at": "2026-05-26"
     },
     {
       "invariant_id": "INV-3",
       "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "defined",
-      "evidence": "",
-      "checked_at": "2026-05-24"
+      "status": "verified",
+      "evidence": "use_memory_v2: false → полная v1-совместимость. Все JSON-схемы, IO-функции, регистрация команд/инструментов — без изменений. context-provider.ts возвращает disabled: true при v1.",
+      "checked_at": "2026-05-26"
     },
     {
       "invariant_id": "INV-1",
@@ -392,8 +392,8 @@
   ],
   "summary": {
     "total": 43,
-    "verified": 40,
-    "defined": 3,
+    "verified": 43,
+    "defined": 0,
     "failed": 0,
     "unknown": 0,
     "needs_audit": 0

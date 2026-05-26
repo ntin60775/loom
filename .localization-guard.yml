@@ -54,6 +54,13 @@ allowed_phrases:
   - "scout-retrieval"
   - "layer"
   - "retrieval"
+  - "CI/CD"
+  - "GitHub Actions"
+  - "v2"
+  - "v8"
+  - "Coverage"
+  - "Domain-aware"
+  - "Audit-log"
 ignore_rel_globs:
   - "knowledge/project/schemas/**"
   - "knowledge/project/configs/**"

@@ -1,1 +1,317 @@
-[]
+[
+  {
+    "entry_id": "sem-001",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "loom — AI-Native Development Environment, реализованный как pi extension (TypeScript)",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "general"
+    },
+    "relevance_score": 0.95,
+    "source_ref": "sdd.json",
+    "tags": ["architecture", "overview"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-002",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Трёхрежимная модель: idle (инспекция) → plan (планирование) → agent (исполнение). Переключение через alt+m",
+      "category": "convention",
+      "confidence": 1.0,
+      "domain": "general"
+    },
+    "relevance_score": 0.95,
+    "source_ref": "index.ts",
+    "tags": ["architecture", "modes"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-003",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "JSON primary, markdown derivative (INV-1). Все знания хранятся в JSON-файлах, markdown генерируется автоматически",
+      "category": "invariant",
+      "confidence": 1.0,
+      "domain": "general"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "AGENTS.md",
+    "tags": ["format", "invariant"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-004",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Stack-Agnostic (INV-2): система не знает о языке/фреймворке. Домены определяются через file extension в subagent-config.json",
+      "category": "invariant",
+      "confidence": 1.0,
+      "domain": "general"
+    },
+    "relevance_score": 0.85,
+    "source_ref": "schemas.ts, subagent-config.json",
+    "tags": ["architecture", "invariant"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-005",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Lifecycle задачи: task.json → plan.json → execution (worker → reviewer → approve/reject) → close. Max 10 итераций reject, затем escalation к оператору",
+      "category": "convention",
+      "confidence": 1.0,
+      "domain": "general"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "executor-loop.ts, AGENTS.md",
+    "tags": ["task-lifecycle", "process"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-006",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Git-based review (INV-8): reviewer анализирует git diff, а не live session. Коммиты staged через files-to-commit.json",
+      "category": "invariant",
+      "confidence": 1.0,
+      "domain": "git"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "agent-mode/tools.ts, AGENTS.md",
+    "tags": ["git", "review", "invariant"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-007",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Локализация (INV-12): UI и пользовательские артефакты на русском; system prompts, JSON-схемы, code comments на английском; машинные маркеры в верхнем регистре (INVARIANT:, PRE:, POST:, CONTRACT:, BLOCK:, SCOPE:, EVIDENCE:)",
+      "category": "invariant",
+      "confidence": 1.0,
+      "domain": "localization"
+    },
+    "relevance_score": 0.95,
+    "source_ref": ".localization-guard.yml, scripts/check-docs-localization.sh",
+    "tags": ["localization", "invariant"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-008",
+    "task_id": "TASK-2026-0002-loom-vnext",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Memory Layer v2: 4 трека памяти (session, episodic, semantic, procedural) с relevance scoring (freshness 0.4, frequency 0.3, explicit_rating 0.3) и retention policy",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "memory"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "memory/manager.ts, memory/types.ts",
+    "tags": ["v2", "memory", "architecture"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-009",
+    "task_id": "TASK-2026-0002-loom-vnext",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Scout Retrieval (DU-2): поиск знаний через scout subagent с кэшированием по query_hash. Не использует embeddings — только explicit reasoning через LLM",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "retrieval"
+    },
+    "relevance_score": 0.85,
+    "source_ref": "retrieval/scout-retrieval.ts, retrieval/cache.ts",
+    "tags": ["v2", "retrieval", "architecture"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-010",
+    "task_id": "TASK-2026-0002-loom-vnext",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Context Provider — единая точка сборки v2-контекста: memory context (4 трека) + scout retrieval. Отключается через use_memory_v2: false для v1-совместимости",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "memory"
+    },
+    "relevance_score": 0.85,
+    "source_ref": "shared/context-provider.ts",
+    "tags": ["v2", "context", "architecture"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-011",
+    "task_id": "TASK-2026-0006-polish-impl",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "TUI widgets read-only (INV-5): mode-widget (статус idle/plan/agent), task-widget (прогресс шагов), subagent-widget (активные субагенты)",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "ui"
+    },
+    "relevance_score": 0.8,
+    "source_ref": "ui/mode-widget.ts, ui/task-widget.ts, ui/subagent-widget.ts",
+    "tags": ["ui", "tui"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-012",
+    "task_id": "TASK-2026-0010-post-review-fixes",
+    "step_number": null,
+    "timestamp": "2026-05-26T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "BatchWriter (W4-fix): deferred I/O для memory store-ов. Группирует множественные записи в одну дисковую операцию с задержкой 5 секунд",
+      "category": "convention",
+      "confidence": 1.0,
+      "domain": "memory"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "memory/store-utils.ts",
+    "tags": ["optimization", "memory"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-013",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Verification Matrix — централизованный трекинг статуса всех инвариантов проекта. 43 инварианта из 10 задач, 93% verified",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "quality"
+    },
+    "relevance_score": 0.8,
+    "source_ref": "knowledge/verification.ts",
+    "tags": ["quality", "invariants"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-014",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Onboarding pipeline: scout (stack.json) → researcher (context-research.json) → migrator (migration-analysis.json). Поддерживает 5 типов проектов: clean, partial, foreign_system, mixed_system, compatible",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "onboarding"
+    },
+    "relevance_score": 0.85,
+    "source_ref": "knowledge/onboarding.ts",
+    "tags": ["onboarding", "architecture"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-015",
+    "task_id": "TASK-2026-0004-agent-mode-impl",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Subagent spawner использует pi CLI в изолированных сессиях (--no-context-files, --no-session). Модели конфигурируются через subagent-config.json по доменам (1c, general, security)",
+      "category": "architecture",
+      "confidence": 1.0,
+      "domain": "subagent"
+    },
+    "relevance_score": 0.85,
+    "source_ref": "subagent/spawner.ts, subagent/model-resolver.ts",
+    "tags": ["subagent", "architecture"],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  }
+]

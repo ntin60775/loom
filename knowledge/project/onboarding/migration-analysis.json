@@ -1,0 +1,7 @@
+{
+  "foreign_systems_detected": [],
+  "migration_plan": [],
+  "data_loss_risks": [],
+  "estimated_effort": "small",
+  "recommendation": "loom — greenfield проект, инородные task-системы не обнаружены. Миграция не требуется."
+}

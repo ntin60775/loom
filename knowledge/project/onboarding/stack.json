@@ -1,0 +1,92 @@
+{
+  "stack": {
+    "languages": ["TypeScript"],
+    "build_tools": ["tsc", "vitest"],
+    "frameworks": ["pi-coding-agent (extension)", "pi-ai (TypeBox)", "pi-tui (widgets)"],
+    "test_frameworks": ["vitest", "@vitest/coverage-v8"],
+    "ci_cd": [],
+    "containerization": []
+  },
+  "modules": [
+    {
+      "name": "extension-entry",
+      "path": ".pi/extensions/loom/index.ts",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["public default function loomExtension(pi)"],
+      "description": "Главная точка входа расширения. Регистрирует 15 команд, управляет режимами (idle/plan/agent), обрабатывает session_start, before_agent_start, agent_end."
+    },
+    {
+      "name": "plan-mode",
+      "path": ".pi/extensions/loom/plan-mode/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["registerPlanMode", "enrichPlanContext"],
+      "description": "Plan Mode orchestrator и инструменты. Управление task.json, plan.json, invariants, delivery units, spawning subagents."
+    },
+    {
+      "name": "agent-mode",
+      "path": ".pi/extensions/loom/agent-mode/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["registerAgentMode", "getNextPendingStep", "incrementIteration"],
+      "description": "Agent Mode executor и executor-loop state machine. Worker/reviewer/spawn, iteration control, step management."
+    },
+    {
+      "name": "knowledge-core",
+      "path": ".pi/extensions/loom/knowledge/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["readJson", "writeJson", "findKnowledgeRoot", "onboardProject", "generateVerificationMatrix"],
+      "description": "Ядро системы знаний. IO операции, JSON-схемы, валидация, onboarding pipeline, verification matrix, audit log."
+    },
+    {
+      "name": "memory-layer",
+      "path": ".pi/extensions/loom/memory/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["MemoryManager", "ContextAssembler", "buildMemoryContext"],
+      "description": "4-трековая система памяти (session, episodic, semantic, procedural). Relevance scoring, retention policy, deferred I/O (BatchWriter)."
+    },
+    {
+      "name": "retrieval-engine",
+      "path": ".pi/extensions/loom/retrieval/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["ScoutRetrieval", "RetrievalCache", "resolveSearchPaths"],
+      "description": "Scout-based retrieval engine. Поиск знаний через LLM-субагента, кэширование по query_hash, 3 scope (task/project/domain)."
+    },
+    {
+      "name": "subagent-system",
+      "path": ".pi/extensions/loom/subagent/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["spawnSubagent", "resolveModelArg", "resolveModel"],
+      "description": "Система запуска изолированных pi-сессий для worker/reviewer/scout/researcher/migrator. Domain-aware model selection."
+    },
+    {
+      "name": "shared-utils",
+      "path": ".pi/extensions/loom/shared/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["loadPrompt", "getFinalOutput", "sanitizeId", "assembleV2Context"],
+      "description": "Общие утилиты: загрузка prompt-ов, парсинг вывода субагентов, v2 context provider."
+    },
+    {
+      "name": "tui-widgets",
+      "path": ".pi/extensions/loom/ui/",
+      "type": "source",
+      "language": "TypeScript",
+      "entry_points": ["updateModeWidget", "updateTaskWidget", "updateSubagentWidget"],
+      "description": "TUI виджеты: статус режима, прогресс задачи, активные субагенты."
+    }
+  ],
+  "entry_points": [
+    {
+      "path": ".pi/extensions/loom/index.ts",
+      "type": "lib",
+      "description": "Главная точка входа pi extension — экспортирует default функцию loomExtension"
+    }
+  ],
+  "confidence": "high"
+}

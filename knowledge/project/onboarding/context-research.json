@@ -1,0 +1,44 @@
+{
+  "readme_summary": "loom — AI-Native Development Environment для pi. Система разработки с трёхрежимной моделью (idle/plan/agent), накоплением знаний, git-based review и локализацией (русский для оператора, английский для AI). Версия 0.3.0.",
+  "conventions": {
+    "naming": "TASK-{year}-{seq}-{slug} для задач, COMP-{name} для архитектурных компонентов, RULE-{seq}-{name} для правил. Инварианты: INV-{N}.",
+    "style_guide": "ES2022, NodeNext module resolution. Строгий TypeScript (strict: true). Code comments на английском. JSON primary для данных.",
+    "git_workflow": "Staged-коммиты через files-to-commit.json. Review через git diff. Максимум 10 итераций reject перед escalation.",
+    "testing": "vitest + @vitest/coverage-v8. Тесты в .pi/extensions/loom/tests/. Thresholds: statements 70%, branches 65%, functions 70%, lines 70%."
+  },
+  "ci_cd": {
+    "platform": null,
+    "workflows": [],
+    "summary": "CI/CD не настроен. Все операции выполняются агентом вручную."
+  },
+  "external_dependencies": [
+    {
+      "name": "pi-coding-agent",
+      "type": "library",
+      "purpose": "Extension API: registerCommand, registerTool, session management, UI"
+    },
+    {
+      "name": "pi-ai",
+      "type": "library",
+      "purpose": "Type.Type для определения схем инструментов и runtime валидации"
+    },
+    {
+      "name": "pi-tui",
+      "type": "library",
+      "purpose": "TUI виджеты и обработка клавиатурных шорткатов (Key.alt)"
+    },
+    {
+      "name": "vitest",
+      "type": "library",
+      "purpose": "Тестовый раннер с v8 coverage provider"
+    }
+  ],
+  "documentation_quality": "good",
+  "recommendations": [
+    "Настроить CI/CD (GitHub Actions) для автоматического запуска тестов при пушах",
+    "Опубликовать loom-extension в npm",
+    "Добавить интеграционные тесты для полного цикла Plan → Agent",
+    "Создать примеры использования для документации",
+    "Настроить автоматическую генерацию markdown-производных из JSON"
+  ]
+}
