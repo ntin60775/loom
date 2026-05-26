@@ -23,6 +23,7 @@ import { generateVerificationMatrix } from "../knowledge/verification";
 import type { PlanStepData, InvariantData } from "../knowledge/types";
 import { validateExecutionConfigShape, validateSubagentConfigShape } from "../knowledge/schemas";
 import { buildMemoryContext } from "../memory";
+import { assembleV2Context } from "../shared/context-provider";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
@@ -53,8 +54,9 @@ function runLocalizationGuard(cwd: string): { passed: boolean; output: string; i
       return { passed: true, output: result.stdout, isError: false };
     }
     return { passed: false, output: `stdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`, isError: true };
-  } catch (err: any) {
-    return { passed: false, output: `Localization guard exception: ${err.message}`, isError: true };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { passed: false, output: `Localization guard exception: ${msg}`, isError: true };
   }
 }
 
@@ -105,34 +107,9 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = resolveModelArg("worker", taskContext, ctx.cwd);
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
 
-      // v2 memory layer: inject assembled context if enabled
-      let v2Context = "";
-      try {
-        // 1. Memory context from 4 tracks (session/episodic/semantic/procedural)
-        const assembled = buildMemoryContext(ctx.cwd, params.task_id);
-        if (assembled) {
-          v2Context += `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
-        }
-
-        // 2. Scout retrieval: search relevant knowledge from closed tasks
-        const execConfig = readJson<Record<string, unknown>>(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"));
-        if (execConfig && execConfig.use_memory_v2 === true && step.description) {
-          const { ScoutRetrieval } = await import("../retrieval/scout-retrieval");
-          const retrieval = new ScoutRetrieval({ cwd: ctx.cwd });
-          const result = await retrieval.searchKnowledge(step.description, "project", 5);
-          if (result.results.length > 0) {
-            v2Context += "\n\n--- Relevant Knowledge ---\n";
-            for (const r of result.results) {
-              v2Context += `[${r.rank}] ${r.source_path} (score: ${r.relevance_score.toFixed(2)})\n`;
-              v2Context += `    ${r.excerpt}\n`;
-            }
-            v2Context += "--- End Relevant Knowledge ---\n";
-          }
-        }
-      } catch (err) {
-        // v2 features are opt-in; log debug only
-        logger.debug("tools", "v2 context assembly skipped", err);
-      }
+      // v2 context: memory + scout retrieval via unified provider
+      const v2Result = await assembleV2Context(ctx.cwd, params.task_id, step.description, "project", 5);
+      const v2Context = v2Result.disabled ? "" : v2Result.combined;
 
       // INV-11: Block concurrent worker spawn via mutex
       if (!workerLock.tryAcquire()) {
@@ -248,17 +225,9 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const model = resolveModelArg("reviewer", reviewContext, ctx.cwd);
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
-      // v2 memory layer: inject assembled context for reviewer if enabled
-      let v2Context = "";
-      try {
-        const assembled = buildMemoryContext(ctx.cwd, params.task_id);
-        if (assembled) {
-          v2Context = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
-        }
-      } catch (err) {
-        // v2 features are opt-in (reviewer); log debug only
-        logger.debug("tools", "v2 reviewer context assembly skipped", err);
-      }
+      // v2 context: memory for reviewer via unified provider
+      const v2Result = await assembleV2Context(ctx.cwd, params.task_id);
+      const v2Context = v2Result.disabled ? "" : v2Result.combined;
 
       const reviewerId = `${params.task_id}-reviewer-step${params.step_number}`;
 
@@ -447,10 +416,11 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           details: { passed: false, files, stdout: result.stdout, stderr: result.stderr },
           isError: true,
         };
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
         return {
-          content: [{ type: "text", text: `❌ Localization guard FAILED with exception: ${err.message}` }],
-          details: { passed: false, files, error: err.message },
+          content: [{ type: "text", text: `❌ Localization guard FAILED with exception: ${msg}` }],
+          details: { passed: false, files, error: msg },
           isError: true,
         };
       }
@@ -566,9 +536,10 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
           details: { query: params.query, scope: params.scope, resultCount: result.results.length, cached: result.cached },
         };
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
         return {
-          content: [{ type: "text", text: `❌ Ошибка поиска знаний: ${err.message}` }],
+          content: [{ type: "text", text: `❌ Ошибка поиска знаний: ${msg}` }],
           isError: true,
         };
       }

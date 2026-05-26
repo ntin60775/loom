@@ -7,6 +7,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { logger } from "../shared/logger";
 
 export interface ProgressSnapshot {
   status: "running" | "completed" | "error" | "aborted";
@@ -21,7 +22,8 @@ export function readProgress(progressPath: string): ProgressSnapshot | null {
   try {
     const data = fs.readFileSync(progressPath, "utf-8");
     return JSON.parse(data) as ProgressSnapshot;
-  } catch {
+  } catch (err) {
+    logger.debug("progress", `Failed to read progress ${progressPath}`, err);
     return null;
   }
 }

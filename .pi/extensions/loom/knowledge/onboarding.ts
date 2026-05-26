@@ -10,6 +10,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { writeJson, readJson } from "./io";
+import { appendAuditEntry } from "./audit";
 
 export interface OnboardingResult {
   knowledgeRoot: string;
@@ -392,6 +393,13 @@ export function writeRule(cwd: string, rule: Record<string, unknown>): string {
   const id = String(rule.id ?? `RULE-${Date.now()}`);
   const filePath = path.join(dir, `${id}.json`);
   writeJson(filePath, { ...rule, id });
+  appendAuditEntry(cwd, {
+    action: "rule_add",
+    target_id: id,
+    target_type: "rule",
+    detail: String(rule.title ?? ""),
+    operator: "agent",
+  });
   return filePath;
 }
 
@@ -401,5 +409,12 @@ export function writeArchitectureComponent(cwd: string, comp: Record<string, unk
   const id = String(comp.id ?? `COMP-${Date.now()}`);
   const filePath = path.join(dir, `${id}.json`);
   writeJson(filePath, { ...comp, id });
+  appendAuditEntry(cwd, {
+    action: "arch_component_add",
+    target_id: id,
+    target_type: "architecture-component",
+    detail: String(comp.name ?? ""),
+    operator: "agent",
+  });
   return filePath;
 }

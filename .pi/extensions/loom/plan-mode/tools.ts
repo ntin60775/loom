@@ -188,6 +188,11 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const dir = taskDir(ctx.cwd, params.task_id);
+
+      // Enrich plan context with retrieval if v2 enabled
+      const taskDesc = params.steps.slice(0, 3).map((s: { title: string; description: string }) => `${s.title}: ${s.description}`).join(". ");
+      const enrichment = taskDesc ? await enrichPlanContext(ctx.cwd, taskDesc) : "";
+
       const planJson = {
         task_id: params.task_id,
         steps: params.steps.map((s) => ({
@@ -202,8 +207,9 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
       writeJson(path.join(dir, "plan.json"), planJson);
 
+      const enrichmentNote = enrichment ? `\n\n--- Knowledge from Previous Tasks ---\n${enrichment}` : "";
       return {
-        content: [{ type: "text", text: `Plan created for ${params.task_id} with ${params.steps.length} steps` }],
+        content: [{ type: "text", text: `Plan created for ${params.task_id} with ${params.steps.length} steps${enrichmentNote}` }],
         details: { planJson },
       };
     },

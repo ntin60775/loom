@@ -11,7 +11,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { logger } from "../../shared/logger";
+import { logger } from "../shared/logger";
 
 /** Single cached entry */
 export interface CacheEntry {

@@ -163,6 +163,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_add_rule", "loom_list_rules",
     "loom_add_architecture_component", "loom_list_architecture_components",
     "loom_generate_agents_md",
+    "loom_search_knowledge",
   ];
   const AGENT_MODE_TOOLS = [
     "read", "bash", "grep", "find", "ls",
@@ -179,6 +180,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_generate_agents_md",
     "loom_verify_invariants",
     "loom_edit_config",
+    "loom_search_knowledge",
   ];
 
   pi.registerCommand("plan", {

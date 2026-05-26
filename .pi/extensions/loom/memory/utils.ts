@@ -4,12 +4,14 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { logger } from "../shared/logger";
 
 export function readJsonFile<T>(filePath: string): T | null {
   try {
     const data = fs.readFileSync(filePath, "utf-8");
     return JSON.parse(data) as T;
-  } catch {
+  } catch (err) {
+    logger.debug("memory-utils", `Failed to read ${filePath}`, err);
     return null;
   }
 }

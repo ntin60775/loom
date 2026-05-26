@@ -13,6 +13,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { logger } from "../shared/logger";
 
 /** Search scope — controls breadth of knowledge search */
 export type Scope = "task" | "project" | "domain";
@@ -146,8 +147,9 @@ export function shouldIncludeFile(filePath: string): boolean {
     if (stats.size > MAX_FILE_SIZE_BYTES) {
       return false;
     }
-  } catch {
+  } catch (err) {
     // If we cannot stat the file, exclude it
+    logger.debug("scope-filter", `Cannot stat ${filePath}, excluding`, err);
     return false;
   }
 

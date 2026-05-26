@@ -13,6 +13,7 @@ import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { readJson } from "../knowledge/io";
 import { registerPlanTools } from "./tools";
+import { assembleV2Context } from "../shared/context-provider";
 import { logger } from "../shared/logger";
 
 /**
@@ -22,31 +23,16 @@ import { logger } from "../shared/logger";
  */
 export async function enrichPlanContext(cwd: string, description: string): Promise<string> {
   try {
-    const execConfig = readJson<Record<string, unknown>>(
-      path.join(cwd, "knowledge", "project", "configs", "execution-config.json")
-    );
-    if (!execConfig || execConfig.use_memory_v2 !== true) {
-      return ""; // v1: no retrieval enrichment
-    }
-
-    const { ScoutRetrieval } = await import("../retrieval/scout-retrieval");
-    const retrieval = new ScoutRetrieval({ cwd });
-    const result = await retrieval.searchKnowledge(description, "project", 5);
-
-    if (result.results.length === 0) {
+    const result = await assembleV2Context(cwd, "plan", description, "project", 5);
+    if (result.disabled || result.retrievalContext.length === 0) {
       return "";
     }
 
     const lines: string[] = ["--- Relevant Knowledge from Previous Tasks ---"];
-    for (const r of result.results) {
-      lines.push(`[${r.rank}] ${r.source_path} (score: ${r.relevance_score.toFixed(2)})`);
-      lines.push(`    Excerpt: ${r.excerpt}`);
-      lines.push(`    Reason: ${r.reasoning}`);
-    }
+    lines.push(result.retrievalContext);
     lines.push("--- End Relevant Knowledge ---");
     return lines.join("\n");
   } catch (err) {
-    // Non-fatal: if retrieval fails, continue without enrichment
     logger.debug("orchestrator", `Retrieval enrichment failed for query "${description}"`, err);
     return "";
   }
