@@ -28,13 +28,27 @@ knowledge/              — Накопленные знания проекта
 
 | ID | Инвариант |
 |----|-----------|
-| INV-1 | Memory layer активно управляет контекстом |
-| INV-2 | Retrieval через scout subagent, не эмбеддинги |
-| INV-3 | Совместимость с v1 |
-| INV-4 | Детерминированный контекст |
-| INV-5 | Task-Centric накопление |
-| INV-6 | Token budget соблюдается |
-| INV-7 | Кэширование результатов поиска |
+| INV-1 | AI-First: JSON primary, markdown derivative |
+| INV-2 | Stack-Agnostic: система не знает о языке/фреймворке |
+| INV-3 | Legacy/Greenfield parity: onboarding для любых проектов |
+| INV-4 | Task-Centric накопление: каждая задача = атом |
+| INV-5 | Operator слои: read-only TUI, docs-as-code |
+| INV-6 | Детерминированный контекст: нет неявного состояния |
+| INV-7 | Pi-Native: extension, не standalone tool |
+| INV-8 | Git-based review: reviewer анализирует артефакты |
+| INV-9 | Executor не пишет код: только оркестрирует |
+| INV-10 | Модели конфигурируются: не хардкод |
+| INV-11 | Строго последовательное исполнение (один worker) |
+| INV-12 | Локализация: русский для UI, английский для AI |
+| INV-13 | Git commit safety: staged по списку |
+| INV-14 | Pi CLI верифицирован |
+| V2-INV-1 | Memory layer: активное управление контекстом |
+| V2-INV-2 | Retrieval через scout subagent, не эмбеддинги |
+| V2-INV-3 | Совместимость с v1 |
+| V2-INV-4 | Детерминированный контекст (v2-specific) |
+| V2-INV-5 | Task-Centric накопление (v2-specific) |
+| V2-INV-6 | Token budget соблюдается |
+| V2-INV-7 | Кэширование результатов поиска |
 | INV-11 | Строго последовательное исполнение (один worker) |
 | INV-12 | Code comments на английском, UI на русском |
 

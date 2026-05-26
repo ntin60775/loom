@@ -1,27 +1,34 @@
 /**
- * Memory Layer IO Utilities — thin JSON helpers
+ * Memory Layer IO Utilities — delegates to knowledge/io.ts
+ *
+ * Provides backward-compatible aliases for memory modules.
+ * Re-exports from knowledge/io.ts to eliminate code duplication (M1 fix).
+ *
+ * INV-12: code comments in English
  */
 
+import { readJson, writeJson } from "../knowledge/io";
 import * as fs from "node:fs";
-import * as path from "node:path";
-import { logger } from "../shared/logger";
 
+/**
+ * Read JSON file without schema validation.
+ * Delegates to knowledge/io.ts readJson.
+ */
 export function readJsonFile<T>(filePath: string): T | null {
-  try {
-    const data = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(data) as T;
-  } catch (err) {
-    logger.debug("memory-utils", `Failed to read ${filePath}`, err);
-    return null;
-  }
+  return readJson<T>(filePath);
 }
 
+/**
+ * Write JSON file with directory auto-creation.
+ * Delegates to knowledge/io.ts writeJson.
+ */
 export function writeJsonFile(filePath: string, data: unknown): void {
-  const dir = path.dirname(filePath);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+  writeJson(filePath, data);
 }
 
+/**
+ * Ensure a directory exists (create if missing).
+ */
 export function ensureDir(dir: string): void {
   fs.mkdirSync(dir, { recursive: true });
 }

@@ -4,7 +4,11 @@
   "title": "Task",
   "description": "Primary machine-readable artifact for a loom task. All human-readable derivatives are generated from this file.",
   "type": "object",
-  "required": ["task_id", "slug", "title", "description", "status", "priority", "branch", "invariants", "delivery_units", "created_at", "updated_at"],
+  "required": [
+    "task_id", "slug", "title", "description", "status",
+    "priority", "branch", "invariants", "delivery_units",
+    "created_at", "updated_at", "schema_version"
+  ],
   "properties": {
     "task_id": {
       "type": "string",
@@ -18,67 +22,82 @@
     },
     "title": {
       "type": "string",
-      "description": "Human-readable title in Russian (for operator). Machine consumption: plain string."
+      "description": "Human-readable title in Russian (for operator)"
     },
     "description": {
       "type": "string",
-      "description": "Human-readable description in Russian (for operator). Machine consumption: plain string."
+      "description": "Human-readable description in Russian (for operator)"
     },
     "status": {
       "type": "string",
-      "enum": ["draft", "ready", "in_progress", "in_review", "waiting_user", "blocked", "completed", "cancelled"],
+      "enum": ["draft", "active", "completed", "rejected"],
       "description": "Machine-readable task status"
     },
     "priority": {
       "type": "string",
-      "enum": ["critical", "high", "medium", "low"]
+      "enum": ["critical", "high", "medium", "low"],
+      "default": "medium"
     },
     "branch": {
       "type": "string",
       "description": "Git branch for this task, e.g. task/TASK-2026-0001-bootstrap"
     },
+    "parent_task_id": {
+      "type": "string",
+      "description": "Parent task ID if this is a subtask"
+    },
+    "parent_delivery_unit": {
+      "type": "string",
+      "description": "Parent delivery unit ID if this is a subtask of a DU"
+    },
     "invariants": {
       "type": "array",
-      "items": { "$ref": "#/definitions/invariant" }
+      "items": { "$ref": "#/definitions/Invariant" }
     },
     "delivery_units": {
       "type": "array",
-      "items": { "$ref": "#/definitions/delivery_unit" }
+      "items": { "$ref": "#/definitions/DeliveryUnit" }
     },
     "created_at": {
       "type": "string",
-      "format": "date"
+      "format": "date",
+      "description": "ISO date when the task was created"
     },
     "updated_at": {
       "type": "string",
-      "format": "date"
+      "format": "date",
+      "description": "ISO date when the task was last updated"
     },
     "schema_version": {
       "type": "string",
-      "default": "1.0.0",
-      "description": "Schema version for migration tracking"
+      "default": "1.0.0"
     }
   },
   "definitions": {
-    "invariant": {
+    "Invariant": {
       "type": "object",
-      "required": ["id", "text", "marker", "status"],
+      "required": ["id", "text", "marker", "status", "verification_method"],
       "properties": {
-        "id": { "type": "string", "pattern": "^INV-[0-9]+$" },
-        "text": { "type": "string", "description": "Human-readable invariant text in Russian" },
-        "marker": { "type": "string", "description": "Machine-verifiable marker in English, e.g. INVARIANT: ..." },
-        "status": { "type": "string", "enum": ["defined", "verified", "violated"] },
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "marker": { "type": "string" },
+        "status": { "type": "string", "enum": ["defined", "verified", "failed"], "default": "defined" },
         "verification_method": { "type": "string" }
       }
     },
-    "delivery_unit": {
+    "DeliveryUnit": {
       "type": "object",
-      "required": ["id", "status", "purpose", "base_branch"],
+      "required": ["id", "purpose"],
       "properties": {
-        "id": { "type": "string", "pattern": "^DU-[0-9]+$" },
-        "status": { "type": "string", "enum": ["planned", "local", "draft", "review", "merged", "closed"] },
+        "id": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "in_progress", "completed", "merged"],
+          "default": "draft"
+        },
         "purpose": { "type": "string" },
-        "base_branch": { "type": "string" }
+        "base_branch": { "type": "string", "default": "main" },
+        "subtask_id": { "type": "string" }
       }
     }
   }

@@ -10,31 +10,31 @@
   "parent_delivery_unit": "DU-1",
   "invariants": [
     {
-      "id": "INV-1",
+      "id": "V2-INV-1",
       "text": "Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту",
       "marker": "INVARIANT: Memory layer must actively manage context, not just store files",
       "status": "defined"
     },
     {
-      "id": "INV-3",
+      "id": "V2-INV-3",
       "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
       "marker": "INVARIANT: v2 must be backwards compatible with v1 formats and tools",
       "status": "defined"
     },
     {
-      "id": "INV-4",
+      "id": "V2-INV-4",
       "text": "Явная сборка контекста: контекст собирается явно, без скрытых состояний сессии агента. Time-based variance в relevance scoring допускается.",
       "marker": "INVARIANT: Context assembly must be explicit; no hidden session state. Time-based variance in relevance scoring is acceptable.",
       "status": "defined"
     },
     {
-      "id": "INV-5",
+      "id": "V2-INV-5",
       "text": "Task-Centric накопление: память привязана к задачам и project knowledge, не к сессии агента",
       "marker": "INVARIANT: Memory is task-scoped and project-scoped; agent session is ephemeral",
       "status": "defined"
     },
     {
-      "id": "INV-6",
+      "id": "V2-INV-6",
       "text": "Token budget respected: контекст агенту не превышает лимит",
       "marker": "INVARIANT: ContextAssembler must truncate output to fit within configured token budget",
       "status": "defined"
