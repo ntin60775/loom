@@ -1,0 +1,90 @@
+{
+  "backup_name": "pi-portable-backup",
+  "generated_at": "2026-05-26",
+  "include": {
+    "system_prompt": {
+      "path": "~/.pi/agent/AGENTS.md",
+      "reason": "Главный системный промпт: 8 блоков правил безопасности, TOOLS_AND_SKILLS"
+    },
+    "models_config": {
+      "path": "~/.pi/agent/models.json",
+      "reason": "Конфигурация LLM-провайдеров (deepseek, neural-deep). Ключи как есть.",
+      "warning": "СОДЕРЖИТ API-КЛЮЧИ — архив нужно хранить в безопасном месте"
+    },
+    "settings": {
+      "paths": [
+        "~/.pi/agent/settings.json",
+        "~/.pi/settings.json"
+      ],
+      "reason": "Тема gruvbox-dark-soft, глобальные настройки"
+    },
+    "auth": {
+      "path": "~/.pi/agent/auth.json",
+      "reason": "Файл аутентификации"
+    },
+    "themes": {
+      "path": "~/.pi/agent/themes/",
+      "reason": "Установленные темы (gruvbox-dark-soft.json)"
+    },
+    "bin": {
+      "path": "~/.pi/agent/bin/",
+      "reason": "Бинарные утилиты (fd, rg)"
+    },
+    "extensions": {
+      "path": "~/.pi/agent/extensions/",
+      "reason": "Установленные расширения: context7, neuraldeep-transcribe, search.json, vision-agent.ts",
+      "exclude": ["context7/cache/"]
+    },
+    "npm_package_json": {
+      "paths": [
+        "~/.pi/agent/npm/package.json",
+        "~/.pi/agent/npm/package-lock.json"
+      ],
+      "reason": "Список npm-зависимостей для pi install на новой машине"
+    },
+    "pi_search_hub": {
+      "path": "~/.pi/agent/npm/node_modules/pi-search-hub/",
+      "reason": "Локальная рабочая копия (npm-версия битая). 200KB.",
+      "warning": "Единственный node_modules-пакет, сохраняемый как есть"
+    },
+    "skills": {
+      "path": "~/.agents/skills/",
+      "reason": "Глобальные навыки: playwright, screenshot, zip-context. 236KB."
+    },
+    "home_context": {
+      "paths": [
+        "~/agent-context.toml",
+        "~/AGENTS.md"
+      ],
+      "reason": "Структура рабочего окружения и домашний контекст"
+    }
+  },
+  "exclude": {
+    "sessions": {
+      "path": "~/.pi/agent/sessions/",
+      "reason": "История сессий (1.4MB) — не нужна на новой машине"
+    },
+    "node_modules_bulk": {
+      "path": "~/.pi/agent/npm/node_modules/",
+      "reason": "220MB — переустановится через npm install. Исключение: pi-search-hub (сохраняется отдельно)."
+    },
+    "context7_cache": {
+      "path": "~/.pi/agent/extensions/context7/cache/",
+      "reason": "Кэш документации — переиндексируется на новой машине"
+    },
+    "backup_files": {
+      "paths": [
+        "~/.pi/agent/AGENTS.md.bak"
+      ],
+      "reason": "Резервные копии"
+    }
+  },
+  "restore_procedure": [
+    "1. Убедиться что pi установлен (pi --version)",
+    "2. Распаковать архив: tar xzf pi-backup-*.tar.gz -C ~/",
+    "3. Восстановить npm-зависимости: cd ~/.pi/agent/npm && npm install",
+    "4. Проверить API-ключи в ~/.pi/agent/models.json",
+    "5. Установить loom: pi install <путь-к-репозиторию>",
+    "6. Перезапустить pi"
+  ]
+}
