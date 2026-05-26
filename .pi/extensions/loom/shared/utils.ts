@@ -12,8 +12,9 @@ import * as path from "node:path";
  * Handles CJS (__dirname), ESM (import.meta.dirname), and jiti transforms.
  */
 export function resolveExtensionRoot(): string {
-  if (typeof __dirname !== "undefined") return __dirname;
-  if (typeof import.meta !== "undefined" && import.meta.dirname) return import.meta.dirname;
+  // This file lives in <root>/shared/ — go one level up to get the extension root
+  if (typeof __dirname !== "undefined") return path.dirname(__dirname);
+  if (typeof import.meta !== "undefined" && import.meta.dirname) return path.dirname(import.meta.dirname);
   return process.cwd();
 }
 
