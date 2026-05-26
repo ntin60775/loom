@@ -1,31 +1,16 @@
 /**
- * Test Setup — global beforeAll/afterAll hooks for vitest
+ * Test Setup — helper functions for file-backed tests
  *
- * - Creates temp directories for file-backed tests
- * - Cleans up after all tests
+ * No global hooks — use beforeEach/afterEach in individual test files.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as os from "node:os";
 
-const TEST_ROOT = path.join(os.tmpdir(), "loom-test-" + Date.now());
-
-beforeAll(() => {
-  fs.mkdirSync(TEST_ROOT, { recursive: true });
-});
-
-afterAll(() => {
-  try {
-    fs.rmSync(TEST_ROOT, { recursive: true, force: true });
-  } catch {
-    // Cleanup is best-effort
-  }
-});
-
 /** Get a fresh temp directory for a test suite */
 export function testDir(name: string): string {
-  const dir = path.join(TEST_ROOT, name);
+  const dir = path.join(os.tmpdir(), "loom-test-" + Date.now() + "-" + name);
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }

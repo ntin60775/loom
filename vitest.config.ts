@@ -33,14 +33,5 @@ export default defineConfig({
 
     // Setup file
     setupFiles: [".pi/extensions/loom/tests/setup.ts"],
-
-    // Module resolution
-    resolve: {
-      alias: {
-        "@earendil-works/pi-coding-agent": path.resolve(__dirname, ".pi/extensions/loom/tests/__mocks__/pi-coding-agent.ts"),
-        "@earendil-works/pi-ai": path.resolve(__dirname, ".pi/extensions/loom/tests/__mocks__/pi-ai.ts"),
-        "@earendil-works/pi-tui": path.resolve(__dirname, ".pi/extensions/loom/tests/__mocks__/pi-tui.ts"),
-      },
-    },
   },
 });

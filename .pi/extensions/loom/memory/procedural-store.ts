@@ -93,7 +93,7 @@ export class ProceduralStore {
       entries.push(enriched);
     }
 
-    this.writeStore(cwd, this.compact(entries));
+    this.writeStore(cwd, this.compactEntries(entries));
   }
 
   /**

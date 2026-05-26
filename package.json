@@ -1,5 +1,8 @@
 {
   "devDependencies": {
+    "@earendil-works/pi-ai": "^0.75.5",
+    "@earendil-works/pi-coding-agent": "^0.75.5",
+    "@earendil-works/pi-tui": "^0.75.5",
     "@vitest/coverage-v8": "^4.1.7",
     "vitest": "^4.1.7"
   }

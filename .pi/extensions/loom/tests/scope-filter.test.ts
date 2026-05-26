@@ -1,119 +1,101 @@
 /**
- * Unit tests for ScopeFilter
- *
- * Covers: path resolution for task/project/domain scopes,
- * exclusion rules (node_modules, .git, large files).
- *
- * Run: npx tsx .pi/extensions/loom/tests/scope-filter.test.ts
+ * Tests: retrieval/scope-filter.ts — search path resolution
  */
 
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as os from "node:os";
 import { resolveSearchPaths, shouldIncludeFile } from "../retrieval/scope-filter";
 
-let testDir: string;
+describe("ScopeFilter", () => {
+  let testDir: string;
 
-function assert(condition: boolean, message: string): void {
-  if (!condition) throw new Error(`FAIL: ${message}`);
-  console.log(`  ✅ ${message}`);
-}
+  beforeEach(() => {
+    testDir = fs.mkdtempSync(path.join(os.tmpdir(), "loom-test-scope-"));
+    const knowledge = path.join(testDir, "knowledge");
+    const tasks = path.join(knowledge, "tasks", "TASK-0001");
+    const project = path.join(knowledge, "project");
+    const rules = path.join(project, "rules");
+    const extDir = path.join(testDir, ".pi", "extensions", "loom");
+    const nodeModules = path.join(testDir, "node_modules", "pkg");
 
-function setup(): void {
-  testDir = fs.mkdtempSync(path.join(os.tmpdir(), "loom-test-scope-"));
-  // Create a minimal knowledge structure
-  const knowledge = path.join(testDir, "knowledge");
-  const tasks = path.join(knowledge, "tasks", "TASK-0001");
-  const project = path.join(knowledge, "project");
-  const rules = path.join(project, "rules");
-  const extDir = path.join(testDir, ".pi", "extensions", "loom");
-  const nodeModules = path.join(testDir, "node_modules", "pkg");
+    fs.mkdirSync(tasks, { recursive: true });
+    fs.mkdirSync(rules, { recursive: true });
+    fs.mkdirSync(extDir, { recursive: true });
+    fs.mkdirSync(nodeModules, { recursive: true });
 
-  fs.mkdirSync(tasks, { recursive: true });
-  fs.mkdirSync(rules, { recursive: true });
-  fs.mkdirSync(extDir, { recursive: true });
-  fs.mkdirSync(nodeModules, { recursive: true });
+    fs.writeFileSync(path.join(tasks, "task.json"), JSON.stringify({ task_id: "TASK-0001" }));
+    fs.writeFileSync(path.join(tasks, "plan.json"), JSON.stringify({ steps: [] }));
+    fs.writeFileSync(path.join(rules, "RULE-001.json"), JSON.stringify({ id: "R-1" }));
+    fs.writeFileSync(path.join(project, "configs.json"), JSON.stringify({}));
+    fs.writeFileSync(path.join(extDir, "index.ts"), "// extension");
+    fs.writeFileSync(path.join(nodeModules, "index.js"), "// excluded");
+  });
 
-  fs.writeFileSync(path.join(tasks, "task.json"), JSON.stringify({ task_id: "TASK-0001" }));
-  fs.writeFileSync(path.join(tasks, "plan.json"), JSON.stringify({ steps: [] }));
-  fs.writeFileSync(path.join(rules, "RULE-001.json"), JSON.stringify({ id: "R-1" }));
-  fs.writeFileSync(path.join(project, "configs.json"), JSON.stringify({}));
-  fs.writeFileSync(path.join(extDir, "index.ts"), "// extension");
-  fs.writeFileSync(path.join(nodeModules, "index.js"), "// excluded");
-}
+  afterEach(() => {
+    try { fs.rmSync(testDir, { recursive: true, force: true }); } catch { /* ignore */ }
+  });
 
-function teardown(): void {
-  fs.rmSync(testDir, { recursive: true, force: true });
-}
+  // ── resolveSearchPaths ────────────────────────────────────────────────
 
-// ── Tests ─────────────────────────────────────────────────────────────────
+  describe("resolveSearchPaths", () => {
+    it("task scope finds files under task dir", () => {
+      const paths = resolveSearchPaths(testDir, "task", "TASK-0001");
+      expect(paths.length).toBeGreaterThanOrEqual(2);
+      expect(paths.every((p) => p.includes("TASK-0001"))).toBe(true);
+    });
 
-function testTaskScope(): void {
-  const paths = resolveSearchPaths(testDir, "task", "TASK-0001");
-  assert(paths.length >= 2, "task scope finds files");
-  assert(paths.every((p) => p.includes("TASK-0001")), "all paths under task dir");
-}
+    it("task scope returns empty for nonexistent task", () => {
+      const paths = resolveSearchPaths(testDir, "task", "TASK-NONEXISTENT");
+      expect(paths).toHaveLength(0);
+    });
 
-function testProjectScope(): void {
-  const paths = resolveSearchPaths(testDir, "project");
-  assert(paths.length >= 2, "project scope finds files");
-  assert(paths.some((p) => p.includes("RULE-001.json")), "finds rule file");
-}
+    it("task scope throws without taskId", () => {
+      expect(() => resolveSearchPaths(testDir, "task")).toThrow("requires a taskId");
+    });
 
-function testDomainScope(): void {
-  const paths = resolveSearchPaths(testDir, "domain");
-  assert(paths.length >= 3, "domain scope finds files in knowledge + extension");
-  assert(paths.some((p) => p.endsWith(".json")), "finds JSON knowledge files");
-}
+    it("project scope finds files under knowledge/project", () => {
+      const paths = resolveSearchPaths(testDir, "project");
+      expect(paths.length).toBeGreaterThanOrEqual(2);
+      expect(paths.some((p) => p.includes("RULE-001.json"))).toBe(true);
+    });
 
-function testExcludedDirs(): void {
-  const paths = resolveSearchPaths(testDir, "domain");
-  const hasNodeModules = paths.some((p) => p.includes("node_modules"));
-  assert(!hasNodeModules, "node_modules excluded from search");
-}
+    it("domain scope finds files in knowledge + extension", () => {
+      const paths = resolveSearchPaths(testDir, "domain");
+      expect(paths.length).toBeGreaterThanOrEqual(3);
+      expect(paths.some((p) => p.endsWith(".json"))).toBe(true);
+    });
 
-function testShouldExcludeLargeFiles(): void {
-  const largePath = path.join(testDir, "large.json");
-  // Write 200KB file
-  const buf = Buffer.alloc(200 * 1024, "x");
-  fs.writeFileSync(largePath, buf);
-  const result = shouldIncludeFile(largePath);
-  assert(!result, "files > 100KB excluded");
-  fs.unlinkSync(largePath);
-}
+    it("excludes node_modules from search", () => {
+      const paths = resolveSearchPaths(testDir, "domain");
+      expect(paths.some((p) => p.includes("node_modules"))).toBe(false);
+    });
+  });
 
-function testShouldIncludeSmallJson(): void {
-  const smallPath = path.join(testDir, "small.json");
-  fs.writeFileSync(smallPath, "{}");
-  const result = shouldIncludeFile(smallPath);
-  assert(result, "small JSON files included");
-  fs.unlinkSync(smallPath);
-}
+  // ── shouldIncludeFile ─────────────────────────────────────────────────
 
-// ── Runner ────────────────────────────────────────────────────────────────
+  describe("shouldIncludeFile", () => {
+    it("excludes files > 100KB", () => {
+      const largePath = path.join(testDir, "large.json");
+      fs.writeFileSync(largePath, Buffer.alloc(200 * 1024, "x"));
+      expect(shouldIncludeFile(largePath)).toBe(false);
+    });
 
-let passed = 0;
-let failed = 0;
+    it("includes small JSON files", () => {
+      const smallPath = path.join(testDir, "small.json");
+      fs.writeFileSync(smallPath, "{}");
+      expect(shouldIncludeFile(smallPath)).toBe(true);
+    });
 
-function run(name: string, fn: () => void): void {
-  setup();
-  try {
-    console.log(`\n${name}`);
-    fn();
-    passed++;
-  } catch (err: any) {
-    console.error(`  ❌ ${err.message}`);
-    failed++;
-  }
-  teardown();
-}
+    it("excludes files in node_modules", () => {
+      const nmPath = path.join(testDir, "node_modules", "pkg", "index.js");
+      expect(shouldIncludeFile(nmPath)).toBe(false);
+    });
 
-run("Task Scope Resolution", testTaskScope);
-run("Project Scope Resolution", testProjectScope);
-run("Domain Scope Resolution", testDomainScope);
-run("Excluded Directories", testExcludedDirs);
-run("Large File Exclusion", testShouldExcludeLargeFiles);
-run("Small File Inclusion", testShouldIncludeSmallJson);
-
-console.log(`\n${passed} passed, ${failed} failed`);
-if (failed > 0) process.exit(1);
+    it("excludes files in .git", () => {
+      const gitPath = path.join(testDir, ".git", "config");
+      expect(shouldIncludeFile(gitPath)).toBe(false);
+    });
+  });
+});

@@ -168,7 +168,7 @@ export class SemanticStore {
     const removed = existing.filter((e) => !currentSources.has(e.source_ref)).length;
 
     let entries = Array.from(bySource.values());
-    entries = this.compact(entries);
+    entries = this.compactEntries(entries);
     this.writeStore(cwd, entries);
 
     return { added, updated, removed };
@@ -232,7 +232,7 @@ export class SemanticStore {
     } else {
       entries.push(enriched);
     }
-    this.writeStore(cwd, this.compact(entries));
+    this.writeStore(cwd, this.compactEntries(entries));
   }
 
   /**

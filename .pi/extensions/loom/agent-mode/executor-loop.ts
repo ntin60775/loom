@@ -54,7 +54,7 @@ function getLoopState(taskId: string, maxIterations = 10): LoopState {
       task_id: taskId,
       current_step: null,
       iteration: 0,
-      max_iterations,
+      max_iterations: maxIterations,
       status: "idle",
     };
     loopStates.set(taskId, state);
