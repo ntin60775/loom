@@ -1,0 +1,57 @@
+{
+  "task_id": "TASK-2026-0013",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "Инвентаризация pi-окружения",
+      "description": "Точный список включаемых/исключаемых артефактов: конфиги, навыки, расширения, npm-пакеты. Особые случаи: pi-search-hub (сохранить из node_modules, npm-версия битая), models.json (ключи как есть).",
+      "expected_output": "backup-inventory.json",
+      "estimated_effort": "small",
+      "status": "pending",
+      "constraints": [],
+      "depends_on": []
+    },
+    {
+      "step_number": 2,
+      "title": "Создать backup.sh",
+      "description": "Bash-скрипт упаковки. Включает: AGENTS.md, models.json (с ключами), settings, auth, themes, bin, extensions (без context7/cache), npm package.json, pi-search-hub из node_modules, навыки (~/.agents/skills), agent-context.toml, AGENTS.md home. Исключает: sessions, остальные node_modules, cache.",
+      "expected_output": "scripts/pi-backup.sh",
+      "estimated_effort": "medium",
+      "status": "pending",
+      "constraints": [],
+      "depends_on": []
+    },
+    {
+      "step_number": 3,
+      "title": "Создать restore.sh",
+      "description": "Скрипт восстановления: проверка pi, распаковка архива, npm install (восстановит node_modules), pi install loom. Предупреждение о наличии ключей в архиве.",
+      "expected_output": "scripts/pi-restore.sh",
+      "estimated_effort": "medium",
+      "status": "pending",
+      "constraints": [],
+      "depends_on": []
+    },
+    {
+      "step_number": 4,
+      "title": "Создать README с инструкцией",
+      "description": "Инструкция на русском: бэкап на старой машине, перенос, восстановление. Важно: архив содержит API-ключи — обращаться осторожно.",
+      "expected_output": "backup-README.md",
+      "estimated_effort": "small",
+      "status": "pending",
+      "constraints": [],
+      "depends_on": []
+    },
+    {
+      "step_number": 5,
+      "title": "Тестовый прогон и валидация",
+      "description": "Выполнить backup.sh, проверить архив: полнота, отсутствие sessions/node_modules, наличие pi-search-hub и ключей.",
+      "expected_output": "pi-backup-YYYY-MM-DD.tar.gz + отчёт",
+      "estimated_effort": "small",
+      "status": "pending",
+      "constraints": [],
+      "depends_on": []
+    }
+  ],
+  "risks": [],
+  "checkpoints": []
+}

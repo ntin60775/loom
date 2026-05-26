@@ -136,6 +136,29 @@ export function registerPlanTools(pi: ExtensionAPI): void {
 
       writeJson(path.join(dir, "task.json"), taskJson);
 
+      // Update registry
+      const knowledgeRoot = findKnowledgeRoot(ctx.cwd) ?? path.join(ctx.cwd, "knowledge");
+      const registry = readRegistryFile(knowledgeRoot) ?? { schema_version: "1.0.0", tasks: [] };
+      const existingIndex = registry.tasks.findIndex((t) => t.task_id === params.task_id);
+      const entry = {
+        task_id: params.task_id,
+        slug: params.slug,
+        title: params.title,
+        status: "draft",
+        priority: params.priority,
+        branch: `task/${params.task_id}`,
+        parent_task_id: params.parent_task_id,
+        parent_delivery_unit: params.parent_delivery_unit,
+        created_at: taskJson.created_at,
+        updated_at: taskJson.updated_at,
+      };
+      if (existingIndex >= 0) {
+        registry.tasks[existingIndex] = entry;
+      } else {
+        registry.tasks.push(entry);
+      }
+      writeJson(path.join(knowledgeRoot, "tasks", "registry.json"), registry);
+
       // Create subdirectories
       for (const sub of ["artifacts", "reviews", "subagents"]) {
         ensureDir(path.join(dir, sub));

@@ -172,6 +172,13 @@ describe("loom_create_task", () => {
     expect(task!.priority).toBe("high");
     expect(task!.invariants).toEqual([]);
     expect(task!.delivery_units).toEqual([]);
+
+    // Registry must be updated
+    const registry = readRegistryFile(path.join(cwd, "knowledge"));
+    expect(registry).toBeTruthy();
+    const regEntry = registry!.tasks.find((t) => t.task_id === "TASK-2026-0200-test");
+    expect(regEntry).toBeTruthy();
+    expect(regEntry!.status).toBe("draft");
   });
 
   it("accepts parent_task_id and parent_delivery_unit", async () => {

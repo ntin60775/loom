@@ -1,5 +1,1325 @@
 [
   {
+    "entry_id": "semantic-rule_RULE-001-ai-native-format-1779812627389",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "AI-Native формат: JSON primary, markdown derivative\nВсе артефакты loom хранятся в JSON как source of truth. Markdown-производные генерируются из JSON и не должны редактироваться вручную. Машинные маркеры (INVARIANT:, PRE:, POST:, CONTRACT:, BLOCK:, SCOPE:, EVIDENCE:) — на английском.",
+      "category": "rule",
+      "confidence": 1,
+      "domain": "documentation"
+    },
+    "relevance_score": 1,
+    "source_ref": "rule:RULE-001-ai-native-format",
+    "tags": [
+      "rule",
+      "documentation"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-rule_RULE-002-localization-1779812627389",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Локализация: русский для оператора, английский для машин\nSystem prompts, JSON schemas, code comments, machine-маркеры — только на английском. UI, команды, уведомления оператору, markdown-артефакты — на русском. Команды, пути, ID — exempt. Все markdown-артефакты проходят localization guard перед finalize.",
+      "category": "rule",
+      "confidence": 1,
+      "domain": "localization"
+    },
+    "relevance_score": 1,
+    "source_ref": "rule:RULE-002-localization",
+    "tags": [
+      "rule",
+      "localization"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-rule_RULE-003-decision-making-1779812627389",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Decision Making: STOP при неоднозначности, варианты 1/2/3 или А/Б/В\nАгент принимает решения автономно, если контекст однозначен. При неоднозначности — STOP, явный вопрос оператору с вариантами (только цифры 1/2/3 или кириллица А/Б/В). Никаких 'предположим по умолчанию'.",
+      "category": "rule",
+      "confidence": 1,
+      "domain": "other"
+    },
+    "relevance_score": 1,
+    "source_ref": "rule:RULE-003-decision-making",
+    "tags": [
+      "rule",
+      "other"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-rule_RULE-004-knowledge-accumulation-1779812627390",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Накопление знаний: каждая задача оставляет след\nКаждая задача — атом знаний. После завершения задачи все артефакты сохраняются в knowledge/tasks/<TASK-ID>/. Project-level память накапливается в knowledge/project/. Cross-task inheritance: агент обязан читать закрытые задачи при работе над новыми.",
+      "category": "rule",
+      "confidence": 1,
+      "domain": "documentation"
+    },
+    "relevance_score": 1,
+    "source_ref": "rule:RULE-004-knowledge-accumulation",
+    "tags": [
+      "rule",
+      "documentation"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-rule_RULE-005-git-flow-1779812627390",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Git Flow: task-scoped commits, staged список, review перед merge\nWorker делает task-scoped commits по staged-списку (files-to-commit.json). Reviewer анализирует git diff + файлы. Executor: approve → следующий шаг, reject → доработка (макс 10 iter). Human-in-the-loop только при reject+max_iter, timeout, ambiguity. После approve — merge в base-ветку.",
+      "category": "rule",
+      "confidence": 1,
+      "domain": "git"
+    },
+    "relevance_score": 1,
+    "source_ref": "rule:RULE-005-git-flow",
+    "tags": [
+      "rule",
+      "git"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-architecture_COMP-catalogs-1779812627390",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Rules + Architecture Catalogs [infrastructure]\nResponsibilities:\n- Store and manage project rules\n- Store and manage architecture components\n- Provide list/add operations",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "infrastructure"
+    },
+    "relevance_score": 1,
+    "source_ref": "architecture:COMP-catalogs",
+    "tags": [
+      "architecture",
+      "infrastructure"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-architecture_COMP-migrator-1779812627390",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Migration Subagent [application]\nResponsibilities:\n- Detect foreign task/knowledge systems\n- Analyze migration feasibility\n- Produce migration-analysis.json",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "application"
+    },
+    "relevance_score": 1,
+    "source_ref": "architecture:COMP-migrator",
+    "tags": [
+      "architecture",
+      "application"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-architecture_COMP-mode-switcher-1779812627390",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Mode Switcher [presentation]\nResponsibilities:\n- Switch between idle/plan/agent modes\n- Provide keyboard shortcut alt+m\n- Persist and restore mode across sessions",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "presentation"
+    },
+    "relevance_score": 1,
+    "source_ref": "architecture:COMP-mode-switcher",
+    "tags": [
+      "architecture",
+      "presentation"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-architecture_COMP-onboarding-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Onboarding Pipeline [application]\nResponsibilities:\n- Pre-check project state\n- Classify as clean/partial/foreign/mixed/compatible\n- Initialize knowledge structure\n- Generate AGENTS.md\n- Run onboarding wizard",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "application"
+    },
+    "relevance_score": 1,
+    "source_ref": "architecture:COMP-onboarding",
+    "tags": [
+      "architecture",
+      "application"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-architecture_COMP-researcher-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Research Subagent [application]\nResponsibilities:\n- Analyze project documentation, CI/CD, conventions\n- Produce context-research.json",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "application"
+    },
+    "relevance_score": 1,
+    "source_ref": "architecture:COMP-researcher",
+    "tags": [
+      "architecture",
+      "application"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-architecture_COMP-scout-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Scout Subagent [application]\nResponsibilities:\n- Analyze codebase by file extensions and config files\n- Produce stack.json with technology stack and module map",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "application"
+    },
+    "relevance_score": 1,
+    "source_ref": "architecture:COMP-scout",
+    "tags": [
+      "architecture",
+      "application"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-1-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-1: AI-First: JSON primary, markdown derivative\nMarker: INVARIANT: JSON must be primary format for all knowledge artifacts; markdown is auto-generated derivative",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-1",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-2-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-2: Stack-Agnostic: система не знает о языке/фреймворке\nMarker: INVARIANT: No language-specific branching logic in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-2",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-3-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-3: Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте\nMarker: INVARIANT: Onboarding pipeline must handle clean, partial, foreign_system, mixed_system, compatible states",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-3",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-4-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-4: Task-Centric накопление: каждая задача = атом, знания наследуются\nMarker: INVARIANT: Every task has task.json; registry.json is updated; closed tasks are read by agents",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-4",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-5-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-5: Operator слои: read-only TUI, docs-as-code\nMarker: INVARIANT: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-5",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-6-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-6: Детерминированный контекст: нет неявного состояния\nMarker: INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-6",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-7-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-7: Pi-Native: extension, не standalone tool\nMarker: INVARIANT: All code lives in .pi/extensions/loom/; single agent with different prompts per mode",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-7",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-8-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-8: Git-based review: reviewer анализирует артефакты, не сессию\nMarker: INVARIANT: Review artifact references git commit hash; reviewer analyzes git diff, not live session",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-8",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-9-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-9: Executor не пишет код: только оркестрирует worker + reviewer\nMarker: INVARIANT: Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. NO write/edit/commit in executor tools",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-9",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-10-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-10: Модели конфигурируются: не хардкод\nMarker: INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-10",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-11-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-11: Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1\nMarker: INVARIANT: Executor loop cannot spawn more than one worker simultaneously",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-11",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-12-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-12: Локализация: UI и пользовательские артефакты — русский; AI-документация — английский\nMarker: INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-12",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-13-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-13: Git commit safety: не git add -A, а staged по списку\nMarker: INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-13",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0001-bootstrap_INV-14-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-14: Pi CLI верифицирован: все флаги для subagent spawner подтверждены PoC\nMarker: INVARIANT: pi CLI supports --mode json, --system-prompt, --model, --session-dir, --tools; subagent spawner is feasible",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0001-bootstrap"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0001-bootstrap:INV-14",
+    "tags": [
+      "invariant",
+      "TASK-2026-0001-bootstrap"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-1-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-1: AI-First: JSON primary, markdown derivative\nMarker: INVARIANT: JSON must be primary format for all knowledge artifacts; markdown is auto-generated derivative",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-1",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-2-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-2: Stack-Agnostic: система не знает о языке/фреймворке\nMarker: INVARIANT: No language-specific branching logic in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-2",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-4-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-4: Task-Centric накопление: каждая задача = атом, знания наследуются\nMarker: INVARIANT: Every task has task.json; registry.json is updated; closed tasks are read by agents",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-4",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-6-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-6: Детерминированный контекст: нет неявного состояния\nMarker: INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-6",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-7-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-7: Pi-Native: extension, не standalone tool\nMarker: INVARIANT: All code lives in .pi/extensions/loom/; single agent with different prompts per mode",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-7",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-10-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-10: Модели конфигурируются: не хардкод\nMarker: INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-10",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-11-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-11: Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1\nMarker: INVARIANT: Executor loop cannot spawn more than one worker simultaneously",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-11",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0003-core-design_INV-12-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-12: Локализация: UI и пользовательские артефакты — русский; AI-документация — английский\nMarker: INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0003-core-design"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0003-core-design:INV-12",
+    "tags": [
+      "invariant",
+      "TASK-2026-0003-core-design"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-6-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-6: Детерминированный контекст: нет неявного состояния\nMarker: INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-6",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-8-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-8: Git-based review: reviewer анализирует артефакты, не сессию\nMarker: INVARIANT: Review artifact references git commit hash; reviewer analyzes git diff, not live session",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-8",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-9-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-9: Executor не пишет код: только оркестрирует worker + reviewer\nMarker: INVARIANT: Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. NO write/edit/commit in executor tools",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-9",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-10-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-10: Модели конфигурируются: не хардкод\nMarker: INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-10",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-11-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-11: Исполнение строго последовательное: шаг N → worker → reviewer → шаг N+1\nMarker: INVARIANT: Executor loop cannot spawn more than one worker simultaneously",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-11",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-12-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-12: Локализация: UI и пользовательские артефакты — русский; AI-документация — английский\nMarker: INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-12",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-13-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-13: Git commit safety: не git add -A, а staged по списку\nMarker: INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-13",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0004-agent-mode-impl_INV-14-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-14: Pi CLI верифицирован: все флаги для subagent spawner подтверждены PoC\nMarker: INVARIANT: pi CLI supports --mode json, --system-prompt, --model, --session-dir, --tools; subagent spawner is feasible",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0004-agent-mode-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0004-agent-mode-impl:INV-14",
+    "tags": [
+      "invariant",
+      "TASK-2026-0004-agent-mode-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0005-onboarding-impl_INV-2-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-2: Stack-Agnostic: система не знает о языке/фреймворке\nMarker: INVARIANT: No language-specific branching logic in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0005-onboarding-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0005-onboarding-impl:INV-2",
+    "tags": [
+      "invariant",
+      "TASK-2026-0005-onboarding-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0005-onboarding-impl_INV-3-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-3: Legacy/Greenfield parity: onboarding работает в пустом и непустом проекте\nMarker: INVARIANT: Onboarding pipeline must handle clean, partial, foreign_system, mixed_system, compatible states",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0005-onboarding-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0005-onboarding-impl:INV-3",
+    "tags": [
+      "invariant",
+      "TASK-2026-0005-onboarding-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0005-onboarding-impl_INV-4-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-4: Task-Centric накопление: каждая задача = атом, знания наследуются\nMarker: INVARIANT: Every task has task.json; registry.json is updated; closed tasks are read by agents",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0005-onboarding-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0005-onboarding-impl:INV-4",
+    "tags": [
+      "invariant",
+      "TASK-2026-0005-onboarding-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0005-onboarding-impl_INV-6-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-6: Детерминированный контекст: нет неявного состояния\nMarker: INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0005-onboarding-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0005-onboarding-impl:INV-6",
+    "tags": [
+      "invariant",
+      "TASK-2026-0005-onboarding-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0005-onboarding-impl_INV-7-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-7: Pi-Native: extension, не standalone tool\nMarker: INVARIANT: All code lives in .pi/extensions/loom/; single agent with different prompts per mode",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0005-onboarding-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0005-onboarding-impl:INV-7",
+    "tags": [
+      "invariant",
+      "TASK-2026-0005-onboarding-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0005-onboarding-impl_INV-12-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-12: Локализация: UI и пользовательские артефакты — русский; AI-документация — английский\nMarker: INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0005-onboarding-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0005-onboarding-impl:INV-12",
+    "tags": [
+      "invariant",
+      "TASK-2026-0005-onboarding-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0006-polish-impl_INV-5-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-5: Operator слои: read-only TUI, docs-as-code\nMarker: INVARIANT: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0006-polish-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0006-polish-impl:INV-5",
+    "tags": [
+      "invariant",
+      "TASK-2026-0006-polish-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0006-polish-impl_INV-10-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-10: Модели конфигурируются: не хардкод\nMarker: INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0006-polish-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0006-polish-impl:INV-10",
+    "tags": [
+      "invariant",
+      "TASK-2026-0006-polish-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0006-polish-impl_INV-12-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-12: Локализация: UI и пользовательские артефакты — русский; AI-документация — английский\nMarker: INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian; machine markers in English",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0006-polish-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0006-polish-impl:INV-12",
+    "tags": [
+      "invariant",
+      "TASK-2026-0006-polish-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0006-polish-impl_INV-13-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-13: Git commit safety: не git add -A, а staged по списку\nMarker: INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0006-polish-impl"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0006-polish-impl:INV-13",
+    "tags": [
+      "invariant",
+      "TASK-2026-0006-polish-impl"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0007-polish-fixes_INV-5-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-5: Operator слои: read-only TUI, docs-as-code\nMarker: INVARIANT: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0007-polish-fixes"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0007-polish-fixes:INV-5",
+    "tags": [
+      "invariant",
+      "TASK-2026-0007-polish-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0007-polish-fixes_INV-10-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-10: Модели конфигурируются: не хардкод\nMarker: INVARIANT: Model config in subagent-config.json; no hardcoded model strings in extension code",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0007-polish-fixes"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0007-polish-fixes:INV-10",
+    "tags": [
+      "invariant",
+      "TASK-2026-0007-polish-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0007-polish-fixes_INV-12-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-12: Локализация: UI и пользовательские артефакты — русский; AI-документация — английский\nMarker: INVARIANT: All system prompts, JSON schemas, code comments in English; operator-facing text in Russian",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0007-polish-fixes"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0007-polish-fixes:INV-12",
+    "tags": [
+      "invariant",
+      "TASK-2026-0007-polish-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0007-polish-fixes_INV-13-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-13: Git commit safety: не git add -A, а staged по списку\nMarker: INVARIANT: Worker commits only files listed in files-to-commit.json; no mass add",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "TASK-2026-0007-polish-fixes"
+    },
+    "relevance_score": 1,
+    "source_ref": "invariant:TASK-2026-0007-polish-fixes:INV-13",
+    "tags": [
+      "invariant",
+      "TASK-2026-0007-polish-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
     "entry_id": "sem-001",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": null,
@@ -8,12 +1328,15 @@
     "content": {
       "fact": "loom — AI-Native Development Environment, реализованный как pi extension (TypeScript)",
       "category": "architecture",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "general"
     },
     "relevance_score": 0.95,
     "source_ref": "sdd.json",
-    "tags": ["architecture", "overview"],
+    "tags": [
+      "architecture",
+      "overview"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -29,96 +1352,15 @@
     "content": {
       "fact": "Трёхрежимная модель: idle (инспекция) → plan (планирование) → agent (исполнение). Переключение через alt+m",
       "category": "convention",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "general"
     },
     "relevance_score": 0.95,
     "source_ref": "index.ts",
-    "tags": ["architecture", "modes"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-003",
-    "task_id": "TASK-2026-0001-bootstrap",
-    "step_number": null,
-    "timestamp": "2026-05-21T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "JSON primary, markdown derivative (INV-1). Все знания хранятся в JSON-файлах, markdown генерируется автоматически",
-      "category": "invariant",
-      "confidence": 1.0,
-      "domain": "general"
-    },
-    "relevance_score": 0.9,
-    "source_ref": "AGENTS.md",
-    "tags": ["format", "invariant"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-004",
-    "task_id": "TASK-2026-0001-bootstrap",
-    "step_number": null,
-    "timestamp": "2026-05-21T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "Stack-Agnostic (INV-2): система не знает о языке/фреймворке. Домены определяются через file extension в subagent-config.json",
-      "category": "invariant",
-      "confidence": 1.0,
-      "domain": "general"
-    },
-    "relevance_score": 0.85,
-    "source_ref": "schemas.ts, subagent-config.json",
-    "tags": ["architecture", "invariant"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-005",
-    "task_id": "TASK-2026-0001-bootstrap",
-    "step_number": null,
-    "timestamp": "2026-05-21T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "Lifecycle задачи: task.json → plan.json → execution (worker → reviewer → approve/reject) → close. Max 10 итераций reject, затем escalation к оператору",
-      "category": "convention",
-      "confidence": 1.0,
-      "domain": "general"
-    },
-    "relevance_score": 0.9,
-    "source_ref": "executor-loop.ts, AGENTS.md",
-    "tags": ["task-lifecycle", "process"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-006",
-    "task_id": "TASK-2026-0001-bootstrap",
-    "step_number": null,
-    "timestamp": "2026-05-21T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "Git-based review (INV-8): reviewer анализирует git diff, а не live session. Коммиты staged через files-to-commit.json",
-      "category": "invariant",
-      "confidence": 1.0,
-      "domain": "git"
-    },
-    "relevance_score": 0.9,
-    "source_ref": "agent-mode/tools.ts, AGENTS.md",
-    "tags": ["git", "review", "invariant"],
+    "tags": [
+      "architecture",
+      "modes"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -134,12 +1376,88 @@
     "content": {
       "fact": "Локализация (INV-12): UI и пользовательские артефакты на русском; system prompts, JSON-схемы, code comments на английском; машинные маркеры в верхнем регистре (INVARIANT:, PRE:, POST:, CONTRACT:, BLOCK:, SCOPE:, EVIDENCE:)",
       "category": "invariant",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "localization"
     },
     "relevance_score": 0.95,
     "source_ref": ".localization-guard.yml, scripts/check-docs-localization.sh",
-    "tags": ["localization", "invariant"],
+    "tags": [
+      "localization",
+      "invariant"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-003",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "JSON primary, markdown derivative (INV-1). Все знания хранятся в JSON-файлах, markdown генерируется автоматически",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "general"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "AGENTS.md",
+    "tags": [
+      "format",
+      "invariant"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-005",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Lifecycle задачи: task.json → plan.json → execution (worker → reviewer → approve/reject) → close. Max 10 итераций reject, затем escalation к оператору",
+      "category": "convention",
+      "confidence": 1,
+      "domain": "general"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "executor-loop.ts, AGENTS.md",
+    "tags": [
+      "task-lifecycle",
+      "process"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-006",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Git-based review (INV-8): reviewer анализирует git diff, а не live session. Коммиты staged через files-to-commit.json",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "git"
+    },
+    "relevance_score": 0.9,
+    "source_ref": "agent-mode/tools.ts, AGENTS.md",
+    "tags": [
+      "git",
+      "review",
+      "invariant"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -155,12 +1473,40 @@
     "content": {
       "fact": "Memory Layer v2: 4 трека памяти (session, episodic, semantic, procedural) с relevance scoring (freshness 0.4, frequency 0.3, explicit_rating 0.3) и retention policy",
       "category": "architecture",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "memory"
     },
     "relevance_score": 0.9,
     "source_ref": "memory/manager.ts, memory/types.ts",
-    "tags": ["v2", "memory", "architecture"],
+    "tags": [
+      "v2",
+      "memory",
+      "architecture"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-004",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Stack-Agnostic (INV-2): система не знает о языке/фреймворке. Домены определяются через file extension в subagent-config.json",
+      "category": "invariant",
+      "confidence": 1,
+      "domain": "general"
+    },
+    "relevance_score": 0.85,
+    "source_ref": "schemas.ts, subagent-config.json",
+    "tags": [
+      "architecture",
+      "invariant"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -176,12 +1522,16 @@
     "content": {
       "fact": "Scout Retrieval (DU-2): поиск знаний через scout subagent с кэшированием по query_hash. Не использует embeddings — только explicit reasoning через LLM",
       "category": "architecture",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "retrieval"
     },
     "relevance_score": 0.85,
     "source_ref": "retrieval/scout-retrieval.ts, retrieval/cache.ts",
-    "tags": ["v2", "retrieval", "architecture"],
+    "tags": [
+      "v2",
+      "retrieval",
+      "architecture"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -197,75 +1547,16 @@
     "content": {
       "fact": "Context Provider — единая точка сборки v2-контекста: memory context (4 трека) + scout retrieval. Отключается через use_memory_v2: false для v1-совместимости",
       "category": "architecture",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "memory"
     },
     "relevance_score": 0.85,
     "source_ref": "shared/context-provider.ts",
-    "tags": ["v2", "context", "architecture"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-011",
-    "task_id": "TASK-2026-0006-polish-impl",
-    "step_number": null,
-    "timestamp": "2026-05-23T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "TUI widgets read-only (INV-5): mode-widget (статус idle/plan/agent), task-widget (прогресс шагов), subagent-widget (активные субагенты)",
-      "category": "architecture",
-      "confidence": 1.0,
-      "domain": "ui"
-    },
-    "relevance_score": 0.8,
-    "source_ref": "ui/mode-widget.ts, ui/task-widget.ts, ui/subagent-widget.ts",
-    "tags": ["ui", "tui"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-012",
-    "task_id": "TASK-2026-0010-post-review-fixes",
-    "step_number": null,
-    "timestamp": "2026-05-26T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "BatchWriter (W4-fix): deferred I/O для memory store-ов. Группирует множественные записи в одну дисковую операцию с задержкой 5 секунд",
-      "category": "convention",
-      "confidence": 1.0,
-      "domain": "memory"
-    },
-    "relevance_score": 0.7,
-    "source_ref": "memory/store-utils.ts",
-    "tags": ["optimization", "memory"],
-    "created_at": "2026-05-26T00:00:00.000Z",
-    "updated_at": "2026-05-26T00:00:00.000Z",
-    "expires_at": null,
-    "access_count": 0,
-    "last_accessed_at": null
-  },
-  {
-    "entry_id": "sem-013",
-    "task_id": "TASK-2026-0001-bootstrap",
-    "step_number": null,
-    "timestamp": "2026-05-21T00:00:00.000Z",
-    "track_type": "semantic",
-    "content": {
-      "fact": "Verification Matrix — централизованный трекинг статуса всех инвариантов проекта. 43 инварианта из 10 задач, 93% verified",
-      "category": "architecture",
-      "confidence": 1.0,
-      "domain": "quality"
-    },
-    "relevance_score": 0.8,
-    "source_ref": "knowledge/verification.ts",
-    "tags": ["quality", "invariants"],
+    "tags": [
+      "v2",
+      "context",
+      "architecture"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -281,12 +1572,15 @@
     "content": {
       "fact": "Onboarding pipeline: scout (stack.json) → researcher (context-research.json) → migrator (migration-analysis.json). Поддерживает 5 типов проектов: clean, partial, foreign_system, mixed_system, compatible",
       "category": "architecture",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "onboarding"
     },
     "relevance_score": 0.85,
     "source_ref": "knowledge/onboarding.ts",
-    "tags": ["onboarding", "architecture"],
+    "tags": [
+      "onboarding",
+      "architecture"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
@@ -302,16 +1596,499 @@
     "content": {
       "fact": "Subagent spawner использует pi CLI в изолированных сессиях (--no-context-files, --no-session). Модели конфигурируются через subagent-config.json по доменам (1c, general, security)",
       "category": "architecture",
-      "confidence": 1.0,
+      "confidence": 1,
       "domain": "subagent"
     },
     "relevance_score": 0.85,
     "source_ref": "subagent/spawner.ts, subagent/model-resolver.ts",
-    "tags": ["subagent", "architecture"],
+    "tags": [
+      "subagent",
+      "architecture"
+    ],
     "created_at": "2026-05-26T00:00:00.000Z",
     "updated_at": "2026-05-26T00:00:00.000Z",
     "expires_at": null,
     "access_count": 0,
     "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-011",
+    "task_id": "TASK-2026-0006-polish-impl",
+    "step_number": null,
+    "timestamp": "2026-05-23T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "TUI widgets read-only (INV-5): mode-widget (статус idle/plan/agent), task-widget (прогресс шагов), subagent-widget (активные субагенты)",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "ui"
+    },
+    "relevance_score": 0.8,
+    "source_ref": "ui/mode-widget.ts, ui/task-widget.ts, ui/subagent-widget.ts",
+    "tags": [
+      "ui",
+      "tui"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-013",
+    "task_id": "TASK-2026-0001-bootstrap",
+    "step_number": null,
+    "timestamp": "2026-05-21T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "Verification Matrix — централизованный трекинг статуса всех инвариантов проекта. 43 инварианта из 10 задач, 93% verified",
+      "category": "architecture",
+      "confidence": 1,
+      "domain": "quality"
+    },
+    "relevance_score": 0.8,
+    "source_ref": "knowledge/verification.ts",
+    "tags": [
+      "quality",
+      "invariants"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "sem-012",
+    "task_id": "TASK-2026-0010-post-review-fixes",
+    "step_number": null,
+    "timestamp": "2026-05-26T00:00:00.000Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "BatchWriter (W4-fix): deferred I/O для memory store-ов. Группирует множественные записи в одну дисковую операцию с задержкой 5 секунд",
+      "category": "convention",
+      "confidence": 1,
+      "domain": "memory"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "memory/store-utils.ts",
+    "tags": [
+      "optimization",
+      "memory"
+    ],
+    "created_at": "2026-05-26T00:00:00.000Z",
+    "updated_at": "2026-05-26T00:00:00.000Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": null
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0002-loom-vnext_V2-INV-1-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-1: Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту\nMarker: INVARIANT: Memory layer must actively manage context, not just store files",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0002-loom-vnext"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0002-loom-vnext:V2-INV-1",
+    "tags": [
+      "invariant",
+      "TASK-2026-0002-loom-vnext"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0002-loom-vnext_V2-INV-2-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-2: Retrieval через scout subagent, не эмбеддинги\nMarker: INVARIANT: Retrieval must use scout subagent with explicit reasoning, not vector embeddings",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0002-loom-vnext"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0002-loom-vnext:V2-INV-2",
+    "tags": [
+      "invariant",
+      "TASK-2026-0002-loom-vnext"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0002-loom-vnext_V2-INV-3-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-3: Совместимость с v1: все форматы и API v1 должны работать без изменений\nMarker: INVARIANT: v2 must be backwards compatible with v1 formats and tools",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0002-loom-vnext"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0002-loom-vnext:V2-INV-3",
+    "tags": [
+      "invariant",
+      "TASK-2026-0002-loom-vnext"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0002-loom-vnext_V2-INV-4-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-4: Детерминированный контекст: контекст агенту собирается явно, без неявного состояния\nMarker: INVARIANT: Context assembly must be explicit and deterministic; no hidden session state",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0002-loom-vnext"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0002-loom-vnext:V2-INV-4",
+    "tags": [
+      "invariant",
+      "TASK-2026-0002-loom-vnext"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0002-loom-vnext_V2-INV-5-1779812627391",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-5: Task-Centric накопление: память привязана к задачам и project knowledge, не к сессии агента\nMarker: INVARIANT: Memory is task-scoped and project-scoped; agent session is ephemeral",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0002-loom-vnext"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0002-loom-vnext:V2-INV-5",
+    "tags": [
+      "invariant",
+      "TASK-2026-0002-loom-vnext"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0008-memory-layer_V2-INV-1-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-1: Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту\nMarker: INVARIANT: Memory layer must actively manage context, not just store files",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0008-memory-layer"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0008-memory-layer:V2-INV-1",
+    "tags": [
+      "invariant",
+      "TASK-2026-0008-memory-layer"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0008-memory-layer_V2-INV-3-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-3: Совместимость с v1: все форматы и API v1 должны работать без изменений\nMarker: INVARIANT: v2 must be backwards compatible with v1 formats and tools",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0008-memory-layer"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0008-memory-layer:V2-INV-3",
+    "tags": [
+      "invariant",
+      "TASK-2026-0008-memory-layer"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0008-memory-layer_V2-INV-4-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-4: Явная сборка контекста: контекст собирается явно, без скрытых состояний сессии агента. Time-based variance в relevance scoring допускается.\nMarker: INVARIANT: Context assembly must be explicit; no hidden session state. Time-based variance in relevance scoring is acceptable.",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0008-memory-layer"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0008-memory-layer:V2-INV-4",
+    "tags": [
+      "invariant",
+      "TASK-2026-0008-memory-layer"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0008-memory-layer_V2-INV-5-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-5: Task-Centric накопление: память привязана к задачам и project knowledge, не к сессии агента\nMarker: INVARIANT: Memory is task-scoped and project-scoped; agent session is ephemeral",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0008-memory-layer"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0008-memory-layer:V2-INV-5",
+    "tags": [
+      "invariant",
+      "TASK-2026-0008-memory-layer"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0008-memory-layer_V2-INV-6-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-6: Token budget respected: контекст агенту не превышает лимит\nMarker: INVARIANT: ContextAssembler must truncate output to fit within configured token budget",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0008-memory-layer"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0008-memory-layer:V2-INV-6",
+    "tags": [
+      "invariant",
+      "TASK-2026-0008-memory-layer"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0009-scout-retrieval_V2-INV-2-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-2: Retrieval через scout subagent, не эмбеддинги\nMarker: INVARIANT: Retrieval must use scout subagent with explicit reasoning, not vector embeddings",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0009-scout-retrieval"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0009-scout-retrieval:V2-INV-2",
+    "tags": [
+      "invariant",
+      "TASK-2026-0009-scout-retrieval"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0009-scout-retrieval_V2-INV-3-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-3: Совместимость с v1: все форматы и API v1 должны работать без изменений\nMarker: INVARIANT: v2 must be backwards compatible with v1 formats and tools",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0009-scout-retrieval"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0009-scout-retrieval:V2-INV-3",
+    "tags": [
+      "invariant",
+      "TASK-2026-0009-scout-retrieval"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0009-scout-retrieval_V2-INV-4-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-4: Детерминированный контекст: контекст агенту собирается явно, без неявного состояния\nMarker: INVARIANT: Context assembly must be explicit and deterministic; no hidden session state",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0009-scout-retrieval"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0009-scout-retrieval:V2-INV-4",
+    "tags": [
+      "invariant",
+      "TASK-2026-0009-scout-retrieval"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0009-scout-retrieval_V2-INV-7-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "V2-INV-7: Кэширование: повторные запросы не порождают лишних субагентов\nMarker: INVARIANT: Scout retrieval must cache results by query_hash to avoid redundant spawns",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0009-scout-retrieval"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0009-scout-retrieval:V2-INV-7",
+    "tags": [
+      "invariant",
+      "TASK-2026-0009-scout-retrieval"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0010-post-review-fixes_INV-1-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-1: Все изменения обратно совместимы: v1 API и форматы не ломаются\nMarker: INVARIANT: Backward compatibility with v1",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0010-post-review-fixes"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0010-post-review-fixes:INV-1",
+    "tags": [
+      "invariant",
+      "TASK-2026-0010-post-review-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0010-post-review-fixes_INV-2-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-2: Тестовое покрытие >= 70% для всех модулей\nMarker: INVARIANT: Test coverage >= 70% for all modules",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0010-post-review-fixes"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0010-post-review-fixes:INV-2",
+    "tags": [
+      "invariant",
+      "TASK-2026-0010-post-review-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
+  },
+  {
+    "entry_id": "semantic-invariant_TASK-2026-0010-post-review-fixes_INV-3-1779812627392",
+    "task_id": null,
+    "step_number": null,
+    "timestamp": "2026-05-26T16:23:47.388Z",
+    "track_type": "semantic",
+    "content": {
+      "fact": "INV-3: Локализация: русский для оператора, английский для машин (INV-12 родительской задачи)\nMarker: INVARIANT: Localization — Russian for operator, English for machines",
+      "category": "invariant",
+      "confidence": 0.7,
+      "domain": "TASK-2026-0010-post-review-fixes"
+    },
+    "relevance_score": 0.7,
+    "source_ref": "invariant:TASK-2026-0010-post-review-fixes:INV-3",
+    "tags": [
+      "invariant",
+      "TASK-2026-0010-post-review-fixes"
+    ],
+    "created_at": "2026-05-26T16:23:47.388Z",
+    "updated_at": "2026-05-26T16:23:47.388Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-26T16:23:47.388Z"
   }
 ]

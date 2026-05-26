@@ -1,0 +1,14 @@
+{
+  "task_id": "TASK-2026-0013",
+  "slug": "pi-backup-portable",
+  "title": "Переносимый бэкап pi-окружения для другой машины",
+  "description": "Создать скрипт и архив для полного переноса pi-окружения (навыки, расширения, конфиги, промпты, тема) на другую машину. Исключить сессии, node_modules, секреты (API-ключи — шаблонизировать). Результат: tar.gz + restore.sh с инструкцией.",
+  "status": "active",
+  "priority": "high",
+  "branch": "task/TASK-2026-0013",
+  "invariants": [],
+  "delivery_units": [],
+  "created_at": "2026-05-26",
+  "updated_at": "2026-05-26",
+  "schema_version": "1.0.0"
+}
