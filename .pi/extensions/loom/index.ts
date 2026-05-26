@@ -510,7 +510,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
 
       if (choice === "Перейти в Agent Mode и начать исполнение") {
         await enterAgentMode(ctx);
-        pi.sendUserMessage("Начни исполнение текущего плана.");
+        // Agent mode context is injected via before_agent_start — no racing message needed
       } else if (choice === "Завершить сессию планирования") {
         await enterIdleMode(ctx);
       }

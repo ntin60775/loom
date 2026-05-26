@@ -382,7 +382,7 @@ describe("loom_finalize_plan", () => {
     expect(registry).toBeTruthy();
     const entry = registry!.tasks.find((t) => t.task_id === "TASK-2026-0600-test");
     expect(entry).toBeTruthy();
-    expect(entry!.status).toBe("draft");
+    expect(entry!.status).toBe("active");
 
     // Check markdown derivatives generated
     expect(fs.existsSync(path.join(taskDir, "task.md"))).toBe(true);

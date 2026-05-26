@@ -310,8 +310,8 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         return { content: [{ type: "text", text: `Plan for ${params.task_id} not found` }], isError: true };
       }
 
-      // Update task status
-      task.status = "draft";
+      // Update task status — mark active so agent mode can pick it up
+      task.status = "active";
       task.updated_at = new Date().toISOString().split("T")[0];
       writeJson(path.join(dir, "task.json"), task);
 
@@ -323,7 +323,7 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         task_id: params.task_id,
         slug: task.slug,
         title: task.title,
-        status: "draft",
+        status: "active",
         priority: task.priority,
         branch: task.branch,
         parent_task_id: task.parent_task_id,
