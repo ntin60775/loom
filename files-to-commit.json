@@ -1,18 +1,8 @@
 {
-  "task_id": "TASK-2026-0011-audit-v2-invariants",
-  "step": 2,
+  "task_id": "TASK-2026-0012-audit-fixes",
+  "step": 1,
   "files": [
-    ".pi/extensions/loom/tests/__mocks__/pi-coding-agent.ts",
-    ".pi/extensions/loom/tests/agent-tools.test.ts",
-    ".pi/extensions/loom/tests/extension-registration.test.ts",
-    ".pi/extensions/loom/tests/extra-coverage.test.ts",
-    ".pi/extensions/loom/tests/onboarding.test.ts",
-    ".pi/extensions/loom/tests/plan-tools.test.ts",
-    ".pi/extensions/loom/tests/scout-retrieval.test.ts",
-    ".pi/extensions/loom/tests/spawner.test.ts",
-    ".pi/extensions/loom/tests/ui-widgets.test.ts",
-    "files-to-commit.json",
-    "knowledge/project/artifacts/verification-matrix.json",
-    "vitest.config.ts"
+    ".pi/extensions/loom/tests/manager.test.ts",
+    "files-to-commit.json"
   ]
 }
