@@ -11,6 +11,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { logger } from "../../shared/logger";
 
 /** Single cached entry */
 export interface CacheEntry {
@@ -153,8 +154,9 @@ export class RetrievalCache {
         return [];
       }
       return this.cleanup(entries);
-    } catch {
+    } catch (err) {
       // Corrupted or unreadable cache — start fresh
+      logger.warn("cache", `Failed to load cache file ${this.cacheFilePath}, starting fresh`, err);
       return [];
     }
   }
@@ -171,12 +173,14 @@ export class RetrievalCache {
     try {
       fs.writeFileSync(tmpPath, JSON.stringify(entries, null, 2), "utf-8");
       fs.renameSync(tmpPath, this.cacheFilePath);
-    } catch {
+    } catch (err) {
       // Clean up temp file on failure
+      logger.warn("cache", `Failed atomic cache write to ${this.cacheFilePath}`, err);
       try {
         fs.unlinkSync(tmpPath);
       } catch {
         // ignore cleanup error
+        logger.debug("cache", `Failed to unlink temp cache file ${tmpPath}`);
       }
     }
   }

@@ -13,6 +13,7 @@ import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { readJson } from "../knowledge/io";
 import { registerPlanTools } from "./tools";
+import { logger } from "../shared/logger";
 
 /**
  * Enrich plan context with retrieval results if v2 is enabled.
@@ -44,8 +45,9 @@ export async function enrichPlanContext(cwd: string, description: string): Promi
     }
     lines.push("--- End Relevant Knowledge ---");
     return lines.join("\n");
-  } catch {
+  } catch (err) {
     // Non-fatal: if retrieval fails, continue without enrichment
+    logger.debug("orchestrator", `Retrieval enrichment failed for query "${description}"`, err);
     return "";
   }
 }

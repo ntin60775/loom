@@ -8,6 +8,7 @@ import {
   validateSubagentConfigShape,
   validateExecutionConfigShape,
 } from "./schemas";
+import { logger } from "../shared/logger";
 import type {
   TaskData,
   PlanData,
@@ -24,13 +25,13 @@ export function readJson<T>(filePath: string, validator?: (data: unknown) => str
     if (validator) {
       const error = validator(parsed);
       if (error) {
-        console.error(`[loom] Validation error in ${filePath}: ${error}`);
+        logger.warn("io", `Validation error in ${filePath}`, error);
         return null;
       }
     }
     return parsed;
   } catch (err) {
-    console.error(`[loom] Failed to read ${filePath}:`, err);
+    logger.error("io", `Failed to read ${filePath}`, err);
     return null;
   }
 }

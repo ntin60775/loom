@@ -19,6 +19,7 @@ import { EpisodicStore } from "./episodic-store";
 import { SemanticStore } from "./semantic-store";
 import { ProceduralStore } from "./procedural-store";
 import { readJsonFile, writeJsonFile } from "./utils";
+import { logger } from "../shared/logger";
 
 export interface RelevanceWeights {
   freshness: number;
@@ -285,8 +286,9 @@ export class MemoryManager {
         episodicTotal += s.total_entries;
         episodicRelevance += s.total_relevance;
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      // stats collection failure is non-critical
+      logger.debug("manager", "Failed to collect episodic stats", err);
     }
 
     const semanticStats = this.semantic.stats(this.cwd);

@@ -17,6 +17,7 @@ import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
+import { logger } from "../shared/logger";
 import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
 import { generateVerificationMatrix } from "../knowledge/verification";
 import type { PlanStepData, InvariantData } from "../knowledge/types";
@@ -57,7 +58,20 @@ function runLocalizationGuard(cwd: string): { passed: boolean; output: string; i
   }
 }
 
-// INV-11: Strictly sequential execution — state machine
+// INV-11: Strictly sequential execution — mutex prevents concurrent worker spawn
+const workerLock = (() => {
+  let locked = false;
+  return {
+    tryAcquire(): boolean {
+      if (locked) return false;
+      locked = true;
+      return true;
+    },
+    release(): void {
+      locked = false;
+    },
+  };
+})();
 let activeWorkerId: string | null = null;
 
 export function registerAgentTools(pi: ExtensionAPI): void {
@@ -115,12 +129,13 @@ export function registerAgentTools(pi: ExtensionAPI): void {
             v2Context += "--- End Relevant Knowledge ---\n";
           }
         }
-      } catch {
-        // v2 features are opt-in; ignore errors gracefully
+      } catch (err) {
+        // v2 features are opt-in; log debug only
+        logger.debug("tools", "v2 context assembly skipped", err);
       }
 
-      // INV-11: Block concurrent worker spawn
-      if (activeWorkerId) {
+      // INV-11: Block concurrent worker spawn via mutex
+      if (!workerLock.tryAcquire()) {
         return {
           content: [{ type: "text", text: `Worker "${activeWorkerId}" is already active. Cannot spawn another worker until it completes. Sequential execution enforced (INV-11).` }],
           isError: true,
@@ -130,7 +145,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const workerId = `${params.task_id}-worker-step${params.step_number}`;
       activeWorkerId = workerId;
 
-      // P2 fix: create AbortController for real subagent kill
+      try {
+        // P2 fix: create AbortController for real subagent kill
       const abortController = new AbortController();
       // Cascade: if tool signal fires, abort our controller too
       if (signal) {
@@ -195,6 +211,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         };
       } finally {
         activeWorkerId = null;
+        workerLock.release();
         updateSubagentStatus(workerId, "completed");
         removeSubagent(workerId);
       }
@@ -239,8 +256,9 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         if (assembled) {
           v2Context = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
         }
-      } catch {
-        // memory layer is opt-in; ignore errors
+      } catch (err) {
+        // v2 features are opt-in (reviewer); log debug only
+        logger.debug("tools", "v2 reviewer context assembly skipped", err);
       }
 
       const reviewerId = `${params.task_id}-reviewer-step${params.step_number}`;
@@ -291,7 +309,8 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
           if (jsonMatch) reviewJson = JSON.parse(jsonMatch[1]);
           else reviewJson = JSON.parse(output);
-        } catch {
+        } catch (err) {
+          logger.warn("tools", "Failed to parse reviewer JSON output", err);
           reviewJson = null;
         }
 

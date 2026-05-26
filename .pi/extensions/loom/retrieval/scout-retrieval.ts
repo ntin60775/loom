@@ -17,6 +17,7 @@ import type { SearchKnowledgeResponse, SearchResult } from "./cache";
 import type { SubagentResult } from "../subagent/specs";
 import { spawnSubagent } from "../subagent/spawner";
 import { loadPrompt } from "../shared/utils";
+import { logger } from "../shared/logger";
 
 /** Options for ScoutRetrieval construction */
 export interface ScoutRetrievalOptions {
@@ -124,6 +125,7 @@ export class ScoutRetrieval {
       results = report.results;
     } catch (err) {
       // On failure: retry once with simplified prompt
+      logger.warn("scout-retrieval", `Scout search failed, retrying with simplified prompt: query="${normalizedQuery}"`, err);
       try {
         const retryReport = await this.spawnScoutSearch(
           normalizedQuery,
@@ -132,8 +134,9 @@ export class ScoutRetrieval {
           true, // simplified
         );
         results = retryReport.results;
-      } catch {
+      } catch (retryErr) {
         // Retry also failed — return empty results
+        logger.error("scout-retrieval", `Scout search retry also failed: query="${normalizedQuery}"`, retryErr);
         results = [];
       }
     }
@@ -249,8 +252,8 @@ export class ScoutRetrieval {
       validated.sort((a, b) => a.rank - b.rank);
 
       return validated;
-    } catch {
-      return [];
+    } catch (err) {
+      logger.warn("scout-retrieval", `Failed to parse scout JSON output, returning empty results. Raw output length: ${output.length}`, err);
     }
   }
 

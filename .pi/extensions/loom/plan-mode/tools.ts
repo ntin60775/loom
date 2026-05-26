@@ -18,6 +18,7 @@ import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
 import { getFinalOutput, loadPrompt, sanitizeId } from "../shared/utils";
+import { logger } from "../shared/logger";
 import {
   validateStackModuleShape,
   validateContextResearchShape,
@@ -74,7 +75,8 @@ export async function runOnboardingSubagent(
     const jsonMatch = output.match(/```json\n?([\s\S]*?)\n?```/);
     if (jsonMatch) parsed = JSON.parse(jsonMatch[1]);
     else parsed = JSON.parse(output);
-  } catch {
+  } catch (err) {
+    logger.warn("plan-tools", `Failed to parse subagent JSON output for ${name}`, err);
     parsed = null;
   }
 
@@ -82,7 +84,7 @@ export async function runOnboardingSubagent(
     if (validator) {
       const err = validator(parsed);
       if (err) {
-        console.error(`[loom] ${name} output validation failed: ${err}`);
+        logger.warn("plan-tools", `${name} output validation failed`, err);
         parsed = null;
       }
     }

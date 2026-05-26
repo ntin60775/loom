@@ -17,7 +17,7 @@ import { updateModeWidget } from "./ui/mode-widget";
 import { updateTaskWidget } from "./ui/task-widget";
 import { updateSubagentWidget } from "./ui/subagent-widget";
 import { getActiveSubagents, killSubagent } from "./shared/subagent-state";
-import { registerPlanMode } from "./plan-mode/orchestrator";
+import { registerPlanMode, enrichPlanContext } from "./plan-mode/orchestrator";
 import { registerAgentMode } from "./agent-mode/executor";
 import { findKnowledgeRoot, readRegistryFile, readJson, writeJson } from "./knowledge/io";
 import { onboardProject, listRules, listArchitectureComponents } from "./knowledge/onboarding";
@@ -45,7 +45,7 @@ function loadState(ctx: ExtensionContext): LoomState {
   // Fallback: legacy session-based state (backward compatibility)
   const entries = ctx.sessionManager.getEntries();
   const loomEntry = entries
-    .filter((e: any) => e.type === "custom" && e.customType === "loom-state")
+    .filter((e: { type?: string; customType?: string }) => e.type === "custom" && e.customType === "loom-state")
     .pop() as { data?: LoomState } | undefined;
 
   if (loomEntry?.data) {
@@ -90,7 +90,10 @@ export default function loomExtension(pi: ExtensionAPI): void {
       ctx.ui.notify("[PLAN] Режим планирования активирован. Опишите задачу или начните декомпозицию.", "info");
 
       if (args && args.trim()) {
-        pi.sendUserMessage(args.trim());
+        // Enrich with retrieval context if v2 enabled
+        const enrichment = await enrichPlanContext(ctx.cwd, args.trim());
+        const message = enrichment ? `${enrichment}\n\n${args.trim()}` : args.trim();
+        pi.sendUserMessage(message);
       }
     } finally {
       isTransitioning = false;

@@ -14,6 +14,7 @@ import * as path from "node:path";
 import { withFileMutationQueue } from "@earendil-works/pi-coding-agent";
 import type { SubagentResult, WorkerSpec, ReviewerSpec } from "./specs";
 import { getFinalOutput } from "../shared/utils";
+import { logger } from "../shared/logger";
 
 function getPiInvocation(): { command: string; args: string[] } {
   const currentScript = process.argv[1];
@@ -35,8 +36,8 @@ function getPiInvocation(): { command: string; args: string[] } {
       timeout: 2000,
     }).trim();
     if (which) return { command: "pi", args: [] };
-  } catch {
-    // command not found — fall through
+  } catch (err) {
+    logger.debug("spawner", "pi CLI not found via which, falling through", err);
   }
 
   throw new Error("pi CLI not found in PATH and no suitable runtime detected");
@@ -56,6 +57,7 @@ export async function spawnSubagent(
   spec: WorkerSpec | ReviewerSpec,
   signal?: AbortSignal,
   onUpdate?: (output: string) => void,
+  timeoutMs: number = 300_000, // 5 min default timeout
 ): Promise<SubagentResult> {
   const invocation = getPiInvocation();
   const args: string[] = ["--mode", "json", "-p", "--no-session", "--no-context-files"];
@@ -96,11 +98,11 @@ export async function spawnSubagent(
 
       const processLine = (line: string) => {
         if (!line.trim()) return;
-        let event: any;
+        let event: { type?: string; message?: SubagentResult["messages"][number] } | null = null;
         try {
           event = JSON.parse(line);
-        } catch {
-          return;
+        } catch (err) {
+          logger.warn("spawner", "Failed to parse subagent output line", err);
         }
 
         if (event.type === "message_end" && event.message) {
@@ -144,6 +146,18 @@ export async function spawnSubagent(
       });
 
       proc.on("error", () => resolve(1));
+
+      // Internal timeout as safety net (SIGTERM → 5s → SIGKILL)
+      const timeout = setTimeout(() => {
+        logger.warn("spawner", `Subagent "${spec.name}" timed out after ${timeoutMs}ms`);
+        wasAborted = true;
+        proc.kill("SIGTERM");
+        setTimeout(() => {
+          if (!proc.killed) proc.kill("SIGKILL");
+        }, 5000);
+      }, timeoutMs);
+
+      proc.on("close", () => clearTimeout(timeout));
 
       if (signal) {
         const killProc = () => {

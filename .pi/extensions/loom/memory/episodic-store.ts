@@ -12,6 +12,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { MemoryEntry, MemoryQuery, TrackStats, EpisodicContent } from "./types";
 import { readJsonFile, writeJsonFile } from "./utils";
+import { logger } from "../shared/logger";
 
 export interface EpisodicStoreOptions {
   maxEntriesPerTask?: number;
@@ -103,8 +104,9 @@ export class EpisodicStore {
         const entries = this.readTaskEntries(cwd, taskId);
         all = all.concat(this.applyFilters(entries, q));
       }
-    } catch {
+    } catch (err) {
       // tasks directory may not exist yet
+      logger.debug("episodic-store", "Failed to query task entries", err);
     }
 
     all.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());

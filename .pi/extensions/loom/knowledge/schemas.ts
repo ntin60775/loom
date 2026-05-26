@@ -334,24 +334,6 @@ export const ExecutionConfigSchema = Type.Object({
   })),
 });
 
-// ── Search Result Schemas (Scout Retrieval v2) ────────────────────────────
-
-export const SearchResultSchema = Type.Object({
-  rank: Type.Integer({ minimum: 1 }),
-  source_path: Type.String(),
-  excerpt: Type.String({ maxLength: 500 }),
-  relevance_score: Type.Number({ minimum: 0, maximum: 1 }),
-  reasoning: Type.String(),
-});
-
-export const SearchKnowledgeResponseSchema = Type.Object({
-  query: Type.String(),
-  scope: Type.String(),
-  results: Type.Array(SearchResultSchema),
-  cached: Type.Boolean(),
-  execution_time_ms: Type.Number(),
-});
-
 // ── Runtime Validators ────────────────────────────────────────────────────
 // Simple structural checks without TypeGuard dependency
 
