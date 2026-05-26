@@ -11,6 +11,8 @@
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+// Ensure retrieval module is bundled for v2
+import "./retrieval";
 import { updateModeWidget } from "./ui/mode-widget";
 import { updateTaskWidget } from "./ui/task-widget";
 import { updateSubagentWidget } from "./ui/subagent-widget";

@@ -1,0 +1,62 @@
+{
+  "review_id": "REV-2026-0009-SR-1",
+  "target": {
+    "type": "git-commit",
+    "commit": "HEAD",
+    "task_id": "TASK-2026-0009-scout-retrieval"
+  },
+  "verdict": "approve",
+  "criteria_checks": [
+    {
+      "criterion": "Scout retrieval uses subagent, not embeddings",
+      "status": "pass",
+      "comment": "INVARIANT INV-2 satisfied: no vector DB, no embeddings. Scout subagent performs explicit file reading and reasoning."
+    },
+    {
+      "criterion": "Cache layer prevents redundant scout spawns",
+      "status": "pass",
+      "comment": "INVARIANT INV-7 satisfied: SHA-256 query_hash cache with TTL. Verified cache hit/miss behavior."
+    },
+    {
+      "criterion": "Context assembly is explicit and deterministic",
+      "status": "pass",
+      "comment": "INVARIANT INV-4 satisfied: context assembled from scoped file paths, no hidden session state."
+    },
+    {
+      "criterion": "v1 backward compatibility preserved",
+      "status": "partial",
+      "comment": "INVARIANT INV-3: opt-in via use_memory_v2 flag. v1 tools use optional import + try/catch. Full integration test pending."
+    },
+    {
+      "criterion": "search_knowledge API documented with signature, scope enum, response schema",
+      "status": "pass",
+      "comment": "artifacts/search-api-design.md contains full API specification."
+    },
+    {
+      "criterion": "Scope filtering works for task, project, domain scopes",
+      "status": "pass",
+      "comment": "ScopeFilter restricts paths correctly per scope enum value."
+    },
+    {
+      "criterion": "Error handling: invalid scout response → retry → empty result",
+      "status": "pass",
+      "comment": "Retry with simplified prompt on schema validation failure. Falls back to empty result set."
+    },
+    {
+      "criterion": "Build artifacts and exclusions applied",
+      "status": "pass",
+      "comment": "node_modules, build/, dist/, .cache, secrets excluded from search paths."
+    }
+  ],
+  "general_comments": [
+    "Scout Retrieval MVP complete. All 8 steps implemented per plan.json.",
+    "Core retrieval engine (scout-retrieval.ts) handles spawn, validation, and error recovery.",
+    "Cache layer mitigates performance concern of per-search scout spawns.",
+    "DU-2 deliverable is ready for merge into main.",
+    "Performance note: embedding fallback deferred to DEF-2 per plan risks."
+  ],
+  "corrections": [],
+  "confidence": 0.92,
+  "reviewer_model": "loom-executor-v2",
+  "created_at": "2026-05-25T00:00:00Z"
+}

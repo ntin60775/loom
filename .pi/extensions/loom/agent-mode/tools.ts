@@ -92,14 +92,31 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const tools = config?.worker?.tools ?? ["read", "bash", "edit", "write"];
 
       // v2 memory layer: inject assembled context if enabled
-      let memoryContext = "";
+      let v2Context = "";
       try {
+        // 1. Memory context from 4 tracks (session/episodic/semantic/procedural)
         const assembled = buildMemoryContext(ctx.cwd, params.task_id);
         if (assembled) {
-          memoryContext = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
+          v2Context += `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
+        }
+
+        // 2. Scout retrieval: search relevant knowledge from closed tasks
+        const execConfig = readJson<Record<string, unknown>>(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"));
+        if (execConfig && execConfig.use_memory_v2 === true && step.description) {
+          const { ScoutRetrieval } = await import("../retrieval/scout-retrieval");
+          const retrieval = new ScoutRetrieval({ cwd: ctx.cwd });
+          const result = await retrieval.searchKnowledge(step.description, "project", 5);
+          if (result.results.length > 0) {
+            v2Context += "\n\n--- Relevant Knowledge ---\n";
+            for (const r of result.results) {
+              v2Context += `[${r.rank}] ${r.source_path} (score: ${r.relevance_score.toFixed(2)})\n`;
+              v2Context += `    ${r.excerpt}\n`;
+            }
+            v2Context += "--- End Relevant Knowledge ---\n";
+          }
         }
       } catch {
-        // memory layer is opt-in; ignore errors
+        // v2 features are opt-in; ignore errors gracefully
       }
 
       // INV-11: Block concurrent worker spawn
@@ -137,7 +154,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           systemPrompt: workerPrompt,
           model,
           tools,
-          task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${memoryContext}${params.additional_context ?? ""}`,
+          task: `Task: ${task.title}\nStep ${step.step_number}: ${step.title}\n${step.description}\nExpected output: ${step.expected_output}\nConstraints: ${step.constraints?.join(", ") ?? "none"}\n${v2Context}${params.additional_context ?? ""}`,
           cwd: ctx.cwd,
         };
 
@@ -216,11 +233,11 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const tools = config?.reviewer?.tools ?? ["read", "bash", "grep", "find", "ls"];
 
       // v2 memory layer: inject assembled context for reviewer if enabled
-      let memoryContext = "";
+      let v2Context = "";
       try {
         const assembled = buildMemoryContext(ctx.cwd, params.task_id);
         if (assembled) {
-          memoryContext = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
+          v2Context = `\n\n--- Memory Context ---\n${assembled}\n--- End Memory Context ---\n`;
         }
       } catch {
         // memory layer is opt-in; ignore errors
@@ -250,7 +267,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         systemPrompt: reviewerPrompt,
         model,
         tools,
-        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output ?? ""}\nInvariants: ${invariantsStr}${memoryContext}`,
+        task: `Review commit ${params.commit_hash} for task ${params.task_id} step ${params.step_number}.\nExpected output: ${step.expected_output ?? ""}\nInvariants: ${invariantsStr}${v2Context}`,
         targetCommit: params.commit_hash,
         planJsonPath: path.join(dir, "plan.json"),
         stepNumber: params.step_number,
@@ -498,6 +515,45 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         content: [{ type: "text", text: `Updated ${fileName} at ${filePath}` }],
         details: { config_type: params.config_type, filePath },
       };
+    },
+  });
+
+  // Tool: Search knowledge via scout retrieval (v2 only)
+  pi.registerTool({
+    name: "loom_search_knowledge",
+    label: "Поиск знаний",
+    description: "Поиск релевантных знаний через scout subagent. Доступен только при use_memory_v2: true.",
+    parameters: Type.Object({
+      query: Type.String({ description: "Поисковый запрос на естественном языке" }),
+      scope: Type.String({ default: "project", description: "Область поиска: task | project | domain" }),
+      limit: Type.Number({ default: 10, description: "Максимальное количество результатов" }),
+    }),
+
+    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+      const execConfigPath = path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json");
+      const execConfig = readJson<Record<string, unknown>>(execConfigPath);
+      if (!execConfig || execConfig.use_memory_v2 !== true) {
+        return {
+          content: [{ type: "text", text: "Ошибка: поиск знаний доступен только при use_memory_v2: true в execution-config.json" }],
+          isError: true,
+        };
+      }
+
+      try {
+        const { ScoutRetrieval } = await import("../retrieval/scout-retrieval");
+        const retrieval = new ScoutRetrieval({ cwd: ctx.cwd });
+        const validScope = ["task", "project", "domain"].includes(params.scope) ? params.scope as import("../retrieval/scope-filter").Scope : "project";
+        const result = await retrieval.searchKnowledge(params.query, validScope, params.limit);
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          details: { query: params.query, scope: params.scope, resultCount: result.results.length, cached: result.cached },
+        };
+      } catch (err: any) {
+        return {
+          content: [{ type: "text", text: `❌ Ошибка поиска знаний: ${err.message}` }],
+          isError: true,
+        };
+      }
     },
   });
 }
