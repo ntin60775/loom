@@ -13,7 +13,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readExecutionConfig } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
@@ -68,7 +68,8 @@ export async function runOnboardingSubagent(
     cwd,
   };
 
-  const result = await spawnSubagent(spec, signal);
+  const effectiveTimeout = (readExecutionConfig(path.join(cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.scout ?? 600) * 1000;
+  const result = await spawnSubagent(spec, signal, undefined, effectiveTimeout);
   const output = getFinalOutput(result.messages);
 
   let parsed: unknown = null;
@@ -377,7 +378,8 @@ export function registerPlanTools(pi: ExtensionAPI): void {
         cwd: ctx.cwd,
       };
 
-      const result = await spawnSubagent(spec, signal);
+      const effectiveTimeout = (readExecutionConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.scout ?? 600) * 1000;
+      const result = await spawnSubagent(spec, signal, undefined, effectiveTimeout);
       const output = getFinalOutput(result.messages);
 
       return {

@@ -7,7 +7,7 @@
  *   INV-14: pi CLI flags verified via PoC
  */
 
-import { spawn, execSync } from "node:child_process";
+import { spawn, exec } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -16,31 +16,33 @@ import type { SubagentResult, WorkerSpec, ReviewerSpec } from "./specs";
 import { getFinalOutput } from "../shared/utils";
 import { logger } from "../shared/logger";
 
-function getPiInvocation(): { command: string; args: string[] } {
+function getPiInvocation(): Promise<{ command: string; args: string[] }> {
   const currentScript = process.argv[1];
   const isBunVirtualScript = currentScript?.startsWith("/$bunfs/root/");
   if (currentScript && !isBunVirtualScript && fs.existsSync(currentScript)) {
-    return { command: process.execPath, args: [currentScript] };
+    return Promise.resolve({ command: process.execPath, args: [currentScript] });
   }
 
   const execName = path.basename(process.execPath).toLowerCase();
   const isGenericRuntime = /^(node|bun)(\.exe)?$/.test(execName);
   if (!isGenericRuntime) {
-    return { command: process.execPath, args: [] };
+    return Promise.resolve({ command: process.execPath, args: [] });
   }
 
-  // Fallback: verify 'pi' is in PATH before using it
-  try {
-    const which = execSync("command -v pi 2>/dev/null || which pi 2>/dev/null || echo ''", {
+  // Fallback: verify 'pi' is in PATH before using it (async)
+  return new Promise((resolve, reject) => {
+    exec("command -v pi 2>/dev/null || which pi 2>/dev/null || echo ''", {
       encoding: "utf-8",
       timeout: 2000,
-    }).trim();
-    if (which) return { command: "pi", args: [] };
-  } catch (err) {
-    logger.debug("spawner", "pi CLI not found via which, falling through", err);
-  }
-
-  throw new Error("pi CLI not found in PATH and no suitable runtime detected");
+    }, (err, stdout) => {
+      const which = (stdout ?? "").trim();
+      if (which && !err) {
+        resolve({ command: "pi", args: [] });
+      } else {
+        reject(new Error("pi CLI not found in PATH and no suitable runtime detected"));
+      }
+    });
+  });
 }
 
 async function writePromptToTempFile(name: string, prompt: string): Promise<{ dir: string; filePath: string }> {
@@ -57,9 +59,9 @@ export async function spawnSubagent(
   spec: WorkerSpec | ReviewerSpec,
   signal?: AbortSignal,
   onUpdate?: (output: string) => void,
-  timeoutMs: number = 300_000, // 5 min default timeout
+  timeoutMs?: number, // read from execution-config; falls back to 5 min
 ): Promise<SubagentResult> {
-  const invocation = getPiInvocation();
+  const invocation = await getPiInvocation();
   const args: string[] = ["--mode", "json", "-p", "--no-session", "--no-context-files"];
 
   if (spec.model) args.push("--model", spec.model);
@@ -77,6 +79,8 @@ export async function spawnSubagent(
   };
 
   try {
+    const effectiveTimeout = timeoutMs ?? 300_000; // default 5 min
+
     if (spec.systemPrompt.trim()) {
       const tmp = await writePromptToTempFile(spec.name, spec.systemPrompt);
       tmpPromptDir = tmp.dir;
@@ -155,7 +159,7 @@ export async function spawnSubagent(
         setTimeout(() => {
           if (!proc.killed) proc.kill("SIGKILL");
         }, 5000);
-      }, timeoutMs);
+      }, effectiveTimeout);
 
       proc.on("close", () => clearTimeout(timeout));
 

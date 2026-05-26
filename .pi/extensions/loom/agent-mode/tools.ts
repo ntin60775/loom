@@ -9,10 +9,10 @@
  */
 
 import * as path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
-import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig } from "../knowledge/io";
+import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig, readExecutionConfig } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
@@ -32,8 +32,9 @@ function taskDir(cwd: string, taskId: string): string {
 /**
  * Run localization guard on files-to-commit.json.
  * Returns pass/fail with guard output. Used automatically after worker commit.
+ * Async — uses spawn instead of spawnSync.
  */
-function runLocalizationGuard(cwd: string): { passed: boolean; output: string; isError: boolean } {
+async function runLocalizationGuard(cwd: string): Promise<{ passed: boolean; output: string; isError: boolean }> {
   const ftcPath = path.join(cwd, "files-to-commit.json");
   const ftc = readJson<{ files?: string[] }>(ftcPath);
   const files = ftc?.files ?? [];
@@ -44,20 +45,31 @@ function runLocalizationGuard(cwd: string): { passed: boolean; output: string; i
 
   const scriptPath = path.join(cwd, "scripts", "check-docs-localization.sh");
 
-  try {
-    const result = spawnSync("bash", [scriptPath, ...files], {
+  return new Promise((resolve) => {
+    const proc = spawn("bash", [scriptPath, ...files], {
       cwd,
-      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "pipe"],
       timeout: 30000,
     });
-    if (result.status === 0) {
-      return { passed: true, output: result.stdout, isError: false };
-    }
-    return { passed: false, output: `stdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`, isError: true };
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return { passed: false, output: `Localization guard exception: ${msg}`, isError: true };
-  }
+
+    let stdout = "";
+    let stderr = "";
+
+    proc.stdout.on("data", (data: Buffer) => { stdout += data.toString(); });
+    proc.stderr.on("data", (data: Buffer) => { stderr += data.toString(); });
+
+    proc.on("close", (code) => {
+      if (code === 0) {
+        resolve({ passed: true, output: stdout, isError: false });
+      } else {
+        resolve({ passed: false, output: `stdout:\n${stdout}\n\nstderr:\n${stderr}`, isError: true });
+      }
+    });
+
+    proc.on("error", (err) => {
+      resolve({ passed: false, output: `Localization guard exception: ${err.message}`, isError: true });
+    });
+  });
 }
 
 // INV-11: Strictly sequential execution — mutex prevents concurrent worker spawn
@@ -154,7 +166,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           if (onUpdate) {
             onUpdate({ content: [{ type: "text", text: output }], details: { phase: "worker", step: params.step_number } });
           }
-        });
+        }, (readExecutionConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.worker ?? 3600) * 1000);
 
         const output = getFinalOutput(result.messages);
         let workerError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
@@ -162,7 +174,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         // Auto-run localization guard after successful worker commit
         let guardResult: { passed: boolean; output: string; isError: boolean } | undefined;
         if (!workerError) {
-          guardResult = runLocalizationGuard(ctx.cwd);
+          guardResult = await runLocalizationGuard(ctx.cwd);
           if (guardResult.isError) {
             workerError = true;
           }
@@ -267,7 +279,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           if (onUpdate) {
             onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
           }
-        });
+        }, (readExecutionConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.reviewer ?? 1800) * 1000);
 
         const output = getFinalOutput(result.messages);
         reviewerError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
@@ -399,31 +411,18 @@ export function registerAgentTools(pi: ExtensionAPI): void {
 
       const scriptPath = path.join(ctx.cwd, "scripts", "check-docs-localization.sh");
 
-      try {
-        const result = spawnSync("bash", [scriptPath, ...files], {
-          cwd: ctx.cwd,
-          encoding: "utf-8",
-          timeout: 30000,
-        });
-        if (result.status === 0) {
-          return {
-            content: [{ type: "text", text: `✅ Localization guard passed.\n\n${result.stdout}` }],
-            details: { passed: true, files, output: result.stdout },
-          };
-        }
+      const guardResult = await runLocalizationGuard(ctx.cwd);
+      if (guardResult.passed) {
         return {
-          content: [{ type: "text", text: `❌ Localization guard FAILED.\n\nstdout:\n${result.stdout}\n\nstderr:\n${result.stderr}` }],
-          details: { passed: false, files, stdout: result.stdout, stderr: result.stderr },
-          isError: true,
-        };
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err);
-        return {
-          content: [{ type: "text", text: `❌ Localization guard FAILED with exception: ${msg}` }],
-          details: { passed: false, files, error: msg },
-          isError: true,
+          content: [{ type: "text", text: `✅ Localization guard passed.\n\n${guardResult.output}` }],
+          details: { passed: true, files, output: guardResult.output },
         };
       }
+      return {
+        content: [{ type: "text", text: `❌ Localization guard FAILED.\n\n${guardResult.output}` }],
+        details: { passed: false, files, output: guardResult.output },
+        isError: true,
+      };
     },
   });
 
