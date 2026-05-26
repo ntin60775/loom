@@ -104,6 +104,16 @@
       "parent_delivery_unit": "DU-4",
       "created_at": "2026-05-24",
       "updated_at": "2026-05-24"
+    },
+    {
+      "task_id": "TASK-2026-0010-post-review-fixes",
+      "slug": "post-review-fixes",
+      "title": "Постревью-исправления: критические замечания + тестовое покрытие",
+      "status": "active",
+      "priority": "critical",
+      "branch": "task/task-2026-0010-post-review-fixes",
+      "created_at": "2026-05-26",
+      "updated_at": "2026-05-26"
     }
   ]
 }

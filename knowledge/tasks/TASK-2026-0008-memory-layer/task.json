@@ -1,8 +1,8 @@
 {
   "task_id": "TASK-2026-0008-memory-layer",
   "slug": "memory-layer",
-  "title": {"ru": "DU-1: Memory Layer"},
-  "description": {"ru": "Реализация 4 дорожек памяти (session, episodic, semantic, procedural) с активным управлением контекстом. Ранжирование, суммаризация, retention policy. Интеграция с ContextAssembler для сборки контекста агенту."},
+  "title": "DU-1: Memory Layer",
+  "description": "Реализация 4 дорожек памяти (session, episodic, semantic, procedural) с активным управлением контекстом. Ранжирование, суммаризация, retention policy. Интеграция с ContextAssembler для сборки контекста агенту.",
   "status": "completed",
   "priority": "medium",
   "branch": "task/task-2026-0008-memory-layer",

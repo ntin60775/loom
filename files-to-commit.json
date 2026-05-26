@@ -1,13 +1,5 @@
 {
-  "task_id": "TASK-2026-0008-memory-layer",
-  "step": "review-fixes-round2",
-  "files": [
-    ".pi/extensions/loom/memory/episodic-store.ts",
-    ".pi/extensions/loom/memory/manager.ts",
-    ".pi/extensions/loom/memory/utils.ts",
-    "files-to-commit.json",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/artifacts/verification-matrix.md",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/task.json",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/task.md"
-  ]
+  "task_id": null,
+  "step": null,
+  "files": []
 }

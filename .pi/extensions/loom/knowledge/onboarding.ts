@@ -97,18 +97,47 @@ export function ensureKnowledgeStructure(cwd: string): { created: string[]; exis
   if (!fs.existsSync(executionConfigPath)) {
     writeJson(executionConfigPath, {
       schema_version: "1.0.0",
-      git_safety: {
-        require_files_to_commit: true,
-        validate_against_plan: true,
+      review: {
+        enabled: true,
+        max_iterations: 10,
+        auto_select_reviewer: { enabled: true, domain_rules: [] },
+      },
+      parallelism: { plan_mode_max_subagents: 4 },
+      timeout: { worker: 3600, reviewer: 1800, scout: 600 },
+      session_retention_days: 7,
+      human_in_the_loop: {
+        on_reject_max_iterations: true,
+        on_timeout: true,
+        on_ambiguity: true,
+        on_worker_blocker: true,
       },
       recovery: {
-        max_worker_iterations: 10,
-        timeout_reviewer_seconds: 300,
-        on_worker_crash: "retry_once",
+        default_strategy: "retry_with_correction",
+        max_retries_per_step: 10,
+        escalate_after_total_failures: 5,
       },
       localization_guard: {
         enabled: true,
-        command: "bash scripts/check-docs-localization.sh",
+        check_on_review: true,
+        check_on_finalize: true,
+        script_path: "scripts/check-docs-localization.sh",
+      },
+      git: {
+        commit_mode: "staged",
+        require_clean_worktree: false,
+      },
+      use_memory_v2: false,
+      memory: {
+        token_budget: 4000,
+        relevance_weights: { freshness: 0.4, frequency: 0.3, explicit_rating: 0.3 },
+        retention: {
+          max_entries_session: 1000,
+          max_entries_episodic: 500,
+          max_entries_semantic: 2000,
+          max_entries_procedural: 500,
+          max_age_days: 90,
+          min_relevance: 0.1,
+        },
       },
     });
     created.push("execution-config.json");
@@ -121,8 +150,9 @@ export function ensureKnowledgeStructure(cwd: string): { created: string[]; exis
     writeJson(subagentConfigPath, {
       schema_version: "1.0.0",
       domains: {},
-      worker: { model: null, tools: ["read", "bash", "edit", "write"] },
-      reviewer: { model: null, tools: ["read", "bash", "grep", "find", "ls"] },
+      worker: { domain_rules: [] },
+      reviewer: { thinking: "medium", domain_rules: [] },
+      scout: { thinking: "medium" },
     });
     created.push("subagent-config.json");
   } else {

@@ -1,0 +1,54 @@
+{
+  "task_id": "TASK-2026-0010-post-review-fixes",
+  "slug": "post-review-fixes",
+  "title": "Постревью-исправления: критические замечания + тестовое покрытие",
+  "description": "Полное всестороннее ревью выявило 4 критических замечания (C1-C4), 12 предупреждений (W1-W12) и катастрофическое отсутствие тестов (покрытие ~5%). Задача: исправить ВСЕ замечания, разработать стратегию тестирования и закрыть пробел с тестовым покрытием.",
+  "status": "active",
+  "priority": "critical",
+  "branch": "task/task-2026-0010-post-review-fixes",
+  "parent_task_id": null,
+  "parent_delivery_unit": null,
+  "invariants": [
+    {
+      "id": "INV-1",
+      "text": "Все изменения обратно совместимы: v1 API и форматы не ломаются",
+      "marker": "INVARIANT: Backward compatibility with v1",
+      "status": "defined"
+    },
+    {
+      "id": "INV-2",
+      "text": "Тестовое покрытие >= 70% для всех модулей",
+      "marker": "INVARIANT: Test coverage >= 70% for all modules",
+      "status": "defined"
+    },
+    {
+      "id": "INV-3",
+      "text": "Локализация: русский для оператора, английский для машин (INV-12 родительской задачи)",
+      "marker": "INVARIANT: Localization — Russian for operator, English for machines",
+      "status": "defined"
+    }
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-1",
+      "status": "draft",
+      "purpose": "Критические исправления: C2, C4, W5, W8-W12 — конфиги, формат, инфраструктура",
+      "base_branch": "main"
+    },
+    {
+      "id": "DU-2",
+      "status": "draft",
+      "purpose": "Устранение предупреждений W1-W4: асинхронные вызовы, DRY store, batch-write",
+      "base_branch": "main"
+    },
+    {
+      "id": "DU-3",
+      "status": "draft",
+      "purpose": "Архитектура тестирования + vitest + полное тестовое покрытие",
+      "base_branch": "main"
+    }
+  ],
+  "created_at": "2026-05-26",
+  "updated_at": "2026-05-26",
+  "schema_version": "1.0.0"
+}

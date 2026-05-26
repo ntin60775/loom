@@ -1,0 +1,68 @@
+{
+  "task_id": "TASK-2026-0010-post-review-fixes",
+  "steps": [
+    {
+      "step_number": 1,
+      "title": "C4 + C2 + W5: Критические исправления конфигов и форматов",
+      "description": "Очистить files-to-commit.json. Исправить onboarding.ts — синхронизировать генерируемые конфиги с актуальной схемой. Исправить формат TASK-2026-0008 title/description на plain string.",
+      "expected_output": "files-to-commit.json очищен. onboarding.ts генерирует конфиги, соответствующие runtime-схеме. TASK-2026-0008 title/description — plain strings.",
+      "status": "pending"
+    },
+    {
+      "step_number": 2,
+      "title": "W8+W9+W10+W12: Инфраструктурные файлы",
+      "description": "Добавить tsconfig.json, расширить .gitignore, зафиксировать peerDependencies, добавить README.md в .pi/extensions/loom/.",
+      "expected_output": "tsconfig.json существует. .gitignore включает node_modules/, dist/, .env. peerDependencies зафиксированы. README.md в extension.",
+      "status": "pending"
+    },
+    {
+      "step_number": 3,
+      "title": "W1+W2+W11: Асинхронные вызовы + timeout из конфига",
+      "description": "Заменить spawnSync → spawn async в runLocalizationGuard. Заменить execSync → async в getPiInvocation. Передавать timeout из execution-config в spawnSubagent.",
+      "expected_output": "Все синхронные вызовы заменены на асинхронные. Timeout читается из execution-config.",
+      "status": "pending"
+    },
+    {
+      "step_number": 4,
+      "title": "W3+W4: DRY BaseStore + batch-write для memory store-ов",
+      "description": "Вынести applyFilters/updateAccessMeta в общий BaseStore. Реализовать отложенную запись (batch) для access_count во все store-ы.",
+      "expected_output": "Базовый класс BaseStore с applyFilters, updateAccessMeta, batchWrite. Все store-ы наследуют BaseStore.",
+      "status": "pending"
+    },
+    {
+      "step_number": 5,
+      "title": "DU-3: Архитектура тестирования + vitest + инфраструктура",
+      "description": "Спроектировать стратегию тестирования. Настроить vitest. Создать тестовые хелперы и фикстуры.",
+      "expected_output": "vitest.config.ts. Тестовые фикстуры. Стратегия тестирования задокументирована.",
+      "status": "pending"
+    },
+    {
+      "step_number": 6,
+      "title": "DU-3: Тесты — knowledge/ модуль (io, schemas, onboarding)",
+      "description": "Написать модульные тесты для knowledge/io.ts, knowledge/schemas.ts (все runtime валидаторы), knowledge/onboarding.ts.",
+      "expected_output": "Тесты для io, schemas, onboarding с покрытием >= 80%.",
+      "status": "pending"
+    },
+    {
+      "step_number": 7,
+      "title": "DU-3: Тесты — memory/ модуль (все store-ы + manager + assembler)",
+      "description": "Написать модульные тесты для session-track, episodic-store, semantic-store, procedural-store, manager, context-assembler.",
+      "expected_output": "Тесты для всех memory store-ов с покрытием >= 80%.",
+      "status": "pending"
+    },
+    {
+      "step_number": 8,
+      "title": "DU-3: Тесты — retrieval, agent-mode, subagent, shared",
+      "description": "Тесты для retrieval/cache, scope-filter; agent-mode/executor-loop; subagent/model-resolver; shared/utils, context-provider.",
+      "expected_output": "Тесты для retrieval, agent-mode, subagent, shared с покрытием >= 70%.",
+      "status": "pending"
+    },
+    {
+      "step_number": 9,
+      "title": "W6+W7: Обновление статусов + финальная верификация",
+      "description": "Обновить verification matrix. Проверить все изменения на соответствие инвариантам. Запустить localization guard. Финальный коммит.",
+      "expected_output": "Verification matrix обновлена. Все тесты проходят. Локализация проверена.",
+      "status": "pending"
+    }
+  ]
+}
