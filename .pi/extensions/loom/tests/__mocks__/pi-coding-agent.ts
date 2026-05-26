@@ -10,6 +10,7 @@ export interface ExtensionContext {
   ui: {
     notify: (message: string, level?: string) => void;
     setWidget: (id: string, widget: unknown) => void;
+    setStatus: (id: string, content: string) => void;
     select: (prompt: string, options: string[]) => Promise<string>;
   };
   sessionManager: {

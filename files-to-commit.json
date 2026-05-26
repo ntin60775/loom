@@ -1,16 +1,18 @@
 {
-  "task_id": "TASK-2026-0011-audit-fixes-v3",
+  "task_id": "TASK-2026-0011-audit-v2-invariants",
   "step": 2,
   "files": [
-    ".pi/extensions/loom/memory/utils.ts",
-    "CONTRIBUTING.md",
+    ".pi/extensions/loom/tests/__mocks__/pi-coding-agent.ts",
+    ".pi/extensions/loom/tests/agent-tools.test.ts",
+    ".pi/extensions/loom/tests/extension-registration.test.ts",
+    ".pi/extensions/loom/tests/extra-coverage.test.ts",
+    ".pi/extensions/loom/tests/onboarding.test.ts",
+    ".pi/extensions/loom/tests/plan-tools.test.ts",
+    ".pi/extensions/loom/tests/scout-retrieval.test.ts",
+    ".pi/extensions/loom/tests/spawner.test.ts",
+    ".pi/extensions/loom/tests/ui-widgets.test.ts",
+    "files-to-commit.json",
     "knowledge/project/artifacts/verification-matrix.json",
-    "knowledge/project/schemas/plan.schema.json",
-    "knowledge/project/schemas/review.schema.json",
-    "knowledge/project/schemas/task.schema.json",
-    "knowledge/tasks/TASK-2026-0002-loom-vnext/task.json",
-    "knowledge/tasks/TASK-2026-0008-memory-layer/task.json",
-    "knowledge/tasks/TASK-2026-0009-scout-retrieval/task.json",
-    "files-to-commit.json"
+    "vitest.config.ts"
   ]
 }
