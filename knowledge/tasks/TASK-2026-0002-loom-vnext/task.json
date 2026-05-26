@@ -1,8 +1,8 @@
 {
   "task_id": "TASK-2026-0002-loom-vnext",
   "slug": "loom-vnext",
-  "title": {"ru": "Когнитивные слои loom v2"},
-  "description": {"ru": "Реализовать отложенные когнитивные слои: Memory Layer (session/episodic/semantic/procedural дорожки) и Scout-based retrieval (поиск релевантных знаний без эмбеддингов, через универсальный scout subagent)."},
+  "title": "Когнитивные слои loom v2",
+  "description": "Реализовать отложенные когнитивные слои: Memory Layer (session/episodic/semantic/procedural дорожки) и Scout-based retrieval (поиск релевантных знаний без эмбеддингов, через универсальный scout subagent).",
   "status": "completed",
   "priority": "medium",
   "branch": "task/task-2026-0002-loom-vnext",

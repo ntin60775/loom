@@ -18,6 +18,7 @@ import { spawnSubagent } from "../subagent/spawner";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
 import { getFinalOutput, loadPrompt, sanitizeId } from "../shared/utils";
+import { enrichPlanContext } from "./orchestrator";
 import { logger } from "../shared/logger";
 import {
   validateStackModuleShape,
