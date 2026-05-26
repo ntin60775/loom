@@ -12,6 +12,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { MemoryEntry, MemoryQuery, TrackStats, SemanticContent } from "./types";
 import { readJsonFile, writeJsonFile } from "./utils";
+import { applyFilters, updateAccessMeta, BatchWriter } from "./store-utils";
 
 export interface SemanticStoreOptions {
   maxEntries?: number;
@@ -46,10 +47,15 @@ interface InvariantJson {
 export class SemanticStore {
   private readonly maxEntries: number;
   private readonly minRelevance: number;
+  private readonly batchWriter: BatchWriter;
 
   constructor(options: SemanticStoreOptions = {}) {
     this.maxEntries = options.maxEntries ?? 2000;
     this.minRelevance = options.minRelevance ?? 0.1;
+    this.batchWriter = new BatchWriter(
+      (filePath, entries) => writeJsonFile(filePath, entries),
+      (filePath) => readJsonFile<MemoryEntry[]>(filePath) ?? [],
+    );
   }
 
   private storePath(cwd: string): string {
@@ -192,36 +198,16 @@ export class SemanticStore {
    */
   query(cwd: string, q: MemoryQuery): MemoryEntry[] {
     let entries = this.readStore(cwd);
-    entries = this.applyFilters(entries, q);
+    entries = applyFilters(entries, q, "semantic");
     entries.sort((a, b) => b.relevance_score - a.relevance_score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     if (q.limit) {
       entries = entries.slice(0, q.limit);
     }
 
-    this.updateAccessMeta(entries);
-    this.writeStore(cwd, this.readStore(cwd)); // persist access metadata
+    updateAccessMeta(entries);
+    this.batchWriter.markDirty(this.storePath(cwd));
     return entries;
-  }
-
-  private applyFilters(entries: MemoryEntry[], q: MemoryQuery): MemoryEntry[] {
-    return entries.filter((e) => {
-      if (e.track_type !== "semantic") return false;
-      if (q.task_id !== undefined && e.task_id !== q.task_id) return false;
-      if (q.tags && q.tags.length > 0 && !q.tags.some((t) => e.tags?.includes(t))) return false;
-      if (q.min_relevance !== undefined && e.relevance_score < q.min_relevance) return false;
-      if (q.since && new Date(e.timestamp) < new Date(q.since)) return false;
-      if (q.until && new Date(e.timestamp) > new Date(q.until)) return false;
-      return true;
-    });
-  }
-
-  private updateAccessMeta(entries: MemoryEntry[]): void {
-    const now = new Date().toISOString();
-    for (const entry of entries) {
-      entry.access_count++;
-      entry.last_accessed_at = now;
-    }
   }
 
   /**

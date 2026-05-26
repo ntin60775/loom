@@ -12,6 +12,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { MemoryEntry, MemoryQuery, TrackStats, EpisodicContent } from "./types";
 import { readJsonFile, writeJsonFile } from "./utils";
+import { applyFilters, updateAccessMeta, BatchWriter } from "./store-utils";
 import { logger } from "../shared/logger";
 
 export interface EpisodicStoreOptions {
@@ -22,10 +23,15 @@ export interface EpisodicStoreOptions {
 export class EpisodicStore {
   private readonly maxEntriesPerTask: number;
   private readonly minRelevance: number;
+  private readonly batchWriter: BatchWriter;
 
   constructor(options: EpisodicStoreOptions = {}) {
     this.maxEntriesPerTask = options.maxEntriesPerTask ?? 500;
     this.minRelevance = options.minRelevance ?? 0.1;
+    this.batchWriter = new BatchWriter(
+      (filePath, entries) => writeJsonFile(filePath, entries),
+      (filePath) => readJsonFile<MemoryEntry[]>(filePath) ?? [],
+    );
   }
 
   private episodicPath(cwd: string, taskId: string): string {
@@ -79,15 +85,15 @@ export class EpisodicStore {
     }
 
     let entries = this.readTaskEntries(cwd, taskId);
-    entries = this.applyFilters(entries, q);
+    entries = applyFilters(entries, q, "episodic");
     entries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     if (q.limit) {
       entries = entries.slice(0, q.limit);
     }
 
-    this.updateAccessMeta(entries);
-    this.writeTaskEntries(cwd, taskId, this.readTaskEntries(cwd, taskId)); // persist updated access_count
+    updateAccessMeta(entries);
+    this.batchWriter.markDirty(this.episodicPath(cwd, taskId));
     return entries;
   }
 
@@ -102,7 +108,7 @@ export class EpisodicStore {
 
       for (const taskId of taskIds) {
         const entries = this.readTaskEntries(cwd, taskId);
-        all = all.concat(this.applyFilters(entries, q));
+        all = all.concat(applyFilters(entries, q, "episodic"));
       }
     } catch (err) {
       // tasks directory may not exist yet
@@ -114,28 +120,8 @@ export class EpisodicStore {
       all = all.slice(0, q.limit);
     }
 
-    this.updateAccessMeta(all);
+    updateAccessMeta(all);
     return all;
-  }
-
-  private applyFilters(entries: MemoryEntry[], q: MemoryQuery): MemoryEntry[] {
-    return entries.filter((e) => {
-      if (e.track_type !== "episodic") return false;
-      if (q.step_number !== undefined && e.step_number !== q.step_number) return false;
-      if (q.tags && q.tags.length > 0 && !q.tags.some((t) => e.tags?.includes(t))) return false;
-      if (q.min_relevance !== undefined && e.relevance_score < q.min_relevance) return false;
-      if (q.since && new Date(e.timestamp) < new Date(q.since)) return false;
-      if (q.until && new Date(e.timestamp) > new Date(q.until)) return false;
-      return true;
-    });
-  }
-
-  private updateAccessMeta(entries: MemoryEntry[]): void {
-    const now = new Date().toISOString();
-    for (const entry of entries) {
-      entry.access_count++;
-      entry.last_accessed_at = now;
-    }
   }
 
   /**
