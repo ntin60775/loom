@@ -145,8 +145,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       const workerId = `${params.task_id}-worker-step${params.step_number}`;
       activeWorkerId = workerId;
 
-      try {
-        // P2 fix: create AbortController for real subagent kill
+      // P2 fix: create AbortController for real subagent kill
       const abortController = new AbortController();
       // Cascade: if tool signal fires, abort our controller too
       if (signal) {
