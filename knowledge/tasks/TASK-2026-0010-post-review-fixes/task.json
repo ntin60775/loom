@@ -3,7 +3,7 @@
   "slug": "post-review-fixes",
   "title": "Постревью-исправления: критические замечания + тестовое покрытие",
   "description": "Полное всестороннее ревью выявило 4 критических замечания (C1-C4), 12 предупреждений (W1-W12) и катастрофическое отсутствие тестов (покрытие ~5%). Задача: исправить ВСЕ замечания, разработать стратегию тестирования и закрыть пробел с тестовым покрытием.",
-  "status": "active",
+  "status": "completed",
   "priority": "critical",
   "branch": "task/task-2026-0010-post-review-fixes",
   "parent_task_id": null,
@@ -31,19 +31,19 @@
   "delivery_units": [
     {
       "id": "DU-1",
-      "status": "draft",
+      "status": "completed",
       "purpose": "Критические исправления: C2, C4, W5, W8-W12 — конфиги, формат, инфраструктура",
       "base_branch": "main"
     },
     {
       "id": "DU-2",
-      "status": "draft",
+      "status": "completed",
       "purpose": "Устранение предупреждений W1-W4: асинхронные вызовы, DRY store, batch-write",
       "base_branch": "main"
     },
     {
       "id": "DU-3",
-      "status": "draft",
+      "status": "completed",
       "purpose": "Архитектура тестирования + vitest + полное тестовое покрытие",
       "base_branch": "main"
     }
