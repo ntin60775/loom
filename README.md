@@ -1,6 +1,14 @@
 # loom — AI-Native Development Environment
 
+[![npm version](https://img.shields.io/npm/v/loom-extension?color=blue&label=loom-extension)](https://www.npmjs.com/package/loom-extension)
+
 Система разработки программных проектов с помощью ИИ-агентов.
+
+## Установка
+
+```bash
+pi install npm:loom-extension
+```
 
 ## Что это
 
