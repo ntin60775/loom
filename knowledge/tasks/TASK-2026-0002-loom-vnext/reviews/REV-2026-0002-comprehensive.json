@@ -1,0 +1,123 @@
+{
+  "review_id": "REV-2026-0002-comprehensive",
+  "target": {
+    "type": "task",
+    "task_id": "TASK-2026-0002-loom-vnext",
+    "scope": "all-component-audit",
+    "files_reviewed": 35
+  },
+  "verdict": "approve_with_notes",
+  "summary": {
+    "total_lines": 6595,
+    "ts_files": 35,
+    "md_prompts": 7,
+    "new_files_v2": 7,
+    "modified_files": 4
+  },
+  "findings": [
+    {
+      "id": "F-001",
+      "severity": "high",
+      "category": "code-duplication",
+      "title": "Схемы SearchResult дублированы в двух модулях",
+      "description": "SearchResultSchema и SearchKnowledgeResponseSchema определены в двух местах: retrieval/schemas.ts (с Type из @earendil-works/pi-ai) и knowledge/schemas.ts (с Type из общего импорта). Версии чуть различаются: в retrieval есть description у поля results.Array.",
+      "impact": "При изменении схемы в одном месте второе может устареть. Риск рассинхронизации валидации.",
+      "recommendation": "Оставить схемы в retrieval/schemas.ts как канонический источник. Из knowledge/schemas.ts убрать дубликаты и импортировать из retrieval."
+    },
+    {
+      "id": "F-002",
+      "severity": "high",
+      "category": "dead-code",
+      "title": "executor-v2.ts не используется",
+      "description": "Класс ExecutorV2 (115 строк) определён в executor-v2.ts, но нигде не импортирован и не инстанциирован. tools.ts вызывает ScoutRetrieval напрямую, bypass-я ExecutorV2.",
+      "impact": "Мёртвый код, который не тестируется и может устареть. Путает архитектуру (два пути интеграции retrieval).",
+      "recommendation": "Либо удалить executor-v2.ts и оставить прямые вызовы в tools.ts, либо переписать tools.ts на использование ExecutorV2."
+    },
+    {
+      "id": "F-003",
+      "severity": "medium",
+      "category": "unused-feature",
+      "title": "enrichPlanContext экспортирован но не вызван",
+      "description": "Функция enrichPlanContext() в plan-mode/orchestrator.ts реализована и экспортирована, но ни index.ts ни Plan Mode (/plan) её не вызывают. Retrieval-обогащение контекста для Plan Mode не работает.",
+      "impact": "Фича заявлена в SPEC.md но не подключена. Пользователи не получат retrieval-подсказки при планировании задач.",
+      "recommendation": "Добавить вызов enrichPlanContext в index.ts при входе в Plan Mode (enterPlanMode)."
+    },
+    {
+      "id": "F-004",
+      "severity": "medium",
+      "category": "race-condition",
+      "title": "activeWorkerId — глобальная переменная без мьютекса",
+      "description": "Переменная activeWorkerId (let) на уровне модуля tools.ts защищает от конкурентного spawn, но не потокобезопасна — два одновременных вызова spawn_worker могут пройти проверку.",
+      "impact": "При быстром асинхронном вызове возможен двойной spawn worker-а, нарушающий INV-11.",
+      "recommendation": "Заменить на мьютекс/лок (например, Promise-based lock) или использовать атомарный флаг с немедленной проверкой."
+    },
+    {
+      "id": "F-005",
+      "severity": "medium",
+      "category": "error-handling",
+      "title": "19 пустых catch-блоков",
+      "description": "19 блоков catch {} или catch { /* ignore */ } по коду — все ошибки проглатываются без логирования. При реальном сбое невозможно диагностировать.",
+      "impact": "Сложность отладки. Ошибки файловой системы, JSON-парсинга, spawn-а — теряются без следа.",
+      "recommendation": "Добавить console.error с контекстом в каждый catch. Создать унифицированный tryOrLog хелпер."
+    },
+    {
+      "id": "F-006",
+      "severity": "medium",
+      "category": "versioning",
+      "title": "Версия npm-пакета 0.1.0 при фактическом v2",
+      "description": "package.json содержит version: 0.1.0, но в коде реализован полноценный DU-1 (1643 строк memory) и DU-2 (776 строк retrieval). Фактический код — на уровне 0.2.0.",
+      "impact": "Пользователи npm видят версию 0.1.0 и не знают о новых возможностях. pi update не обновит.",
+      "recommendation": "Поднять версию до 0.2.0 и опубликовать обновлённый npm-пакет."
+    },
+    {
+      "id": "F-007",
+      "severity": "low",
+      "category": "timeout",
+      "title": "spawnSubagent без внутреннего таймаута",
+      "description": "Функция spawnSubagent полагается на внешний AbortSignal. Если signal не передан или не сработал — процесс висит бесконечно.",
+      "impact": "Scout retrieval или worker могут зависнуть при сетевых проблемах.",
+      "recommendation": "Добавить внутренний setTimeout-таймаут (из execution-config.json) как fallback."
+    },
+    {
+      "id": "F-008",
+      "severity": "low",
+      "category": "logging",
+      "title": "Смесь console.warn/error без structured logging",
+      "description": "4 вызова console.log/error/warn в коде без единого формата. Нет уровней логирования, нет префикса модуля везде.",
+      "impact": "В production сложно фильтровать логи.",
+      "recommendation": "Создать простой логгер-хелпер с уровнями (debug/info/warn/error) и префиксом [loom]."
+    },
+    {
+      "id": "F-009",
+      "severity": "info",
+      "category": "style",
+      "title": "any типы в catch-блоках",
+      "description": "5 использований any: 3 в catch (err: any) — стандартная практика TS, 2 в index.ts и spawner.ts.",
+      "impact": "Минимальный.",
+      "recommendation": "Заменить err: any на err: unknown с type narrowing."
+    }
+  ],
+  "positive_highlights": [
+    "Архитектура чистая: 7 модулей, чёткое разделение ответственности",
+    "Нет циклических импортов",
+    "Нет хардкод-секретов или ключей API",
+    "v1 совместимость: use_memory_v2=false по умолчанию, все v1 tools сохранены",
+    "8/8 код-проверок инвариантов пройдено",
+    "Нет TODO/FIXME в коде",
+    "Обработка ошибок в ScoutRetrieval: retry с упрощённым промптом при сбое JSON-парсинга",
+    "Кэширование с TTL и атомарной записью в retrieval/cache.ts",
+    "TypeBox-схемы для runtime-валидации",
+    "Executor loop с защитой от бесконечных циклов (max_iterations)"
+  ],
+  "score": {
+    "architecture": 8,
+    "correctness": 7,
+    "completeness": 7,
+    "maintainability": 7,
+    "security": 9,
+    "overall": 7.4
+  },
+  "confidence": 0.88,
+  "reviewer_model": "claude-opus-4.5",
+  "reviewed_at": "2026-05-25T12:00:00Z"
+}
