@@ -1,14 +1,5 @@
 {
   "files": [
-    ".pi/extensions/loom/knowledge/schemas.ts",
-    ".pi/extensions/loom/subagent/output-validator.ts",
-    ".pi/extensions/loom/subagent/persistent-registry.ts",
-    ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/plan-mode/tools.ts",
-    ".pi/extensions/loom/tests/output-validator.test.ts",
-    ".pi/extensions/loom/tests/persistent-registry.test.ts",
-    "knowledge/project/subagents/registry.json",
-    "knowledge/project/configs/execution-config.json",
-    "knowledge/project/configs/subagent-config.json"
+    ".pi/extensions/loom/agent-mode/tools.ts"
   ]
 }

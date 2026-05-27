@@ -1,14 +1,13 @@
 {
   "task": "DU-1: Dual execution mode — agent-direct (≤3 шага) + subagent×2 (≥4 шага)",
   "all_steps_completed": true,
+  "post_completion_fix": "Auto-switch to idle mode in loom_update_task when no active tasks remain",
   "steps_summary": {
-    "step_1": "Execution mode selection: execution_mode field in task.json, resolveExecutionMode() — DONE",
-    "step_2": "Agent-direct executor loop: getDirectSteps(), markStepDone(), loom_get_direct_steps tool, loom_complete_direct_step tool, agent-executor-direct.md prompt — DONE",
-    "step_3": "Subagent×2 hardening: JSON Schema validation (output-validator.ts), persistent subagent registry (persistent-registry.ts + registry.json), configurable toolsets (subagent-config.json worker.tools/reviewer.tools), exponential backoff retry config (execution-config.json retry section) — DONE"
+    "step_1": "Execution mode selection — DONE",
+    "step_2": "Agent-direct executor loop — DONE",
+    "step_3": "Subagent×2 hardening — DONE"
   },
   "tests_total": 407,
   "tests_passing": 407,
-  "new_tests": 25,
-  "new_files": 4,
-  "total_commits": 3
+  "total_commits": 5
 }
