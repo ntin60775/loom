@@ -11,6 +11,7 @@ import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
 import type { SubagentRecord } from "../shared/subagent-state";
 import { renderStatusLineText, type StatusIcon } from "./render-utils";
+import { collapseOutput, collapseHint, DEFAULT_LIMITS } from "./expand-collapse";
 
 // ── Widget (status bar) ──────────────────────────────────────────────────
 
@@ -205,6 +206,7 @@ export function renderSubagentCard(
 export function subagentCallRender(
   state: SubagentCardState,
   theme: Theme,
+  options?: SubagentResultRenderOptions,
 ): Text {
   const text = renderSubagentCard(state, "running", undefined, undefined, theme);
   return new Text(text, 0, 0);
@@ -213,6 +215,10 @@ export function subagentCallRender(
 /**
  * Компонент Text для renderResult — показывает финальную карточку со статусом.
  */
+export interface SubagentResultRenderOptions {
+  expanded?: boolean;
+}
+
 export function subagentResultRender(
   state: SubagentCardState,
   result: {
@@ -285,9 +291,26 @@ export function subagentResultRender(
 
   const parts = [line];
   if (statsStr) parts.push(`${state.childIndent}${statsStr}`);
-  if (findingsStr) parts.push(findingsStr);
-  if (verdictStr) parts.push(verdictStr);
-  if (guardStr) parts.push(guardStr);
 
+  // Apply expand/collapse: collapsed mode limits lines
+  const expanded = options?.expanded !== false; // default expanded=true
+  const fullText = parts.join("\n");
+
+  // Collapse findings + verdict + guard when not expanded
+  const detailParts: string[] = [];
+  if (findingsStr) detailParts.push(findingsStr);
+  if (verdictStr) detailParts.push(verdictStr);
+  if (guardStr) detailParts.push(guardStr);
+
+  const detailText = detailParts.join("\n");
+
+  if (!expanded && detailText) {
+    const collapsed = collapseOutput(detailText, { maxLines: 3, maxDiffHunks: 8 });
+    const hint = collapseHint(collapsed.truncated);
+    const finalText = fullText + "\n" + collapsed.text + (hint ? `\n${state.childIndent}${hint}` : "");
+    return new Text(finalText, 0, 0);
+  }
+
+  if (detailText) parts.push(...detailParts);
   return new Text(parts.join("\n"), 0, 0);
 }

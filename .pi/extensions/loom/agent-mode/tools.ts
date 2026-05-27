@@ -232,9 +232,9 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       return subagentCallRender(state, theme);
     },
 
-    renderResult(result: { isError?: boolean; details?: { guardResult?: { passed?: boolean }; result?: { exitCode?: number } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+    renderResult(result: { isError?: boolean; details?: { guardResult?: { passed?: boolean }; result?: { exitCode?: number } } }, options: { expanded?: boolean }, theme: import("@earendil-works/pi-coding-agent").Theme) {
       const state = { id: `worker`, type: "worker" as const, treePrefix: "├──", childIndent: "│   " };
-      return subagentResultRender(state, result, theme);
+      return subagentResultRender(state, result, theme, { expanded: options.expanded });
     },
   });
 
@@ -358,9 +358,9 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       return subagentCallRender(state, theme);
     },
 
-    renderResult(result: { isError?: boolean; details?: { reviewJson?: { verdict?: string; findings?: Array<{ priority: string; file: string; line?: number; description: string; correct?: boolean; confidence?: number }> } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+    renderResult(result: { isError?: boolean; details?: { reviewJson?: { verdict?: string; findings?: Array<{ priority: string; file: string; line?: number; description: string; correct?: boolean; confidence?: number }> } } }, options: { expanded?: boolean }, theme: import("@earendil-works/pi-coding-agent").Theme) {
       const state = { id: "reviewer", type: "reviewer" as const, treePrefix: "├──", childIndent: "│   " };
-      return subagentResultRender(state, result, theme);
+      return subagentResultRender(state, result, theme, { expanded: options.expanded });
     },
     },
   });
