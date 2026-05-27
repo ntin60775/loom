@@ -12,10 +12,11 @@ import {
   incrementIteration,
   resetIteration,
   markStepInProgress,
+  resolveExecutionMode,
 } from "../agent-mode/executor-loop";
 import { setupTestKnowledge } from "./setup";
 
-function writeTaskAndPlan(cwd: string, taskId: string, plan: Record<string, unknown>): void {
+function writeTaskAndPlan(cwd: string, taskId: string, plan: Record<string, unknown>, taskOverrides: Record<string, unknown> = {}): void {
   const taskDir = path.join(cwd, "knowledge", "tasks", taskId);
   fs.mkdirSync(taskDir, { recursive: true });
   fs.mkdirSync(path.join(taskDir, "artifacts"), { recursive: true });
@@ -36,6 +37,7 @@ function writeTaskAndPlan(cwd: string, taskId: string, plan: Record<string, unkn
       created_at: now,
       updated_at: now,
       schema_version: "1.0.0",
+      ...taskOverrides,
     }),
   );
   fs.writeFileSync(path.join(taskDir, "plan.json"), JSON.stringify(plan));
@@ -211,6 +213,139 @@ describe("Executor Loop", () => {
       });
 
       expect(markStepInProgress("TASK-0001", 99, cwd)).toBe(false);
+    });
+  });
+
+  // ── resolveExecutionMode ──────────────────────────────────────────────
+
+  describe("resolveExecutionMode", () => {
+    it("returns direct for plan with 1 step", () => {
+      writeTaskAndPlan(cwd, "TASK-0001", {
+        task_id: "TASK-0001",
+        steps: [
+          { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+        ],
+      });
+      expect(resolveExecutionMode("TASK-0001", cwd)).toBe("direct");
+    });
+
+    it("returns direct for plan with 2 steps", () => {
+      writeTaskAndPlan(cwd, "TASK-0002", {
+        task_id: "TASK-0002",
+        steps: [
+          { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 2, title: "S2", description: "D2", expected_output: "O2", status: "pending", constraints: [], depends_on: [] },
+        ],
+      });
+      expect(resolveExecutionMode("TASK-0002", cwd)).toBe("direct");
+    });
+
+    it("returns direct for plan with exactly 3 steps (boundary)", () => {
+      writeTaskAndPlan(cwd, "TASK-0003", {
+        task_id: "TASK-0003",
+        steps: [
+          { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 2, title: "S2", description: "D2", expected_output: "O2", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 3, title: "S3", description: "D3", expected_output: "O3", status: "pending", constraints: [], depends_on: [] },
+        ],
+      });
+      expect(resolveExecutionMode("TASK-0003", cwd)).toBe("direct");
+    });
+
+    it("returns subagent for plan with 4 steps (boundary)", () => {
+      writeTaskAndPlan(cwd, "TASK-0004", {
+        task_id: "TASK-0004",
+        steps: [
+          { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 2, title: "S2", description: "D2", expected_output: "O2", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 3, title: "S3", description: "D3", expected_output: "O3", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 4, title: "S4", description: "D4", expected_output: "O4", status: "pending", constraints: [], depends_on: [] },
+        ],
+      });
+      expect(resolveExecutionMode("TASK-0004", cwd)).toBe("subagent");
+    });
+
+    it("returns subagent for plan with 10+ steps", () => {
+      const steps = Array.from({ length: 10 }, (_, i) => ({
+        step_number: i + 1,
+        title: `S${i + 1}`,
+        description: `D${i + 1}`,
+        expected_output: `O${i + 1}`,
+        status: "pending",
+        constraints: [],
+        depends_on: [],
+      }));
+      writeTaskAndPlan(cwd, "TASK-0010", { task_id: "TASK-0010", steps });
+      expect(resolveExecutionMode("TASK-0010", cwd)).toBe("subagent");
+    });
+
+    it("respects manual override to direct for 5-step plan", () => {
+      const steps = [
+        { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+        { step_number: 2, title: "S2", description: "D2", expected_output: "O2", status: "pending", constraints: [], depends_on: [] },
+        { step_number: 3, title: "S3", description: "D3", expected_output: "O3", status: "pending", constraints: [], depends_on: [] },
+        { step_number: 4, title: "S4", description: "D4", expected_output: "O4", status: "pending", constraints: [], depends_on: [] },
+        { step_number: 5, title: "S5", description: "D5", expected_output: "O5", status: "pending", constraints: [], depends_on: [] },
+      ];
+      writeTaskAndPlan(cwd, "TASK-0005", { task_id: "TASK-0005", steps }, { execution_mode: "direct" });
+      expect(resolveExecutionMode("TASK-0005", cwd)).toBe("direct");
+    });
+
+    it("respects manual override to subagent for 1-step plan", () => {
+      writeTaskAndPlan(cwd, "TASK-0006", {
+        task_id: "TASK-0006",
+        steps: [
+          { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+        ],
+      }, { execution_mode: "subagent" });
+      expect(resolveExecutionMode("TASK-0006", cwd)).toBe("subagent");
+    });
+
+    it("defaults to auto (subagent) when execution_mode is auto for 5-step plan", () => {
+      const steps = Array.from({ length: 5 }, (_, i) => ({
+        step_number: i + 1,
+        title: `S${i + 1}`,
+        description: `D${i + 1}`,
+        expected_output: `O${i + 1}`,
+        status: "pending",
+        constraints: [],
+        depends_on: [],
+      }));
+      writeTaskAndPlan(cwd, "TASK-0007", { task_id: "TASK-0007", steps }, { execution_mode: "auto" });
+      expect(resolveExecutionMode("TASK-0007", cwd)).toBe("subagent");
+    });
+
+    it("defaults to auto (direct) when execution_mode is auto for 2-step plan", () => {
+      writeTaskAndPlan(cwd, "TASK-0008", {
+        task_id: "TASK-0008",
+        steps: [
+          { step_number: 1, title: "S1", description: "D1", expected_output: "O1", status: "pending", constraints: [], depends_on: [] },
+          { step_number: 2, title: "S2", description: "D2", expected_output: "O2", status: "pending", constraints: [], depends_on: [] },
+        ],
+      }, { execution_mode: "auto" });
+      expect(resolveExecutionMode("TASK-0008", cwd)).toBe("direct");
+    });
+
+    it("returns subagent when no execution_mode set and no plan exists", () => {
+      const taskDir = path.join(cwd, "knowledge", "tasks", "TASK-NOPLAN");
+      fs.mkdirSync(taskDir, { recursive: true });
+      fs.mkdirSync(path.join(taskDir, "artifacts"), { recursive: true });
+      const now = new Date().toISOString().split("T")[0];
+      fs.writeFileSync(path.join(taskDir, "task.json"), JSON.stringify({
+        task_id: "TASK-NOPLAN",
+        slug: "no-plan",
+        title: "No Plan",
+        description: "Task without plan",
+        status: "active",
+        priority: "medium",
+        branch: "task/no-plan",
+        invariants: [],
+        delivery_units: [],
+        created_at: now,
+        updated_at: now,
+        schema_version: "1.0.0",
+      }));
+      expect(resolveExecutionMode("TASK-NOPLAN", cwd)).toBe("subagent");
     });
   });
 });

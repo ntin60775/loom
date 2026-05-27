@@ -59,6 +59,7 @@ export interface TestTask {
   status: string;
   priority: string;
   branch: string;
+  execution_mode?: string;
   invariants: Array<{ id: string; text: string; marker: string; status: string }>;
   delivery_units: Array<{ id: string; status: string; purpose: string; base_branch: string }>;
   created_at: string;

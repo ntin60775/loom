@@ -50,6 +50,12 @@
       "type": "string",
       "description": "Parent delivery unit ID if this is a subtask of a DU"
     },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["auto", "direct", "subagent"],
+      "default": "auto",
+      "description": "Режим исполнения: auto (автовыбор по числу шагов плана), direct (агент сам, без worker/reviewer, для ≤3 шагов), subagent (worker → reviewer, для ≥4 шагов). Ручное переопределение."
+    },
     "invariants": {
       "type": "array",
       "items": { "$ref": "#/definitions/Invariant" }

@@ -16,6 +16,7 @@ export const TaskSchema = Type.Object({
   branch: Type.String(),
   parent_task_id: Type.Optional(Type.String()),
   parent_delivery_unit: Type.Optional(Type.String()),
+  execution_mode: Type.Optional(Type.String({ default: "auto", enum: ["auto", "direct", "subagent"] })),
   invariants: Type.Array(
     Type.Object({
       id: Type.String(),

@@ -18,6 +18,7 @@ import { readPlan, readTask, writeJson, readExecutionConfig } from "../knowledge
 import type { PlanStepData } from "../knowledge/types";
 import { resolveModelArg } from "../subagent/model-resolver";
 import type { WorkerSpec } from "../subagent/specs";
+import { logger } from "../shared/logger";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -182,6 +183,44 @@ export function markStepInProgress(taskId: string, stepNumber: number, cwd: stri
     return true;
   }
   return false;
+}
+
+// ── Execution Mode Resolution ─────────────────────────────────────────────
+
+export type ExecutionMode = "direct" | "subagent";
+
+/**
+ * Resolve execution mode for a task.
+ *
+ * Logic:
+ *   1. If task.json has execution_mode set to "direct" or "subagent" — use it (manual override).
+ *   2. If "auto" or unset — read plan.json, count steps:
+ *      - ≤3 steps → "direct" (agent implements directly, no worker/reviewer spawn)
+ *      - ≥4 steps → "subagent" (worker → reviewer → executor loop)
+ *
+ * INV-9: Executor does not write code in subagent mode; in direct mode agent writes code itself.
+ * INV-11: Sequential steps enforced. In subagent mode via mutex; in direct mode by plan step order.
+ */
+export function resolveExecutionMode(taskId: string, cwd: string): ExecutionMode {
+  const dir = taskDir(cwd, taskId);
+  const task = readTask(dir);
+
+  // Manual override from task.json
+  if (task?.execution_mode && task.execution_mode !== "auto") {
+    logger.info("executor-loop", `Execution mode manually set to "${task.execution_mode}" for ${taskId}`);
+    return task.execution_mode as ExecutionMode;
+  }
+
+  // Automatic selection based on plan step count
+  const plan = readPlan(dir);
+  if (!plan || plan.steps.length === 0) {
+    logger.warn("executor-loop", `No plan found for ${taskId}, defaulting to subagent mode`);
+    return "subagent";
+  }
+
+  const mode: ExecutionMode = plan.steps.length <= 3 ? "direct" : "subagent";
+  logger.info("executor-loop", `Resolved execution mode "${mode}" for ${taskId} (${plan.steps.length} plan steps)`);
+  return mode;
 }
 
 // ── Registered Tools ──────────────────────────────────────────────────────
