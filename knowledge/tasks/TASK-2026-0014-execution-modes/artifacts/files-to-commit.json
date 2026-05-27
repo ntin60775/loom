@@ -1,9 +1,14 @@
 {
   "files": [
-    ".pi/extensions/loom/agent-mode/executor-loop.ts",
-    ".pi/extensions/loom/agent-mode/executor.ts",
-    ".pi/extensions/loom/tests/executor-loop.test.ts",
-    ".pi/extensions/loom/tests/extension-registration.test.ts",
-    ".pi/extensions/loom/prompts/agent-executor-direct.md"
+    ".pi/extensions/loom/knowledge/schemas.ts",
+    ".pi/extensions/loom/subagent/output-validator.ts",
+    ".pi/extensions/loom/subagent/persistent-registry.ts",
+    ".pi/extensions/loom/agent-mode/tools.ts",
+    ".pi/extensions/loom/plan-mode/tools.ts",
+    ".pi/extensions/loom/tests/output-validator.test.ts",
+    ".pi/extensions/loom/tests/persistent-registry.test.ts",
+    "knowledge/project/subagents/registry.json",
+    "knowledge/project/configs/execution-config.json",
+    "knowledge/project/configs/subagent-config.json"
   ]
 }
