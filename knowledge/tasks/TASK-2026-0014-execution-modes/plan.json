@@ -1,0 +1,85 @@
+{
+  "task_id": "TASK-2026-0014-execution-modes",
+  "steps": [
+    {
+      "depends_on": [],
+      "constraints": [
+        "INV-9",
+        "INV-11"
+      ],
+      "description": "Добавить поле execution_mode в task.json схему (auto | direct | subagent). Логика выбора: plan.steps.length ≤ 3 → direct, иначе subagent. Опциональное ручное переопределение.",
+      "estimated_effort": "small",
+      "expected_output": "Обновлённый knowledge/schemas.ts (task schema + execution_mode). Обновлённый agent-mode/executor.ts — resolveExecutionMode().",
+      "step_number": 1,
+      "title": "Execution mode selection",
+      "status": "done"
+    },
+    {
+      "depends_on": [
+        1
+      ],
+      "constraints": [
+        "INV-9",
+        "INV-11"
+      ],
+      "description": "Новый executor-loop для direct-режима. Агент получает plan.steps, для каждого шага:\n- читает step.description и expected_output\n- реализует в текущей сессии (write/edit/bash)\n- обновляет files-to-commit.json\n- коммитит\n- отмечает step.status = done\nПереход к следующему шагу. В конце — mark task completed.\n\nВажно: в direct-режиме spawn_worker/spawn_reviewer НЕ вызываются. INV-9: «executor не пишет код» — обновлён для разрешения в direct-режиме.",
+      "estimated_effort": "medium",
+      "expected_output": "Обновлённый agent-mode/executor.ts и agent-mode/executor-loop.ts с веткой direct-режима. Новый промпт для direct-исполнения.",
+      "step_number": 2,
+      "title": "Agent-direct executor loop",
+      "status": "done"
+    },
+    {
+      "depends_on": [],
+      "constraints": [
+        "INV-11"
+      ],
+      "description": "Улучшения для существующего subagent-режима:\n- JSON Schema валидация output'а субагентов (вместо regex markdown)\n- Persistent registry subagent'ов (knowledge/project/subagents/registry.json)\n- Exponential backoff retry при reject (множитель и jitter из execution-config)\n- Configurable toolsets для worker/reviewer через subagent-config.json\n\nНе зависит от DU-1. Может разрабатываться параллельно.",
+      "estimated_effort": "large",
+      "expected_output": "Обновлённый plan-mode/tools.ts (runOnboardingSubagent). Обновлённый agent-mode/tools.ts (spawn_worker/spawn_reviewer). Новый knowledge/project/subagents/registry.json. Обновлённый execution-config.json (retry). Обновлённый subagent-config.json (worker.tools, reviewer.tools).",
+      "step_number": 3,
+      "title": "Subagent×2 hardening",
+      "status": "pending"
+    }
+  ],
+  "risks": [
+    {
+      "description": "INV-9 (executor не пишет код) — требуется обновление инварианта для разрешения direct-режима. Без этого direct-режим нарушит invariant check.",
+      "id": "RISK-1",
+      "mitigation": "Обновить формулировку INV-9 до: 'Executor spawns worker+reviewer in subagent mode; implements directly in agent-direct mode'.",
+      "severity": "high"
+    },
+    {
+      "description": "В direct-режиме контекст агента растёт с каждым шагом. После 3+ шагов агент может терять контекст.",
+      "id": "RISK-2",
+      "mitigation": "Ограничить direct-режим ≤3 шагами. Для 4+ — только subagent.",
+      "severity": "medium"
+    },
+    {
+      "description": "Subagent hardening меняет формат output'а (Schema validation) — существующие промпты worker/reviewer могут давать несовместимый output.",
+      "id": "RISK-3",
+      "mitigation": "Добавить fallback: если schema validation fails, попробовать regex (старый метод). Логировать warning.",
+      "severity": "medium"
+    }
+  ],
+  "checkpoints": [
+    {
+      "after_step": 1,
+      "description": "execution_mode корректно выбирается для планов с 1-2, 3, 4-5, 10+ шагами",
+      "id": "CP-1",
+      "verification": "Ручной тест: создать plan с разным числом шагов, проверить resolveExecutionMode()"
+    },
+    {
+      "after_step": 2,
+      "description": "Direct-режим отрабатывает полный цикл на задаче из 3 шагов",
+      "id": "CP-2",
+      "verification": "Создать тестовую задачу ≤3 шага, запустить /agent, проверить что все шаги выполнены без spawn"
+    },
+    {
+      "after_step": 3,
+      "description": "Subagent hardening не ломает существующий subagent-флоу",
+      "id": "CP-3",
+      "verification": "Создать тестовую задачу ≥4 шага, запустить /agent, проверить worker→reviewer→loop"
+    }
+  ]
+}

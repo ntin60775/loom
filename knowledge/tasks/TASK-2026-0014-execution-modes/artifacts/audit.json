@@ -1,52 +1,39 @@
 {
-  "step": "DU-1 Step 1",
+  "step": 2,
+  "title": "Agent-direct executor loop",
   "files_touched": [
     {
-      "path": "knowledge/project/schemas/task.schema.json",
-      "lines_added": 6,
-      "lines_removed": 0,
-      "description": "Добавлено поле execution_mode (enum: auto, direct, subagent, default: auto) в раздел properties"
-    },
-    {
-      "path": ".pi/extensions/loom/knowledge/schemas.ts",
-      "lines_added": 1,
-      "lines_removed": 0,
-      "description": "Добавлено execution_mode поле в TypeBox TaskSchema"
-    },
-    {
-      "path": ".pi/extensions/loom/knowledge/types.ts",
-      "lines_added": 1,
-      "lines_removed": 0,
-      "description": "Добавлено execution_mode?: string в TaskData интерфейс"
-    },
-    {
       "path": ".pi/extensions/loom/agent-mode/executor-loop.ts",
-      "lines_added": 39,
-      "lines_removed": 0,
-      "description": "Импорт logger; функция resolveExecutionMode() (~35 строк) + Export type ExecutionMode"
+      "changes": "Major update: added getDirectSteps(), markStepDone(), runLocalizationGuard(); registered loom_get_direct_steps and loom_complete_direct_step tools; updated INV-9/INV-11 comments; added DirectExecutionPlan and DirectStepInfo types",
+      "lines_added": 300,
+      "lines_removed": 5
     },
     {
       "path": ".pi/extensions/loom/agent-mode/executor.ts",
+      "changes": "Added exports for getDirectSteps, markStepDone, DirectStepInfo, DirectExecutionPlan",
       "lines_added": 3,
-      "lines_removed": 1,
-      "description": "Реэкспорт resolveExecutionMode и ExecutionMode из executor-loop.ts"
-    },
-    {
-      "path": ".pi/extensions/loom/tests/fixtures.ts",
-      "lines_added": 1,
-      "lines_removed": 0,
-      "description": "Добавлено execution_mode?: string в TestTask интерфейс"
+      "lines_removed": 1
     },
     {
       "path": ".pi/extensions/loom/tests/executor-loop.test.ts",
-      "lines_added": 135,
-      "lines_removed": 2,
-      "description": "Импорт resolveExecutionMode; taskOverrides параметр в writeTaskAndPlan; 10 новых тестов для resolveExecutionMode"
+      "changes": "Added 11 tests: getDirectSteps (6 tests) and markStepDone (5 tests); updated imports",
+      "lines_added": 165,
+      "lines_removed": 2
+    },
+    {
+      "path": ".pi/extensions/loom/tests/extension-registration.test.ts",
+      "changes": "Updated tool count from 24 to 26; added assertions for loom_get_direct_steps and loom_complete_direct_step",
+      "lines_added": 5,
+      "lines_removed": 2
+    },
+    {
+      "path": ".pi/extensions/loom/prompts/agent-executor-direct.md",
+      "changes": "New file: direct execution prompt with instructions, rules, and invariant references",
+      "lines_added": 52,
+      "lines_removed": 0
     }
   ],
-  "total_lines_added": 186,
-  "total_lines_removed": 3,
-  "tests_run": 68,
-  "tests_passed": 68,
-  "tests_failed": 0
+  "tests_run": "executor-loop.test.ts (35 tests), extension-registration.test.ts (21 tests) — all passing",
+  "total_lines_changed": 560,
+  "commit_hash": "6d06237"
 }

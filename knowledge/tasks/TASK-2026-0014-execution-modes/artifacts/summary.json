@@ -1,23 +1,25 @@
 {
-  "step": "DU-1 Step 1: Execution mode selection",
-  "what_was_done": "Добавлено поле execution_mode в task.json схему (JSON Schema + TypeBox + TypeScript types). Реализована функция resolveExecutionMode() с логикой: plan.steps.length ≤ 3 → direct, иначе subagent. Поддержано ручное переопределение через task.json.",
+  "step": "DU-1 Step 2: Agent-direct executor loop",
+  "what_was_done": "Реализован executor-loop для direct-режима. Добавлены функции getDirectSteps() (возвращает все ожидающие шаги плана с контекстом) и markStepDone() (отмечает шаг как выполненный). Зарегистрированы два новых инструмента: loom_get_direct_steps (получает план прямого исполнения со всеми шагами и инструкциями) и loom_complete_direct_step (отмечает шаг выполненным, запускает localization guard, проверяет завершение плана). Создан промпт agent-executor-direct.md с инструкциями для агента в direct-режиме.",
   "decisions": [
-    "resolveExecutionMode() размещён в executor-loop.ts (рядом с getNextPendingStep, isPlanComplete — логически связанные функции). Реэкспортирован из executor.ts.",
-    "Формат execution_mode: 'auto' (значение по умолчанию), 'direct', 'subagent'. Валидация — enum на уровне JSON Schema и TypeBox.",
-    "При отсутствии плана по умолчанию выбирается subagent (безопаснее).",
-    "Порог ≤3 шага для direct-режима выбран для минимизации риска потери контекста агентом (RISK-2)."
+    "getDirectSteps() возвращает DirectExecutionPlan с полным контекстом задачи (task_id, task_title, task_description) и списком pending_steps, где для каждого шага указан статус (pending/blocked).",
+    "markStepDone() — легковесная функция только для отметки шага в plan.json, в отличие от loom_update_task которая также обновляет registry.",
+    "loom_get_direct_steps проверяет execution_mode и возвращает ошибку если режим не 'direct', блокируя использование в subagent-режиме.",
+    "loom_complete_direct_step автоматически запускает localization guard после отметки шага и сигнализирует о завершении плана.",
+    "Промпт agent-executor-direct.md написан с учётом INV-9 (агент пишет код сам) и INV-11 (последовательные шаги). Операторские сообщения на русском, системные на английском.",
+    "Инварианты INV-9 и INV-11 обновлены в комментариях executor-loop.ts для отражения dual-mode поведения."
   ],
   "files_modified": [
-    "knowledge/project/schemas/task.schema.json",
-    ".pi/extensions/loom/knowledge/schemas.ts",
-    ".pi/extensions/loom/knowledge/types.ts",
     ".pi/extensions/loom/agent-mode/executor-loop.ts",
     ".pi/extensions/loom/agent-mode/executor.ts",
-    ".pi/extensions/loom/tests/fixtures.ts",
-    ".pi/extensions/loom/tests/executor-loop.test.ts"
+    ".pi/extensions/loom/tests/executor-loop.test.ts",
+    ".pi/extensions/loom/tests/extension-registration.test.ts"
   ],
-  "tests_added": 10,
-  "tests_passing": "All 68 tests in schemas.test.ts + executor-loop.test.ts pass. Full suite: 373/374 pass (1 pre-existing failure in model-resolver.test.ts unrelated to changes).",
+  "files_created": [
+    ".pi/extensions/loom/prompts/agent-executor-direct.md"
+  ],
+  "tests_added": 11,
+  "tests_passing": "All 35 tests in executor-loop.test.ts pass (24 existing + 11 new). Extension registration test updated to 26 tools. Full suite: 383/385 pass (1 pre-existing failure in model-resolver.test.ts).",
   "invariants_checked": ["INV-9", "INV-11"],
   "blockers": []
 }
