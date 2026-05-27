@@ -1,8 +1,11 @@
 {
-  "task_id": "TASK-2026-0012-audit-fixes",
+  "task_id": "TASK-2026-0013-global-install",
   "step": 1,
   "files": [
-    ".pi/extensions/loom/tests/manager.test.ts",
+    ".pi/extensions/loom/index.ts",
+    ".pi/extensions/loom/tests/extension-registration.test.ts",
+    "AGENTS.md",
+    ".pi/extensions/loom/index.dev.ts",
     "files-to-commit.json"
   ]
 }

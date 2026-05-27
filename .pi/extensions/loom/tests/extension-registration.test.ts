@@ -78,7 +78,7 @@ vi.mock("../shared/utils", async () => {
 
 // ── Now import the extension ─────────────────────────────────────────────
 
-import loomExtension from "../index";
+import loomExtension from "../index.dev";
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
