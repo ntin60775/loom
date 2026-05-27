@@ -260,8 +260,11 @@ describe("loom extension registration", () => {
     expect(names).toContain("loom_run_localization_guard");
     expect(names).toContain("loom_verify_invariants");
     expect(names).toContain("loom_edit_config");
-    // Total tools should be 24
-    expect(tools.length).toBe(24);
+    // Direct mode tools
+    expect(names).toContain("loom_get_direct_steps");
+    expect(names).toContain("loom_complete_direct_step");
+    // Total tools should be 26
+    expect(tools.length).toBe(26);
   });
 
   it("registers alt+m shortcut", () => {
