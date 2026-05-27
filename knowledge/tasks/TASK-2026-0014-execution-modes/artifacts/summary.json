@@ -1,0 +1,13 @@
+{
+  "task": "DU-1: Dual execution mode — agent-direct (≤3 шага) + subagent×2 (≥4 шага)",
+  "all_steps_completed": true,
+  "post_completion_fix": "Auto-switch to idle mode in loom_update_task when no active tasks remain",
+  "steps_summary": {
+    "step_1": "Execution mode selection — DONE",
+    "step_2": "Agent-direct executor loop — DONE",
+    "step_3": "Subagent×2 hardening — DONE"
+  },
+  "tests_total": 407,
+  "tests_passing": 407,
+  "total_commits": 5
+}

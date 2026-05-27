@@ -1,0 +1,70 @@
+{
+  "step": 3,
+  "title": "Subagent×2 hardening",
+  "files_touched": [
+    {
+      "path": ".pi/extensions/loom/knowledge/schemas.ts",
+      "changes": "Added retry section to ExecutionConfigSchema; added tools fields to SubagentConfigSchema reviewer/worker; updated knownSections in validator",
+      "lines_added": 14,
+      "lines_removed": 0
+    },
+    {
+      "path": ".pi/extensions/loom/subagent/output-validator.ts",
+      "changes": "New file: JSON Schema validation for subagent output with regex fallback",
+      "lines_added": 145,
+      "lines_removed": 0
+    },
+    {
+      "path": ".pi/extensions/loom/subagent/persistent-registry.ts",
+      "changes": "New file: persistent subagent registry (CRUD, stats, queries)",
+      "lines_added": 171,
+      "lines_removed": 0
+    },
+    {
+      "path": ".pi/extensions/loom/agent-mode/tools.ts",
+      "changes": "Schema-based reviewer output validation; persistent registry integration for worker and reviewer spawn/complete",
+      "lines_added": 38,
+      "lines_removed": 10
+    },
+    {
+      "path": ".pi/extensions/loom/plan-mode/tools.ts",
+      "changes": "Schema-based onboarding subagent output validation in runOnboardingSubagent",
+      "lines_added": 16,
+      "lines_removed": 8
+    },
+    {
+      "path": ".pi/extensions/loom/tests/output-validator.test.ts",
+      "changes": "New file: 16 tests for output validation",
+      "lines_added": 98,
+      "lines_removed": 0
+    },
+    {
+      "path": ".pi/extensions/loom/tests/persistent-registry.test.ts",
+      "changes": "New file: 9 tests for persistent registry",
+      "lines_added": 155,
+      "lines_removed": 0
+    },
+    {
+      "path": "knowledge/project/subagents/registry.json",
+      "changes": "New file: empty persistent registry",
+      "lines_added": 10,
+      "lines_removed": 0
+    },
+    {
+      "path": "knowledge/project/configs/execution-config.json",
+      "changes": "Added retry section (exponential_backoff, base_delay, max_delay, multiplier, jitter)",
+      "lines_added": 8,
+      "lines_removed": 1
+    },
+    {
+      "path": "knowledge/project/configs/subagent-config.json",
+      "changes": "Added worker.tools and reviewer.tools fields",
+      "lines_added": 2,
+      "lines_removed": 0
+    }
+  ],
+  "total_lines_changed": 675,
+  "tests_run": 407,
+  "tests_passing": 407,
+  "commit_hash": "e4892ac"
+}

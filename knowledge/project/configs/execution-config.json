@@ -5,11 +5,27 @@
     "auto_select_reviewer": {
       "enabled": true,
       "domain_rules": [
-        {"extension": ".bsl", "domain": "1c"},
-        {"extension": ".1s", "domain": "1c"},
-        {"default": "general"}
+        {
+          "extension": ".bsl",
+          "domain": "1c"
+        },
+        {
+          "extension": ".1s",
+          "domain": "1c"
+        },
+        {
+          "default": "general"
+        }
       ]
     }
+  },
+  "retry": {
+    "strategy": "exponential_backoff",
+    "base_delay_ms": 1000,
+    "max_delay_ms": 60000,
+    "multiplier": 2.0,
+    "jitter_ms": 500,
+    "max_retries_per_step": 10
   },
   "parallelism": {
     "plan_mode_max_subagents": 4

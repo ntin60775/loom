@@ -33,6 +33,7 @@ export interface TaskData {
   branch: string;
   parent_task_id?: string;
   parent_delivery_unit?: string;
+  execution_mode?: string;
   invariants: InvariantData[];
   delivery_units: DeliveryUnitData[];
   created_at: string;
