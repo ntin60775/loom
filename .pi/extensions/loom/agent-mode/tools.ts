@@ -27,6 +27,7 @@ import { buildMemoryContext } from "../memory";
 import { assembleV2Context } from "../shared/context-provider";
 
 import { renderStatusLine } from "../ui/render-utils";
+import { subagentCallRender, subagentResultRender } from "../ui/subagent-widget";
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
 }
@@ -222,13 +223,13 @@ export function registerAgentTools(pi: ExtensionAPI): void {
     },
 
     renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
-      return renderStatusLine({ icon: "pending", title: "Spawn worker", description: `step ${args.step_number}` }, theme);
+      const state = { id: `step${args.step_number}`, type: "worker" as const, step: args.step_number as number, treePrefix: "├──", childIndent: "│   " };
+      return subagentCallRender(state, theme);
     },
 
-    renderResult(result: { isError?: boolean; details?: { guardResult?: { passed?: boolean } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
-      const icon = result.isError ? "error" : "success";
-      const desc = result.details?.guardResult?.passed === false ? "localization guard failed" : undefined;
-      return renderStatusLine({ icon, title: "Spawn worker", description: desc }, theme);
+    renderResult(result: { isError?: boolean; details?: { guardResult?: { passed?: boolean }; result?: { exitCode?: number } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const state = { id: `worker`, type: "worker" as const, treePrefix: "├──", childIndent: "│   " };
+      return subagentResultRender(state, result, theme);
     },
   });
 
@@ -344,14 +345,13 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
 
     renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
-      return renderStatusLine({ icon: "pending", title: "Spawn reviewer", description: `commit ${args.commit_hash}` }, theme);
+      const state = { id: `commit ${args.commit_hash}`, type: "reviewer" as const, step: args.step_number as number, treePrefix: "├──", childIndent: "│   " };
+      return subagentCallRender(state, theme);
     },
 
     renderResult(result: { isError?: boolean; details?: { reviewJson?: { verdict?: string } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
-      const icon = result.isError ? "error" : "success";
-      const verdict = result.details?.reviewJson?.verdict;
-      const desc = verdict ? `verdict: ${verdict}` : undefined;
-      return renderStatusLine({ icon, title: "Spawn reviewer", description: desc }, theme);
+      const state = { id: "reviewer", type: "reviewer" as const, treePrefix: "├──", childIndent: "│   " };
+      return subagentResultRender(state, result, theme);
     },
     },
   });
