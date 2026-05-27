@@ -507,15 +507,6 @@ export default function loomExtension(pi: ExtensionAPI): void {
     handler: cycleModesHandler,
   });
 
-  pi.registerShortcut(Key.ctrl("o"), {
-    description: "Развернуть/свернуть tool-карточку",
-    handler: () => {
-      // Ctrl+O toggles expanded state — handled by renderResult via context.expanded
-      // This shortcut just triggers rerender
-      // Actual expand/collapse logic is in subagent-widget.ts renderResult
-      logger.info("loom", "Ctrl+O pressed — toggle expand");
-    },
-  });
 
   pi.on("agent_end", async (_event, ctx) => {
     // In plan mode, after agent finishes, show options
