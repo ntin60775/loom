@@ -1,5 +1,6 @@
 {
   "files": [
+    ".pi/extensions/loom/ui/render-utils.ts",
     ".pi/extensions/loom/agent-mode/tools.ts"
   ]
 }

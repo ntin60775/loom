@@ -26,6 +26,7 @@ import { validateExecutionConfigShape, validateSubagentConfigShape } from "../kn
 import { buildMemoryContext } from "../memory";
 import { assembleV2Context } from "../shared/context-provider";
 
+import { renderStatusLine } from "../ui/render-utils";
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
 }
@@ -162,6 +163,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         status: "running",
       });
 
+      let workerError = false;
       try {
         const spec: WorkerSpec = {
           name: workerId,
@@ -179,7 +181,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         }, (readExecutionConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.worker ?? 3600) * 1000);
 
         const output = getFinalOutput(result.messages);
-        let workerError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
+        workerError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
 
         // Auto-run localization guard after successful worker commit
         let guardResult: { passed: boolean; output: string; isError: boolean } | undefined;
@@ -217,6 +219,16 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           exit_code: 0,
         });
       }
+    },
+
+    renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Spawn worker", description: `step ${args.step_number}` }, theme);
+    },
+
+    renderResult(result: { isError?: boolean; details?: { guardResult?: { passed?: boolean } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const icon = result.isError ? "error" : "success";
+      const desc = result.details?.guardResult?.passed === false ? "localization guard failed" : undefined;
+      return renderStatusLine({ icon, title: "Spawn worker", description: desc }, theme);
     },
   });
 
@@ -330,6 +342,17 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           exit_code: 0,
         });
       }
+
+    renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Spawn reviewer", description: `commit ${args.commit_hash}` }, theme);
+    },
+
+    renderResult(result: { isError?: boolean; details?: { reviewJson?: { verdict?: string } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const icon = result.isError ? "error" : "success";
+      const verdict = result.details?.reviewJson?.verdict;
+      const desc = verdict ? `verdict: ${verdict}` : undefined;
+      return renderStatusLine({ icon, title: "Spawn reviewer", description: desc }, theme);
+    },
     },
   });
 
@@ -403,6 +426,18 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         details: { task_id: params.task_id, step_number: params.step_number, step_status: params.step_status, task_status: params.task_status },
       };
     },
+
+    renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const descParts: string[] = [];
+      if (args.task_status) descParts.push(`task: ${args.task_status}`);
+      if (args.step_status) descParts.push(`step ${args.step_number}: ${args.step_status}`);
+      return renderStatusLine({ icon: "pending", title: "Update task", description: descParts.join(", ") || undefined }, theme);
+    },
+
+    renderResult(result: { isError?: boolean }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const icon = result.isError ? "error" : "success";
+      return renderStatusLine({ icon, title: "Update task" }, theme);
+    },
   });
 
   pi.registerTool({
@@ -424,6 +459,15 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
         details: { artifact_path: params.artifact_path },
       };
+
+    renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Read artifact", description: args.artifact_path as string }, theme);
+    },
+
+    renderResult(result: { isError?: boolean }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const icon = result.isError ? "error" : "success";
+      return renderStatusLine({ icon, title: "Read artifact" }, theme);
+    },
     },
   });
 
@@ -463,6 +507,16 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         isError: true,
       };
     },
+
+    renderCall(_args: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Localization guard" }, theme);
+    },
+
+    renderResult(result: { isError?: boolean; details?: { passed?: boolean } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const passed = result.details?.passed;
+      const icon = passed ? "success" : (result.isError ? "error" : "warning");
+      return renderStatusLine({ icon, title: "Localization guard", description: passed ? "passed" : "failed" }, theme);
+    },
   });
 
   // Tool: Generate verification matrix
@@ -488,6 +542,17 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         content: [{ type: "text", text: lines.join("\n") }],
         details: { summary: matrix.summary },
       };
+    },
+
+    renderCall(_args: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Verify invariants" }, theme);
+    },
+
+    renderResult(result: { isError?: boolean; details?: { summary?: { verified?: number; total?: number } } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const s = result.details?.summary;
+      const desc = s ? `${s.verified}/${s.total} verified` : undefined;
+      const icon = result.isError ? "error" : "success";
+      return renderStatusLine({ icon, title: "Verify invariants", description: desc }, theme);
     },
   });
 
@@ -542,6 +607,15 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         details: { config_type: params.config_type, filePath },
       };
     },
+
+    renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Edit config", description: args.config_type as string }, theme);
+    },
+
+    renderResult(result: { isError?: boolean }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const icon = result.isError ? "error" : "success";
+      return renderStatusLine({ icon, title: "Edit config" }, theme);
+    },
   });
 
   // Tool: Search knowledge via scout retrieval (v2 only)
@@ -581,6 +655,17 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           isError: true,
         };
       }
+    },
+
+    renderCall(args: Record<string, unknown>, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      return renderStatusLine({ icon: "pending", title: "Search knowledge", description: args.query as string }, theme);
+    },
+
+    renderResult(result: { isError?: boolean; details?: { resultCount?: number } }, _options: unknown, theme: import("@earendil-works/pi-coding-agent").Theme) {
+      const count = result.details?.resultCount;
+      const desc = count !== undefined ? `${count} results` : undefined;
+      const icon = result.isError ? "error" : "success";
+      return renderStatusLine({ icon, title: "Search knowledge", description: desc }, theme);
     },
   });
 }
