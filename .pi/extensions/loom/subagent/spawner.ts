@@ -12,7 +12,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { withFileMutationQueue } from "@earendil-works/pi-coding-agent";
-import type { SubagentResult, WorkerSpec, ReviewerSpec } from "./specs";
+import type { SubagentResult, WorkerSpec, ReviewerSpec, ProgressEvent } from "./specs";
 import { getFinalOutput } from "../shared/utils";
 import { logger } from "../shared/logger";
 
@@ -58,7 +58,7 @@ async function writePromptToTempFile(name: string, prompt: string): Promise<{ di
 export async function spawnSubagent(
   spec: WorkerSpec | ReviewerSpec,
   signal?: AbortSignal,
-  onUpdate?: (output: string) => void,
+  onUpdate?: (output: string | ProgressEvent) => void,
   timeoutMs?: number, // read from execution-config; falls back to 5 min
 ): Promise<SubagentResult> {
   const invocation = await getPiInvocation();

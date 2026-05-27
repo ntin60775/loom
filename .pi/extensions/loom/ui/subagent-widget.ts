@@ -169,15 +169,24 @@ export function subagentResultRender(
   result: {
     isError?: boolean;
     details?: {
-      result?: { exitCode?: number; usage?: unknown; model?: string };
+      result?: { exitCode?: number; usage?: { input?: number; output?: number; cost?: number; turns?: number }; model?: string };
       reviewJson?: { verdict?: string };
       guardResult?: { passed?: boolean };
+      progress?: {
+        status?: string;
+        tools_used?: number;
+        ctx_current?: number;
+        ctx_window?: number;
+        tokens_cumulative?: number;
+        cost?: number;
+        duration_ms?: number;
+        current_tool?: string;
+      };
     };
   },
   theme: Theme,
 ): Text {
   const exitCode = result.details?.result?.exitCode;
-  const isWorkerOk = exitCode === 0 && !result.isError;
   const finalStatus = result.isError ? "failed" : "completed";
 
   const { icon } = statusIcon(finalStatus);
@@ -201,7 +210,23 @@ export function subagentResultRender(
     guardStr = `${state.childIndent}⚠ localization guard failed`;
   }
 
+  // Stats from ProgressEvent
+  let statsStr = "";
+  const p = result.details?.progress;
+  if (p) {
+    statsStr = statsLine({
+      tools: p.tools_used,
+      ctxCurrent: p.ctx_current,
+      ctxWindow: p.ctx_window,
+      tokensCumulative: p.tokens_cumulative,
+      cost: p.cost,
+      durationMs: p.duration_ms,
+      currentTool: p.current_tool,
+    });
+  }
+
   const parts = [line];
+  if (statsStr) parts.push(`${state.childIndent}${statsStr}`);
   if (verdictStr) parts.push(verdictStr);
   if (guardStr) parts.push(guardStr);
 

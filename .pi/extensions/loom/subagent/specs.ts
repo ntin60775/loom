@@ -34,6 +34,29 @@ export interface MigratorSpec extends BaseSpec {
   outputArtifact: string; // path to migration-analysis.json
 }
 
+
+/**
+ * Structured progress event emitted by spawner.
+ * Used by SubagentCard for live TUI updates.
+ */
+export interface ProgressEvent {
+  status: "running" | "completed" | "error" | "aborted";
+  tools_used: number;
+  ctx_current: number;
+  ctx_window: number;
+  tokens_cumulative: number;
+  cost: number;
+  duration_ms: number;
+  current_tool?: string;
+  /** For retry state */
+  retry?: {
+    attempt: number;
+    max: number;
+    reason?: string;
+    delay_ms?: number;
+  };
+}
+
 export type OnboardingSubagentSpec = ScoutSpec | ResearcherSpec | MigratorSpec;
 
 export interface SubagentResult {

@@ -177,7 +177,12 @@ export function registerAgentTools(pi: ExtensionAPI): void {
 
         const result = await spawnSubagent(spec, abortController.signal, (output) => {
           if (onUpdate) {
-            onUpdate({ content: [{ type: "text", text: output }], details: { phase: "worker", step: params.step_number } });
+            // Emit both text (for onUpdate) and ProgressEvent details
+            const progressEvent = typeof output === "object" ? output : undefined;
+            onUpdate({ 
+              content: [{ type: "text", text: typeof output === "string" ? output : "" }], 
+              details: { phase: "worker", step: params.step_number, progress: progressEvent }
+            });
           }
         }, (readExecutionConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.worker ?? 3600) * 1000);
 
@@ -313,7 +318,11 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       try {
         const result = await spawnSubagent(spec, reviewAbortController.signal, (output) => {
           if (onUpdate) {
-            onUpdate({ content: [{ type: "text", text: output }], details: { phase: "reviewer", step: params.step_number } });
+            const rProgressEvent = typeof output === "object" ? output : undefined;
+            onUpdate({ 
+              content: [{ type: "text", text: typeof output === "string" ? output : "" }], 
+              details: { phase: "reviewer", step: params.step_number, progress: rProgressEvent }
+            });
           }
         }, (readExecutionConfig(path.join(ctx.cwd, "knowledge", "project", "configs", "execution-config.json"))?.timeout?.reviewer ?? 1800) * 1000);
 
