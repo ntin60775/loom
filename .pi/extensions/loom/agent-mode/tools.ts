@@ -374,13 +374,15 @@ export function registerAgentTools(pi: ExtensionAPI): void {
           generateVerificationMatrix(ctx.cwd);
 
           // Auto-switch to idle mode when no active tasks remain
-          const activeRemaining = registry?.tasks?.filter(
-            (t: { task_id: string; status: string }) => t.task_id !== params.task_id && t.status === "active"
-          );
-          if (!activeRemaining || activeRemaining.length === 0) {
-            const loomStatePath = path.join(ctx.cwd, "knowledge", ".loom-state.json");
-            writeJson(loomStatePath, { mode: "idle", currentTaskId: null });
-            logger.info("tools", "All tasks completed — switched loom state to idle");
+          if (registry) {
+            const activeRemaining = registry.tasks.filter(
+              (t) => t.task_id !== params.task_id && t.status === "active"
+            );
+            if (activeRemaining.length === 0) {
+              const loomStatePath = path.join(ctx.cwd, "knowledge", ".loom-state.json");
+              writeJson(loomStatePath, { mode: "idle", currentTaskId: null });
+              logger.info("tools", "All tasks completed — switched loom state to idle");
+            }
           }
         }
       }
