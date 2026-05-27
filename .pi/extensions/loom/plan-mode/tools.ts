@@ -23,7 +23,6 @@ import { logger } from "../shared/logger";
 import {
   validateStackModuleShape,
   validateContextResearchShape,
-import { renderStatusLine } from "../ui/render-utils";
   validateMigrationAnalysisShape,
 } from "../knowledge/schemas";
 import {
