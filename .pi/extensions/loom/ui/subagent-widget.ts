@@ -206,7 +206,6 @@ export function renderSubagentCard(
 export function subagentCallRender(
   state: SubagentCardState,
   theme: Theme,
-  options?: SubagentResultRenderOptions,
 ): Text {
   const text = renderSubagentCard(state, "running", undefined, undefined, theme);
   return new Text(text, 0, 0);
@@ -215,6 +214,10 @@ export function subagentCallRender(
 /**
  * Компонент Text для renderResult — показывает финальную карточку со статусом.
  */
+export interface SubagentResultRenderOptions {
+  expanded?: boolean;
+}
+
 export interface SubagentResultRenderOptions {
   expanded?: boolean;
 }
@@ -240,6 +243,7 @@ export function subagentResultRender(
     };
   },
   theme: Theme,
+  options: SubagentResultRenderOptions = {},
 ): Text {
   const exitCode = result.details?.result?.exitCode;
   const finalStatus = result.isError ? "failed" : "completed";
@@ -293,7 +297,7 @@ export function subagentResultRender(
   if (statsStr) parts.push(`${state.childIndent}${statsStr}`);
 
   // Apply expand/collapse: collapsed mode limits lines
-  const expanded = options?.expanded !== false; // default expanded=true
+  const expanded = options.expanded !== false; // default expanded=true
   const fullText = parts.join("\n");
 
   // Collapse findings + verdict + guard when not expanded

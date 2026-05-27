@@ -1,6 +1,9 @@
 {
   "files": [
+    ".pi/extensions/loom/ui/subagent-widget.ts",
+    ".pi/extensions/loom/plan-mode/tools.ts",
     ".pi/extensions/loom/tests/e2e-full-cycle.test.ts",
-    ".pi/extensions/loom/tests/e2e-subagent-rendering.test.ts"
+    ".pi/extensions/loom/tests/e2e-subagent-rendering.test.ts",
+    ".pi/extensions/loom/tests/fixtures.ts"
   ]
 }

@@ -1,73 +1,206 @@
 {
   "task_id": "TASK-2026-0016-tui-cards",
-  "title": "TUI-карточки: заимствование лучших UX-паттернов omp для loom",
-  "status": "draft",
-  "delivery_units": [
+  "steps": [
     {
-      "id": "DU-1",
-      "title": "Карточки субагентов с деревом и статистикой",
-      "status": "pending",
-      "files": [
-        ".pi/extensions/loom/ui/subagent-widget.ts",
-        ".pi/extensions/loom/agent-mode/tools.ts",
-        ".pi/extensions/loom/subagent/spawner.ts"
-      ]
+      "step_number": 1,
+      "title": "DU-3: Единый renderStatusLine — базовая утилита",
+      "description": "Создать модуль .pi/extensions/loom/ui/render-utils.ts с функцией renderStatusLine({icon, title, description}, theme). Внедрить во все существующие renderCall/renderResult loom-инструментов. Иконка цветная (success/error/warning/pending/running). Title: операция (Edit, Spawn worker, Review). Description: доп. информация.",
+      "expected_output": "Файл render-utils.ts, обновлённые agent-mode/tools.ts и plan-mode/tools.ts с renderCall/renderResult для всех инструментов",
+      "estimated_effort": "medium",
+      "constraints": [
+        "INV-5",
+        "INV-12"
+      ],
+      "status": "done",
+      "depends_on": []
     },
     {
-      "id": "DU-2",
-      "title": "Expand/Collapse (Ctrl+O)",
-      "status": "pending",
-      "files": [
-        ".pi/extensions/loom/ui/expand-collapse.ts",
-        ".pi/extensions/loom/index.dev.ts"
-      ]
+      "step_number": 2,
+      "title": "DU-1: SubagentCard — компонент карточки субагента",
+      "description": "Создать компонент SubagentCard в .pi/extensions/loom/ui/subagent-widget.ts. Реализовать: tree-коннектор, иконка статуса с цветом, bold ID + описание, бейдж [done/failed/aborted], строка статистики (tools, ctx, Σtokens, cost, duration), текущий инструмент (если running), retry-состояние. Добавить renderCall/renderResult для loom_spawn_worker и loom_spawn_reviewer.",
+      "expected_output": "Обновлённый subagent-widget.ts с классом SubagentCard, обновлённый agent-mode/tools.ts с renderCall/renderResult, обновлённый spawner.ts с ProgressEvent",
+      "estimated_effort": "large",
+      "constraints": [
+        "INV-5",
+        "INV-9",
+        "INV-12"
+      ],
+      "depends_on": [
+        1
+      ],
+      "status": "done"
     },
     {
-      "id": "DU-3",
-      "title": "Единый renderStatusLine для всех инструментов",
-      "status": "pending",
-      "files": [
-        ".pi/extensions/loom/ui/render-utils.ts",
-        ".pi/extensions/loom/agent-mode/tools.ts",
-        ".pi/extensions/loom/plan-mode/tools.ts"
-      ]
+      "step_number": 3,
+      "title": "DU-1: Интеграция ProgressEvent в spawner",
+      "description": "Обновить subagent/spawner.ts: заменить текстовые onUpdate на структурированные ProgressEvent (status, tools_used, ctx_current, ctx_window, tokens_cumulative, cost, duration_ms, current_tool). SubagentCard использует эти поля для live-обновления.",
+      "expected_output": "Обновлённый spawner.ts с интерфейсом ProgressEvent и эмиссией структурированных событий",
+      "estimated_effort": "medium",
+      "constraints": [
+        "INV-9"
+      ],
+      "depends_on": [
+        2
+      ],
+      "status": "done"
     },
     {
-      "id": "DU-4",
-      "title": "Review findings [P0-P3] в дереве",
-      "status": "pending",
-      "files": [
-        ".pi/extensions/loom/ui/review-widget.ts",
-        ".pi/extensions/loom/agent-mode/tools.ts"
-      ]
+      "step_number": 4,
+      "title": "DU-4: Review findings [P0-P3] в карточке reviewer'а",
+      "description": "Расширить SubagentCard для reviewer'а: парсинг review JSON из output, цветное дерево находок (P0=красный, P1=жёлтый, P2=синий, P3=серый) с file:line, раскрытие описания, вердикт (correct/incorrect с confidence %).",
+      "expected_output": "Обновлённый subagent-widget.ts с ReviewFindingsTree, обновлённый agent-mode/tools.ts (renderResult для spawn_reviewer)",
+      "estimated_effort": "medium",
+      "constraints": [
+        "INV-5"
+      ],
+      "depends_on": [
+        2
+      ],
+      "status": "done"
     },
     {
-      "id": "DU-5",
-      "title": "Streaming diff preview для edit-инструментов",
-      "status": "pending",
-      "files": [
-        ".pi/extensions/loom/ui/edit-preview.ts",
-        ".pi/extensions/loom/index.dev.ts"
-      ]
+      "step_number": 5,
+      "title": "DU-2: Expand/Collapse (Ctrl+O) — инфраструктура",
+      "description": "Создать модуль .pi/extensions/loom/ui/expand-collapse.ts с утилитой collapseOutput(content, limits). Реализовать: свёрнуто — 3 строки вывода, 8 ханков диффа, хинт «(Ctrl+O для подробностей)»; развёрнуто — полный вывод. Хинт авто-скрывается когда уже развёрнуто. Зарегистрировать Ctrl+O.",
+      "expected_output": "Файл expand-collapse.ts, обновлённый index.dev.ts с регистрацией hotkey",
+      "estimated_effort": "medium",
+      "constraints": [
+        "INV-5"
+      ],
+      "depends_on": [
+        1
+      ],
+      "status": "done"
     },
     {
-      "id": "DU-6",
-      "title": "Сквозные E2E-тесты цепочки Plan→Worker→Reviewer→Commit",
-      "status": "pending",
-      "files": [
-        ".pi/extensions/loom/tests/e2e-full-cycle.test.ts",
-        ".pi/extensions/loom/tests/e2e-subagent-rendering.test.ts"
-      ]
+      "step_number": 6,
+      "title": "DU-2: Применение Expand/Collapse ко всем tool-карточкам",
+      "description": "Интегрировать expand/collapse во все renderResult loom-инструментов: SubagentCard, renderStatusLine, review findings. Использовать context.expanded из renderResult API.",
+      "expected_output": "Обновлённые renderResult во всех tool-файлах с поддержкой expanded/collapsed",
+      "estimated_effort": "medium",
+      "constraints": [
+        "INV-5"
+      ],
+      "depends_on": [
+        5,
+        4
+      ],
+      "status": "done"
+    },
+    {
+      "step_number": 7,
+      "title": "DU-5: Streaming diff preview для edit-инструментов",
+      "description": "Создать модуль .pi/extensions/loom/ui/edit-preview.ts. Перехватывать partial JSON аргументов edit/write через tool_call хук. Compute diff preview из partial аргументов (как только есть path + content). Стабилизация: strip trailing removals без matching additions. Abort предыдущего compute при новых аргументах. Spinner пока нет полных аргументов.",
+      "expected_output": "Файл edit-preview.ts, обновлённый index.dev.ts с tool_call хуком",
+      "estimated_effort": "large",
+      "constraints": [
+        "INV-5",
+        "INV-12"
+      ],
+      "status": "done",
+      "depends_on": []
+    },
+    {
+      "step_number": 8,
+      "title": "DU-6: E2E-тесты — полный цикл Plan→Worker→Reviewer→Commit",
+      "description": "Написать тесты в .pi/extensions/loom/tests/e2e-full-cycle.test.ts: успешный worker + reviewer, worker с ошибкой, таймаут worker'а. Использовать существующие моки pi CLI.",
+      "expected_output": "Файл e2e-full-cycle.test.ts с 3 сценариями (успех, ошибка, таймаут)",
+      "estimated_effort": "large",
+      "constraints": [
+        "INV-9"
+      ],
+      "depends_on": [
+        6
+      ],
+      "status": "done"
+    },
+    {
+      "step_number": 9,
+      "title": "DU-6: E2E-тесты — рендеринг прогресса субагентов и TUI-компонентов",
+      "description": "Написать тесты в .pi/extensions/loom/tests/e2e-subagent-rendering.test.ts: рендеринг прогресса (иконки, tools, ctx, tokens, cost, duration), TUI-компоненты без креша (SubagentCard с разными статусами, expand/collapse, review findings, renderStatusLine).",
+      "expected_output": "Файл e2e-subagent-rendering.test.ts с 2 сценариями (прогресс + компоненты)",
+      "estimated_effort": "medium",
+      "constraints": [
+        "INV-5"
+      ],
+      "depends_on": [
+        8
+      ],
+      "status": "done"
+    },
+    {
+      "step_number": 10,
+      "title": "Финальная верификация: все тесты + визуальная проверка",
+      "description": "Запустить все существующие 385 тестов + новые E2E. Провести визуальную проверку: запуск /plan → /agent и наблюдение за рендерингом карточек. Проверить локейшн-гард.",
+      "expected_output": "Зелёные тесты, визуальное подтверждение корректного рендеринга",
+      "estimated_effort": "small",
+      "constraints": [
+        "INV-5",
+        "INV-12"
+      ],
+      "depends_on": [
+        9,
+        7
+      ],
+      "status": "in_progress"
     }
   ],
-  "sequence": [
-    "DU-3 (renderStatusLine — базовая утилита для всех)",
-    "DU-1 (SubagentCard — ядро)",
-    "DU-4 (Review findings — надстройка над SubagentCard)",
-    "DU-2 (Expand/Collapse — после карточек)",
-    "DU-5 (Streaming diff — опциональное улучшение)",
-    "DU-6 (E2E-тесты — параллельно, финал после всех DU)"
+  "risks": [
+    {
+      "id": "RISK-1",
+      "description": "renderCall/renderResult API может не поддерживать live-обновление (перерисовку) для SubagentCard в реальном времени",
+      "severity": "high",
+      "mitigation": "PROOF: проверить на шаге 2 через context.state и handle.requestRender(). Если не работает — перейти на ctx.ui.custom() overlay"
+    },
+    {
+      "id": "RISK-2",
+      "description": "ProgressEvent в spawner может конфликтовать с существующим механизмом onUpdate (текстовые строки)",
+      "severity": "medium",
+      "mitigation": "Добавить ProgressEvent как дополнительное поле, сохранить обратную совместимость"
+    },
+    {
+      "id": "RISK-3",
+      "description": "Streaming diff preview (DU-5) требует перехвата tool_call хука, что может быть нестабильно в pi API",
+      "severity": "medium",
+      "mitigation": "Изолировать в отдельном модуле, fallback — обычный diff после выполнения"
+    },
+    {
+      "id": "RISK-4",
+      "description": "Ctrl+O может конфликтовать с существующими hotkey в pi",
+      "severity": "low",
+      "mitigation": "Проверить существующие биндинги, использовать Ctrl+O (не занято в pi)"
+    }
   ],
-  "created_at": "2026-05-27",
-  "updated_at": "2026-05-27"
+  "checkpoints": [
+    {
+      "id": "CHK-1",
+      "description": "renderStatusLine работает для всех инструментов (DU-3 завершён)",
+      "after_step": 1,
+      "verification": "Визуально: все loom-инструменты показывают единую строку статуса"
+    },
+    {
+      "id": "CHK-2",
+      "description": "SubagentCard рендерит карточку worker'а с live-обновлением (DU-1 завершён)",
+      "after_step": 3,
+      "verification": "Запустить /agent с задачей из 2 шагов, наблюдать карточку worker'а"
+    },
+    {
+      "id": "CHK-3",
+      "description": "Review findings отображаются с цветными приоритетами (DU-4 завершён)",
+      "after_step": 4,
+      "verification": "Запустить reviewer, проверить цветное дерево находок"
+    },
+    {
+      "id": "CHK-4",
+      "description": "Все tool-карточки сворачиваются/разворачиваются по Ctrl+O (DU-2 завершён)",
+      "after_step": 6,
+      "verification": "Нажать Ctrl+O на разных карточках, проверить свёрнутый/развёрнутый режим"
+    },
+    {
+      "id": "CHK-5",
+      "description": "Все тесты (385 + новые E2E) зелёные",
+      "after_step": 10,
+      "verification": "npm test — все тесты проходят"
+    }
+  ]
 }

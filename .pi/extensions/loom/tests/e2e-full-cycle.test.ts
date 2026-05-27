@@ -32,12 +32,18 @@ import { renderSubagentCard, subagentCallRender, subagentResultRender } from "..
 import { computeDiffPreview } from "../ui/edit-preview";
 import { collapseOutput } from "../ui/expand-collapse";
 import { renderStatusLineText, renderStatusLine } from "../ui/render-utils";
-import * as themeMock from "./fixtures";
+
+// Theme mock
+const mockTheme = {
+  fg: (_color: string, text: string) => text,
+  bg: (_color: string, text: string) => text,
+} as unknown as import("@earendil-works/pi-coding-agent").Theme;
+
 
 // ── Tests ─────────────────────────────────────────────────────────────────
 
 describe("E2E: Полный цикл", () => {
-  const mockTheme = themeMock as unknown as import("@earendil-works/pi-coding-agent").Theme;
+  
 
   describe("SubagentCard — все статусы", () => {
     it("рендерит карточку running worker'а", () => {

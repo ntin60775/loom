@@ -8,9 +8,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderSubagentCard, subagentResultRender } from "../ui/subagent-widget";
 import { renderStatusLine } from "../ui/render-utils";
-import * as themeMock from "./fixtures";
 
-const mockTheme = themeMock as unknown as import("@earendil-works/pi-coding-agent").Theme;
+const mockTheme = {
+  fg: (_color: string, text: string) => text,
+  bg: (_color: string, text: string) => text,
+} as unknown as import("@earendil-works/pi-coding-agent").Theme;
+
+
+
 
 describe("E2E: Рендеринг прогресса", () => {
   it("иконки статуса корректны", () => {

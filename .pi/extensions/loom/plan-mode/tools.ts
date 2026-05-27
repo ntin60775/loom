@@ -23,6 +23,7 @@ import { logger } from "../shared/logger";
 import {
   validateStackModuleShape,
   validateContextResearchShape,
+import { renderStatusLine } from "../ui/render-utils";
   validateMigrationAnalysisShape,
 } from "../knowledge/schemas";
 import {
@@ -36,6 +37,7 @@ import {
   listArchitectureComponents,
   generateAgentsMd,
 } from "../knowledge/onboarding";
+import { renderStatusLine } from "../ui/render-utils";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);

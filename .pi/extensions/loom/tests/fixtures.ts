@@ -219,3 +219,14 @@ export function makeReview(overrides: Partial<TestReview> = {}): TestReview {
     ...overrides,
   };
 }
+
+
+// ── Theme mock ────────────────────────────────────────────────────────────
+
+export function fg(color: string, text: string): string {
+  return text;
+}
+
+export function bg(color: string, text: string): string {
+  return text;
+}
