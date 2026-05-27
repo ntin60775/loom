@@ -1,5 +1,6 @@
 {
   "files": [
-    ".pi/extensions/loom/ui/edit-preview.ts"
+    ".pi/extensions/loom/tests/e2e-full-cycle.test.ts",
+    ".pi/extensions/loom/tests/e2e-subagent-rendering.test.ts"
   ]
 }
