@@ -1,0 +1,52 @@
+{
+  "step": "DU-1 Step 1",
+  "files_touched": [
+    {
+      "path": "knowledge/project/schemas/task.schema.json",
+      "lines_added": 6,
+      "lines_removed": 0,
+      "description": "Добавлено поле execution_mode (enum: auto, direct, subagent, default: auto) в раздел properties"
+    },
+    {
+      "path": ".pi/extensions/loom/knowledge/schemas.ts",
+      "lines_added": 1,
+      "lines_removed": 0,
+      "description": "Добавлено execution_mode поле в TypeBox TaskSchema"
+    },
+    {
+      "path": ".pi/extensions/loom/knowledge/types.ts",
+      "lines_added": 1,
+      "lines_removed": 0,
+      "description": "Добавлено execution_mode?: string в TaskData интерфейс"
+    },
+    {
+      "path": ".pi/extensions/loom/agent-mode/executor-loop.ts",
+      "lines_added": 39,
+      "lines_removed": 0,
+      "description": "Импорт logger; функция resolveExecutionMode() (~35 строк) + Export type ExecutionMode"
+    },
+    {
+      "path": ".pi/extensions/loom/agent-mode/executor.ts",
+      "lines_added": 3,
+      "lines_removed": 1,
+      "description": "Реэкспорт resolveExecutionMode и ExecutionMode из executor-loop.ts"
+    },
+    {
+      "path": ".pi/extensions/loom/tests/fixtures.ts",
+      "lines_added": 1,
+      "lines_removed": 0,
+      "description": "Добавлено execution_mode?: string в TestTask интерфейс"
+    },
+    {
+      "path": ".pi/extensions/loom/tests/executor-loop.test.ts",
+      "lines_added": 135,
+      "lines_removed": 2,
+      "description": "Импорт resolveExecutionMode; taskOverrides параметр в writeTaskAndPlan; 10 новых тестов для resolveExecutionMode"
+    }
+  ],
+  "total_lines_added": 186,
+  "total_lines_removed": 3,
+  "tests_run": 68,
+  "tests_passed": 68,
+  "tests_failed": 0
+}

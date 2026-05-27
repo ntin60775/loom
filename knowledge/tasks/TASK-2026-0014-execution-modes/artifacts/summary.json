@@ -1,0 +1,23 @@
+{
+  "step": "DU-1 Step 1: Execution mode selection",
+  "what_was_done": "Добавлено поле execution_mode в task.json схему (JSON Schema + TypeBox + TypeScript types). Реализована функция resolveExecutionMode() с логикой: plan.steps.length ≤ 3 → direct, иначе subagent. Поддержано ручное переопределение через task.json.",
+  "decisions": [
+    "resolveExecutionMode() размещён в executor-loop.ts (рядом с getNextPendingStep, isPlanComplete — логически связанные функции). Реэкспортирован из executor.ts.",
+    "Формат execution_mode: 'auto' (значение по умолчанию), 'direct', 'subagent'. Валидация — enum на уровне JSON Schema и TypeBox.",
+    "При отсутствии плана по умолчанию выбирается subagent (безопаснее).",
+    "Порог ≤3 шага для direct-режима выбран для минимизации риска потери контекста агентом (RISK-2)."
+  ],
+  "files_modified": [
+    "knowledge/project/schemas/task.schema.json",
+    ".pi/extensions/loom/knowledge/schemas.ts",
+    ".pi/extensions/loom/knowledge/types.ts",
+    ".pi/extensions/loom/agent-mode/executor-loop.ts",
+    ".pi/extensions/loom/agent-mode/executor.ts",
+    ".pi/extensions/loom/tests/fixtures.ts",
+    ".pi/extensions/loom/tests/executor-loop.test.ts"
+  ],
+  "tests_added": 10,
+  "tests_passing": "All 68 tests in schemas.test.ts + executor-loop.test.ts pass. Full suite: 373/374 pass (1 pre-existing failure in model-resolver.test.ts unrelated to changes).",
+  "invariants_checked": ["INV-9", "INV-11"],
+  "blockers": []
+}
