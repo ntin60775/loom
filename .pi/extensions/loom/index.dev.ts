@@ -152,6 +152,13 @@ export default function loomExtension(pi: ExtensionAPI): void {
     }
   }
 
+  // ── Subagent tools — all available in universal idle mode ───────────
+  const SUBAGENT_TOOLS = [
+    "loom_run_scout", "loom_run_researcher", "loom_run_migrator",
+    "loom_spawn_subagent",
+    "loom_spawn_worker", "loom_spawn_reviewer",
+  ];
+
   // ── Commands ───────────────────────────────────────────────────────────
 
   const PLAN_MODE_TOOLS = [
@@ -181,6 +188,7 @@ export default function loomExtension(pi: ExtensionAPI): void {
     "loom_verify_invariants",
     "loom_edit_config",
     "loom_search_knowledge",
+    ...SUBAGENT_TOOLS,
   ];
 
   pi.registerCommand("plan", {
