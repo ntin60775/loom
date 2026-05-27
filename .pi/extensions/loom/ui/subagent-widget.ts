@@ -64,6 +64,55 @@ function badge(status: string): string {
   }
 }
 
+
+interface ReviewFinding {
+  priority: "P0" | "P1" | "P2" | "P3";
+  file: string;
+  line?: number;
+  description: string;
+  correct?: boolean;
+  confidence?: number;
+}
+
+function priorityColor(priority: string): string {
+  switch (priority) {
+    case "P0": return "🔴";
+    case "P1": return "🟡";
+    case "P2": return "🔵";
+    case "P3": return "⚪";
+    default: return "⚪";
+  }
+}
+
+function renderReviewFindings(findings: ReviewFinding[], indent: string, expanded?: boolean): string {
+  if (!findings || findings.length === 0) return "";
+
+  const countByP: Record<string, number> = {};
+  for (const f of findings) {
+    countByP[f.priority] = (countByP[f.priority] || 0) + 1;
+  }
+  const summary = Object.entries(countByP).sort()
+    .map(([p, c]) => `${p}:${c}`).join(" · ");
+
+  const lines: string[] = [];
+  lines.push(`${indent}Findings: ${summary}`);
+
+  for (const f of findings) {
+    const icon = priorityColor(f.priority);
+    const loc = f.file + (f.line !== undefined ? `:${f.line}` : "");
+    let findingLine = `${indent}├── ${icon} [${f.priority}] ${f.description}  ${loc}`;
+    if (f.correct !== undefined) {
+      findingLine += f.correct ? "  ✓" : "  ✗";
+    }
+    if (f.confidence !== undefined) {
+      findingLine += ` (${Math.round(f.confidence * 100)}%)`;
+    }
+    lines.push(findingLine);
+  }
+
+  return lines.join("\n");
+}
+
 interface SubagentStats {
   tools?: number;
   ctxCurrent?: number;
@@ -197,6 +246,15 @@ export function subagentResultRender(
   let line = `${state.treePrefix} ${icon} ${stepInfo} ${typeLabel}: ${state.id}`;
   if (b) line += ` ${b}`;
 
+  // Review findings tree (P0-P3)
+  let findingsStr = "";
+  if (state.type === "reviewer" && result.details?.reviewJson?.findings) {
+    const findings = result.details.reviewJson.findings as ReviewFinding[];
+    if (Array.isArray(findings) && findings.length > 0) {
+      findingsStr = renderReviewFindings(findings, state.childIndent);
+    }
+  }
+
   // Вердикт reviewer'а
   let verdictStr = "";
   if (state.type === "reviewer" && result.details?.reviewJson?.verdict) {
@@ -227,6 +285,7 @@ export function subagentResultRender(
 
   const parts = [line];
   if (statsStr) parts.push(`${state.childIndent}${statsStr}`);
+  if (findingsStr) parts.push(findingsStr);
   if (verdictStr) parts.push(verdictStr);
   if (guardStr) parts.push(guardStr);
 

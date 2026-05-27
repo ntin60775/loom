@@ -1,8 +1,6 @@
 {
   "files": [
-    ".pi/extensions/loom/subagent/specs.ts",
-    ".pi/extensions/loom/subagent/spawner.ts",
-    ".pi/extensions/loom/agent-mode/tools.ts",
-    ".pi/extensions/loom/ui/subagent-widget.ts"
+    ".pi/extensions/loom/ui/subagent-widget.ts",
+    ".pi/extensions/loom/agent-mode/tools.ts"
   ]
 }
