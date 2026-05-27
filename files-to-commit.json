@@ -1,6 +1,6 @@
 {
   "files": [
-    ".pi/extensions/loom/ui/subagent-widget.ts",
-    ".pi/extensions/loom/agent-mode/tools.ts"
+    ".pi/extensions/loom/ui/expand-collapse.ts",
+    ".pi/extensions/loom/index.dev.ts"
   ]
 }
