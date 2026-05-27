@@ -1,22 +1,52 @@
 {
   "domains": {
-    "1c": {"provider": "kimi", "model": "kimi-for-coding", "thinking": "high"},
-    "general": {"provider": "deepseek", "model": "deepseek-chat", "thinking": "medium"},
-    "security": {"provider": "anthropic", "model": "claude-sonnet-4", "thinking": "high"}
+    "1c": {
+      "provider": "kimi",
+      "model": "kimi-for-coding",
+      "thinking": "high"
+    },
+    "general": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "thinking": "medium"
+    },
+    "security": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4",
+      "thinking": "high"
+    }
   },
   "reviewer": {
     "thinking": "xhigh",
+    "tools": ["read", "bash", "grep", "find", "ls"],
     "domain_rules": [
-      {"extension": ".bsl", "domain": "1c"},
-      {"extension": ".1s", "domain": "1c"},
-      {"default": "general"}
+      {
+        "extension": ".bsl",
+        "domain": "1c"
+      },
+      {
+        "extension": ".1s",
+        "domain": "1c"
+      },
+      {
+        "default": "general"
+      }
     ]
   },
   "worker": {
+    "tools": ["read", "bash", "edit", "write"],
     "domain_rules": [
-      {"extension": ".bsl", "domain": "1c"},
-      {"extension": ".1s", "domain": "1c"},
-      {"default": "general"}
+      {
+        "extension": ".bsl",
+        "domain": "1c"
+      },
+      {
+        "extension": ".1s",
+        "domain": "1c"
+      },
+      {
+        "default": "general"
+      }
     ]
   },
   "scout": {

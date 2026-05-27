@@ -19,6 +19,7 @@ import type { WorkerSpec, ReviewerSpec } from "../subagent/specs";
 import { loadPrompt, getFinalOutput } from "../shared/utils";
 import { logger } from "../shared/logger";
 import { registerSubagent, updateSubagentStatus, removeSubagent } from "../shared/subagent-state";
+import { registerPersistentSubagent, updatePersistentSubagent } from "../subagent/persistent-registry";
 import { generateVerificationMatrix } from "../knowledge/verification";
 import type { PlanStepData, InvariantData } from "../knowledge/types";
 import { validateExecutionConfigShape, validateSubagentConfigShape } from "../knowledge/schemas";
@@ -151,6 +152,15 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         taskId: params.task_id,
         controller: abortController,
       });
+      registerPersistentSubagent(ctx.cwd, {
+        id: workerId,
+        name: workerId,
+        type: "worker",
+        task_id: params.task_id,
+        step_number: params.step_number,
+        model,
+        status: "running",
+      });
 
       try {
         const spec: WorkerSpec = {
@@ -202,6 +212,10 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         workerLock.release();
         updateSubagentStatus(workerId, "completed");
         removeSubagent(workerId);
+        updatePersistentSubagent(ctx.cwd, workerId, {
+          status: workerError ? "error" : "completed",
+          exit_code: 0,
+        });
       }
     },
   });
@@ -259,6 +273,15 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         taskId: params.task_id,
         controller: reviewAbortController,
       });
+      registerPersistentSubagent(ctx.cwd, {
+        id: reviewerId,
+        name: reviewerId,
+        type: "reviewer",
+        task_id: params.task_id,
+        step_number: params.step_number,
+        model,
+        status: "running",
+      });
 
       const spec: ReviewerSpec = {
         name: reviewerId,
@@ -302,6 +325,10 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       } finally {
         updateSubagentStatus(reviewerId, reviewerError ? "error" : "completed");
         removeSubagent(reviewerId);
+        updatePersistentSubagent(ctx.cwd, reviewerId, {
+          status: reviewerError ? "error" : "completed",
+          exit_code: 0,
+        });
       }
     },
   });

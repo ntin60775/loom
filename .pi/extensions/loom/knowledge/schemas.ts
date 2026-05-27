@@ -129,11 +129,13 @@ export const SubagentConfigSchema = Type.Object({
   reviewer: Type.Optional(
     Type.Object({
       thinking: Type.Optional(Type.String()),
+      tools: Type.Optional(Type.Array(Type.String())),
       domain_rules: Type.Array(DomainRuleSchema),
     }),
   ),
   worker: Type.Optional(
     Type.Object({
+      tools: Type.Optional(Type.Array(Type.String())),
       domain_rules: Type.Array(DomainRuleSchema),
     }),
   ),
@@ -300,6 +302,14 @@ export const ExecutionConfigSchema = Type.Object({
     on_ambiguity: Type.Boolean(),
     on_worker_blocker: Type.Boolean(),
   })),
+  retry: Type.Optional(Type.Object({
+    strategy: Type.Optional(Type.String({ default: "exponential_backoff" })),
+    base_delay_ms: Type.Optional(Type.Number({ default: 1000 })),
+    max_delay_ms: Type.Optional(Type.Number({ default: 60000 })),
+    multiplier: Type.Optional(Type.Number({ default: 2.0 })),
+    jitter_ms: Type.Optional(Type.Number({ default: 500 })),
+    max_retries_per_step: Type.Optional(Type.Number({ default: 10 })),
+  })),
   recovery: Type.Optional(Type.Object({
     default_strategy: Type.String(),
     max_retries_per_step: Type.Number(),
@@ -397,7 +407,7 @@ export function validateExecutionConfigShape(data: unknown): string | null {
   if (!data || typeof data !== "object") return "not an object";
   const obj = data as Record<string, unknown>;
   const knownSections = [
-    "schema_version", "review", "parallelism", "timeout", "session_retention_days",
+    "schema_version", "review", "retry", "parallelism", "timeout", "session_retention_days",
     "human_in_the_loop", "recovery", "localization_guard", "git", "use_memory_v2", "memory",
   ];
   const hasAnySection = knownSections.some((s) => s in obj);

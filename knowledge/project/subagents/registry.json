@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "subagents": [],
+  "stats": {
+    "total_spawned": 0,
+    "total_completed": 0,
+    "total_failed": 0,
+    "total_aborted": 0
+  }
+}
