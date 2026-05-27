@@ -1,4 +1,7 @@
 {
+  "pi": {
+    "extensions": ["./.pi/extensions/loom/index.dev.ts"]
+  },
   "devDependencies": {
     "@earendil-works/pi-ai": "^0.75.5",
     "@earendil-works/pi-coding-agent": "^0.75.5",

@@ -251,10 +251,10 @@
     "last_accessed_at": null
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step1-1779813431456",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step1-1779877351737",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.456Z",
+    "timestamp": "2026-05-27T10:22:31.737Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Создать JSON schemas\": Вынести все JSON schemas из SDD markdown в отдельные файлы в knowledge/project/schemas/. Схемы на английском.",
@@ -269,17 +269,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.456Z",
-    "updated_at": "2026-05-26T16:37:11.457Z",
+    "created_at": "2026-05-27T10:22:31.737Z",
+    "updated_at": "2026-05-27T10:22:31.738Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.456Z"
+    "last_accessed_at": "2026-05-27T10:22:31.737Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step2-1779813431458",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step2-1779877351738",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.458Z",
+    "timestamp": "2026-05-27T10:22:31.738Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Создать primary JSON-артефакты bootstrap\": Создать task.json, plan.json, sdd.json для TASK-2026-0001-bootstrap из существующих markdown-артефактов. Статусы — machine-readable английские enum.",
@@ -294,17 +294,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.458Z",
-    "updated_at": "2026-05-26T16:37:11.458Z",
+    "created_at": "2026-05-27T10:22:31.738Z",
+    "updated_at": "2026-05-27T10:22:31.739Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.458Z"
+    "last_accessed_at": "2026-05-27T10:22:31.738Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step3-1779813431459",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step3-1779877351740",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.459Z",
+    "timestamp": "2026-05-27T10:22:31.740Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Обновить derivative markdown\": Сгенерировать task.md, plan.md, sdd.md как derivative из JSON. Добавить заголовок 'Generated from task.json'. Исправить 'aide' на 'loom'.",
@@ -319,17 +319,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.459Z",
-    "updated_at": "2026-05-26T16:37:11.460Z",
+    "created_at": "2026-05-27T10:22:31.740Z",
+    "updated_at": "2026-05-27T10:22:31.740Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.459Z"
+    "last_accessed_at": "2026-05-27T10:22:31.740Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step4-1779813431460",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step4-1779877351741",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.460Z",
+    "timestamp": "2026-05-27T10:22:31.741Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Обновить registry.json и AGENTS.md\": Привести registry.json к единому формату. Обновить AGENTS.md: минимальный entry point + localization guard integration + routing commands.",
@@ -344,17 +344,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.460Z",
-    "updated_at": "2026-05-26T16:37:11.461Z",
+    "created_at": "2026-05-27T10:22:31.741Z",
+    "updated_at": "2026-05-27T10:22:31.742Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.460Z"
+    "last_accessed_at": "2026-05-27T10:22:31.741Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step5-1779813431461",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step5-1779877351742",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.461Z",
+    "timestamp": "2026-05-27T10:22:31.742Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Интегрировать owned-text-localization-guard\": Скопировать навык локально в skills/owned-text-localization-guard/. Создать .localization-guard.yml и обертку scripts/check-docs-localization.sh.",
@@ -369,17 +369,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.461Z",
-    "updated_at": "2026-05-26T16:37:11.462Z",
+    "created_at": "2026-05-27T10:22:31.742Z",
+    "updated_at": "2026-05-27T10:22:31.743Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.461Z"
+    "last_accessed_at": "2026-05-27T10:22:31.742Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step6-1779813431462",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step6-1779877351744",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 6,
-    "timestamp": "2026-05-26T16:37:11.462Z",
+    "timestamp": "2026-05-27T10:22:31.744Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Добавить recovery strategy и error schema\": Создать error.schema.json. Документировать поведение при crash worker, timeout reviewer, missing outputArtifact.",
@@ -394,17 +394,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.462Z",
-    "updated_at": "2026-05-26T16:37:11.463Z",
+    "created_at": "2026-05-27T10:22:31.744Z",
+    "updated_at": "2026-05-27T10:22:31.744Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.462Z"
+    "last_accessed_at": "2026-05-27T10:22:31.744Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step7-1779813431464",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step7-1779877351745",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 7,
-    "timestamp": "2026-05-26T16:37:11.464Z",
+    "timestamp": "2026-05-27T10:22:31.745Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Обновить execution-config и subagent-config\": Создать machine-readable configs: execution-config.json (с recovery, git safety, localization guard) и subagent-config.json.",
@@ -419,17 +419,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.464Z",
-    "updated_at": "2026-05-26T16:37:11.464Z",
+    "created_at": "2026-05-27T10:22:31.745Z",
+    "updated_at": "2026-05-27T10:22:31.746Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.464Z"
+    "last_accessed_at": "2026-05-27T10:22:31.745Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step8-1779813431465",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step8-1779877351747",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 8,
-    "timestamp": "2026-05-26T16:37:11.465Z",
+    "timestamp": "2026-05-27T10:22:31.747Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Обновить historical artifacts — disclaimers\": Добавить в analysis-approaches.md, pi-extension-design.md, loom-git-flow-design.md, analysis-stratum-v2.md дисклеймер: 'Historical artifact, names aide/stratum outdated'.",
@@ -444,17 +444,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.465Z",
-    "updated_at": "2026-05-26T16:37:11.465Z",
+    "created_at": "2026-05-27T10:22:31.747Z",
+    "updated_at": "2026-05-27T10:22:31.747Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.465Z"
+    "last_accessed_at": "2026-05-27T10:22:31.747Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step9-1779813431466",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step9-1779877351748",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 9,
-    "timestamp": "2026-05-26T16:37:11.466Z",
+    "timestamp": "2026-05-27T10:22:31.748Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Провести внешнее ревью v2\": Создать review-report-v2.md с явным списком 'исправлено / не исправлено' по каждому замечанию первого ревью.",
@@ -469,17 +469,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.466Z",
-    "updated_at": "2026-05-26T16:37:11.467Z",
+    "created_at": "2026-05-27T10:22:31.748Z",
+    "updated_at": "2026-05-27T10:22:31.749Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.466Z"
+    "last_accessed_at": "2026-05-27T10:22:31.748Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step10-1779813431467",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step10-1779877351749",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 10,
-    "timestamp": "2026-05-26T16:37:11.467Z",
+    "timestamp": "2026-05-27T10:22:31.749Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Обновить README.md\": Обновить README.md для пользователя на русском. Отразить текущий статус и архитектуру.",
@@ -494,17 +494,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.467Z",
-    "updated_at": "2026-05-26T16:37:11.468Z",
+    "created_at": "2026-05-27T10:22:31.749Z",
+    "updated_at": "2026-05-27T10:22:31.750Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.467Z"
+    "last_accessed_at": "2026-05-27T10:22:31.749Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0001-bootstrap-step11-1779813431468",
+    "entry_id": "procedural-TASK-2026-0001-bootstrap-step11-1779877351751",
     "task_id": "TASK-2026-0001-bootstrap",
     "step_number": 11,
-    "timestamp": "2026-05-26T16:37:11.468Z",
+    "timestamp": "2026-05-27T10:22:31.751Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Ядро loom — bootstrap\", for step \"Провести PoC верификацию pi CLI\": Проверить реальное наличие флагов pi CLI: --mode json, --system-prompt, --model, --session-dir, --tools. Создать PoC report.",
@@ -519,17 +519,17 @@
       "auto-seeded",
       "TASK-2026-0001-bootstrap"
     ],
-    "created_at": "2026-05-26T16:37:11.468Z",
-    "updated_at": "2026-05-26T16:37:11.469Z",
+    "created_at": "2026-05-27T10:22:31.751Z",
+    "updated_at": "2026-05-27T10:22:31.751Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.468Z"
+    "last_accessed_at": "2026-05-27T10:22:31.751Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step1-1779813431470",
+    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step1-1779877351752",
     "task_id": "TASK-2026-0002-loom-vnext",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.470Z",
+    "timestamp": "2026-05-27T10:22:31.752Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Когнитивные слои loom v2\", for step \"Создать SDD когнитивных слоёв\": Спроектировать архитектуру Memory Layer (4 дорожки) и Scout Retrieval. Зафиксировать инварианты, компоненты, потоки данных, границы совместимости с v1.",
@@ -544,17 +544,17 @@
       "auto-seeded",
       "TASK-2026-0002-loom-vnext"
     ],
-    "created_at": "2026-05-26T16:37:11.470Z",
-    "updated_at": "2026-05-26T16:37:11.470Z",
+    "created_at": "2026-05-27T10:22:31.752Z",
+    "updated_at": "2026-05-27T10:22:31.753Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.470Z"
+    "last_accessed_at": "2026-05-27T10:22:31.752Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step2-1779813431471",
+    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step2-1779877351754",
     "task_id": "TASK-2026-0002-loom-vnext",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.471Z",
+    "timestamp": "2026-05-27T10:22:31.754Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Когнитивные слои loom v2\", for step \"Изолировать DU в подзадачи\": Создать TASK-2026-0008 (Memory Layer) и TASK-2026-0009 (Scout Retrieval) как изолированные подзадачи со своими task.json, plan.json, task.md. Обновить registry.json.",
@@ -569,17 +569,17 @@
       "auto-seeded",
       "TASK-2026-0002-loom-vnext"
     ],
-    "created_at": "2026-05-26T16:37:11.471Z",
-    "updated_at": "2026-05-26T16:37:11.471Z",
+    "created_at": "2026-05-27T10:22:31.754Z",
+    "updated_at": "2026-05-27T10:22:31.755Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.471Z"
+    "last_accessed_at": "2026-05-27T10:22:31.754Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step3-1779813431472",
+    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step3-1779877351755",
     "task_id": "TASK-2026-0002-loom-vnext",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.472Z",
+    "timestamp": "2026-05-27T10:22:31.755Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Когнитивные слои loom v2\", for step \"Реализовать Memory Layer (DU-1)\": Выполнить подзадачу TASK-2026-0008: реализовать 4 дорожки памяти (session, episodic, semantic, procedural) с активным управлением контекстом. Ранжирование, суммаризация, retention policy.",
@@ -594,17 +594,17 @@
       "auto-seeded",
       "TASK-2026-0002-loom-vnext"
     ],
-    "created_at": "2026-05-26T16:37:11.472Z",
-    "updated_at": "2026-05-26T16:37:11.472Z",
+    "created_at": "2026-05-27T10:22:31.755Z",
+    "updated_at": "2026-05-27T10:22:31.756Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.472Z"
+    "last_accessed_at": "2026-05-27T10:22:31.755Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step4-1779813431473",
+    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step4-1779877351757",
     "task_id": "TASK-2026-0002-loom-vnext",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.473Z",
+    "timestamp": "2026-05-27T10:22:31.757Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Когнитивные слои loom v2\", for step \"Реализовать Scout Retrieval (DU-2)\": Выполнить подзадачу TASK-2026-0009: реализовать search_knowledge tool, scout-based поиск по project knowledge без эмбеддингов.",
@@ -619,17 +619,17 @@
       "auto-seeded",
       "TASK-2026-0002-loom-vnext"
     ],
-    "created_at": "2026-05-26T16:37:11.473Z",
-    "updated_at": "2026-05-26T16:37:11.474Z",
+    "created_at": "2026-05-27T10:22:31.757Z",
+    "updated_at": "2026-05-27T10:22:31.757Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.473Z"
+    "last_accessed_at": "2026-05-27T10:22:31.757Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step5-1779813431474",
+    "entry_id": "procedural-TASK-2026-0002-loom-vnext-step5-1779877351758",
     "task_id": "TASK-2026-0002-loom-vnext",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.474Z",
+    "timestamp": "2026-05-27T10:22:31.758Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Когнитивные слои loom v2\", for step \"Интеграция и совместимость v1\": Интегрировать Memory Layer и Scout Retrieval в существующий executor. Проверить обратную совместимость: все v1 форматы, API, инструменты работают без изменений.",
@@ -644,17 +644,17 @@
       "auto-seeded",
       "TASK-2026-0002-loom-vnext"
     ],
-    "created_at": "2026-05-26T16:37:11.474Z",
-    "updated_at": "2026-05-26T16:37:11.475Z",
+    "created_at": "2026-05-27T10:22:31.758Z",
+    "updated_at": "2026-05-27T10:22:31.758Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.474Z"
+    "last_accessed_at": "2026-05-27T10:22:31.758Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step1-1779813431476",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step1-1779877351759",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.476Z",
+    "timestamp": "2026-05-27T10:22:31.759Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Создать extension entry point\": Создать .pi/extensions/loom/index.ts — entry point с event hooks, commands, state init. Зарегистрировать команды /plan, /agent, /loom-init, /task-status.",
@@ -669,17 +669,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.476Z",
-    "updated_at": "2026-05-26T16:37:11.477Z",
+    "created_at": "2026-05-27T10:22:31.759Z",
+    "updated_at": "2026-05-27T10:22:31.760Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.476Z"
+    "last_accessed_at": "2026-05-27T10:22:31.759Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step2-1779813431477",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step2-1779877351761",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.477Z",
+    "timestamp": "2026-05-27T10:22:31.761Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Реализовать Plan Mode orchestrator\": Создать plan-mode/orchestrator.ts и tools.ts. Tools: loom_create_task, loom_create_plan, loom_add_invariant, loom_add_delivery_unit, loom_spawn_subagent, loom_finalize_plan.",
@@ -694,17 +694,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.477Z",
-    "updated_at": "2026-05-26T16:37:11.478Z",
+    "created_at": "2026-05-27T10:22:31.761Z",
+    "updated_at": "2026-05-27T10:22:31.761Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.477Z"
+    "last_accessed_at": "2026-05-27T10:22:31.761Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step3-1779813431478",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step3-1779877351762",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.478Z",
+    "timestamp": "2026-05-27T10:22:31.762Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Реализовать Agent Mode executor\": Создать agent-mode/executor.ts, executor-loop.ts, tools.ts. Executor loop: step -> worker -> review -> decision. Tools: loom_get_next_step, loom_spawn_worker, loom_spawn_reviewer, loom_check_iteration, loom_update_task, loom_read_artifact.",
@@ -719,17 +719,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.478Z",
-    "updated_at": "2026-05-26T16:37:11.479Z",
+    "created_at": "2026-05-27T10:22:31.762Z",
+    "updated_at": "2026-05-27T10:22:31.762Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.478Z"
+    "last_accessed_at": "2026-05-27T10:22:31.762Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step4-1779813431480",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step4-1779877351763",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.480Z",
+    "timestamp": "2026-05-27T10:22:31.763Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Реализовать Knowledge I/O\": Создать knowledge/io.ts (JSON read/write, markdown generator), knowledge/schemas.ts (TypeBox schemas), knowledge/onboarding.ts (init pipeline).",
@@ -744,17 +744,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.480Z",
-    "updated_at": "2026-05-26T16:37:11.480Z",
+    "created_at": "2026-05-27T10:22:31.763Z",
+    "updated_at": "2026-05-27T10:22:31.764Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.480Z"
+    "last_accessed_at": "2026-05-27T10:22:31.763Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step5-1779813431481",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step5-1779877351764",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.481Z",
+    "timestamp": "2026-05-27T10:22:31.764Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Реализовать Subagent Spawner\": Создать subagent/spawner.ts (tmux + pi CLI launch), subagent/progress.ts (progress.json polling), subagent/specs.ts (WorkerSpec, ReviewerSpec types). Подтвердить работу с реальным pi.",
@@ -769,17 +769,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.481Z",
-    "updated_at": "2026-05-26T16:37:11.481Z",
+    "created_at": "2026-05-27T10:22:31.764Z",
+    "updated_at": "2026-05-27T10:22:31.765Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.481Z"
+    "last_accessed_at": "2026-05-27T10:22:31.764Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step6-1779813431482",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step6-1779877351766",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 6,
-    "timestamp": "2026-05-26T16:37:11.482Z",
+    "timestamp": "2026-05-27T10:22:31.766Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Реализовать Worker subagent prompt\": Создать subagent/prompts/worker.md — универсальный worker prompt. Инструкции: task-scoped commit, files-to-commit.json, summary.json, audit.json.",
@@ -794,17 +794,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.482Z",
-    "updated_at": "2026-05-26T16:37:11.483Z",
+    "created_at": "2026-05-27T10:22:31.766Z",
+    "updated_at": "2026-05-27T10:22:31.766Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.482Z"
+    "last_accessed_at": "2026-05-27T10:22:31.766Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step7-1779813431483",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step7-1779877351767",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 7,
-    "timestamp": "2026-05-26T16:37:11.483Z",
+    "timestamp": "2026-05-27T10:22:31.767Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Реализовать Reviewer subagent prompt\": Создать subagent/prompts/reviewer.md — универсальный reviewer prompt. Инструкции: git show, read files, compare with criteria, write review.json.",
@@ -819,17 +819,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.483Z",
-    "updated_at": "2026-05-26T16:37:11.484Z",
+    "created_at": "2026-05-27T10:22:31.767Z",
+    "updated_at": "2026-05-27T10:22:31.768Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.483Z"
+    "last_accessed_at": "2026-05-27T10:22:31.767Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step8-1779813431484",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step8-1779877351768",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 8,
-    "timestamp": "2026-05-26T16:37:11.484Z",
+    "timestamp": "2026-05-27T10:22:31.768Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Интегрировать TUI widgets\": Создать ui/mode-widget.ts ([PLAN]/[AGENT]), ui/task-widget.ts (step progress), ui/subagent-widget.ts (фаза 2).",
@@ -844,17 +844,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.484Z",
-    "updated_at": "2026-05-26T16:37:11.485Z",
+    "created_at": "2026-05-27T10:22:31.768Z",
+    "updated_at": "2026-05-27T10:22:31.769Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.484Z"
+    "last_accessed_at": "2026-05-27T10:22:31.768Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step9-1779813431485",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step9-1779877351769",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 9,
-    "timestamp": "2026-05-26T16:37:11.485Z",
+    "timestamp": "2026-05-27T10:22:31.769Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Интеграционный тест: Plan -> Agent flow\": End-to-end тест: /plan -> create_task -> create_plan -> finalize_plan -> auto-switch -> spawn_worker -> spawn_reviewer -> approve -> next step. Проверить на реальном проекте.",
@@ -869,17 +869,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.485Z",
-    "updated_at": "2026-05-26T16:37:11.486Z",
+    "created_at": "2026-05-27T10:22:31.769Z",
+    "updated_at": "2026-05-27T10:22:31.770Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.485Z"
+    "last_accessed_at": "2026-05-27T10:22:31.769Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step10-1779813431487",
+    "entry_id": "procedural-TASK-2026-0004-agent-mode-impl-step10-1779877351771",
     "task_id": "TASK-2026-0004-agent-mode-impl",
     "step_number": 10,
-    "timestamp": "2026-05-26T16:37:11.487Z",
+    "timestamp": "2026-05-27T10:22:31.771Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-2: Реализация Agent Mode + Git-based review\", for step \"Ревью и фиксация DU-2\": Провести review кода extension. Исправить замечания. Закоммитить. Обновить task.json DU-2 status -> completed.",
@@ -894,17 +894,17 @@
       "auto-seeded",
       "TASK-2026-0004-agent-mode-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.487Z",
-    "updated_at": "2026-05-26T16:37:11.487Z",
+    "created_at": "2026-05-27T10:22:31.771Z",
+    "updated_at": "2026-05-27T10:22:31.771Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.487Z"
+    "last_accessed_at": "2026-05-27T10:22:31.771Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step1-1779813431488",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step1-1779877351772",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.488Z",
+    "timestamp": "2026-05-27T10:22:31.772Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Реализовать scout subagent\": Создать универсальный scout prompt и spawner integration. Scout исследует codebase, строит stack.json и modules/.",
@@ -919,17 +919,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.488Z",
-    "updated_at": "2026-05-26T16:37:11.489Z",
+    "created_at": "2026-05-27T10:22:31.772Z",
+    "updated_at": "2026-05-27T10:22:31.773Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.488Z"
+    "last_accessed_at": "2026-05-27T10:22:31.772Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step2-1779813431489",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step2-1779877351773",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.489Z",
+    "timestamp": "2026-05-27T10:22:31.773Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Реализовать research subagent\": Создать research subagent для анализа README, CI/CD, внешней документации. Output: context-research.json.",
@@ -944,17 +944,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.489Z",
-    "updated_at": "2026-05-26T16:37:11.490Z",
+    "created_at": "2026-05-27T10:22:31.773Z",
+    "updated_at": "2026-05-27T10:22:31.774Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.489Z"
+    "last_accessed_at": "2026-05-27T10:22:31.773Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step3-1779813431490",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step3-1779877351775",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.490Z",
+    "timestamp": "2026-05-27T10:22:31.775Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Реализовать migration subagent\": Создать migrator subagent для анализа foreign task systems (task-centric-knowledge и др.). Output: migration-analysis.json.",
@@ -969,17 +969,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.490Z",
-    "updated_at": "2026-05-26T16:37:11.491Z",
+    "created_at": "2026-05-27T10:22:31.775Z",
+    "updated_at": "2026-05-27T10:22:31.775Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.490Z"
+    "last_accessed_at": "2026-05-27T10:22:31.775Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step4-1779813431492",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step4-1779877351776",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.492Z",
+    "timestamp": "2026-05-27T10:22:31.776Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Реализовать rules catalog\": Команды /rule-add, /rule-list. Авто-экстракция правил из кода. Хранение: knowledge/project/rules/.",
@@ -994,17 +994,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.492Z",
-    "updated_at": "2026-05-26T16:37:11.492Z",
+    "created_at": "2026-05-27T10:22:31.776Z",
+    "updated_at": "2026-05-27T10:22:31.776Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.492Z"
+    "last_accessed_at": "2026-05-27T10:22:31.776Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step5-1779813431493",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step5-1779877351777",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.493Z",
+    "timestamp": "2026-05-27T10:22:31.777Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Реализовать architecture catalog\": Авто-детекция компонентов, ручное документирование. Хранение: knowledge/project/architecture/components/.",
@@ -1019,17 +1019,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.493Z",
-    "updated_at": "2026-05-26T16:37:11.493Z",
+    "created_at": "2026-05-27T10:22:31.777Z",
+    "updated_at": "2026-05-27T10:22:31.778Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.493Z"
+    "last_accessed_at": "2026-05-27T10:22:31.777Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step6-1779813431494",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step6-1779877351778",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 6,
-    "timestamp": "2026-05-26T16:37:11.494Z",
+    "timestamp": "2026-05-27T10:22:31.778Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Реализовать onboarding pipeline\": Объединить pre-check, scout, research, migration, rules, AGENTS.md generator в единый /loom-init flow.",
@@ -1044,17 +1044,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.494Z",
-    "updated_at": "2026-05-26T16:37:11.494Z",
+    "created_at": "2026-05-27T10:22:31.778Z",
+    "updated_at": "2026-05-27T10:22:31.779Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.494Z"
+    "last_accessed_at": "2026-05-27T10:22:31.778Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step7-1779813431495",
+    "entry_id": "procedural-TASK-2026-0005-onboarding-impl-step7-1779877351780",
     "task_id": "TASK-2026-0005-onboarding-impl",
     "step_number": 7,
-    "timestamp": "2026-05-26T16:37:11.495Z",
+    "timestamp": "2026-05-27T10:22:31.780Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-3: Реализация Onboarding + Knowledge accumulation\", for step \"Ревью и фиксация DU-3\": Провести review. Исправить замечания. Закоммитить. Обновить task.json status -> completed.",
@@ -1069,17 +1069,17 @@
       "auto-seeded",
       "TASK-2026-0005-onboarding-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.495Z",
-    "updated_at": "2026-05-26T16:37:11.496Z",
+    "created_at": "2026-05-27T10:22:31.780Z",
+    "updated_at": "2026-05-27T10:22:31.781Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.495Z"
+    "last_accessed_at": "2026-05-27T10:22:31.780Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0006-polish-impl-step1-1779813431496",
+    "entry_id": "procedural-TASK-2026-0006-polish-impl-step1-1779877351782",
     "task_id": "TASK-2026-0006-polish-impl",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.496Z",
+    "timestamp": "2026-05-27T10:22:31.782Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Полировка — TUI, localization guard, verification matrix\", for step \"Реализовать task widget\": TUI widget для отображения текущей задачи, шагов, прогресса, статуса субагентов.",
@@ -1094,17 +1094,17 @@
       "auto-seeded",
       "TASK-2026-0006-polish-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.496Z",
-    "updated_at": "2026-05-26T16:37:11.497Z",
+    "created_at": "2026-05-27T10:22:31.782Z",
+    "updated_at": "2026-05-27T10:22:31.783Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.496Z"
+    "last_accessed_at": "2026-05-27T10:22:31.782Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0006-polish-impl-step2-1779813431498",
+    "entry_id": "procedural-TASK-2026-0006-polish-impl-step2-1779877351783",
     "task_id": "TASK-2026-0006-polish-impl",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.498Z",
+    "timestamp": "2026-05-27T10:22:31.783Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Полировка — TUI, localization guard, verification matrix\", for step \"Реализовать subagent widget (фаза 2)\": TUI widget со списком запущенных субагентов, статусами, моделями. Команды /subagents, /subagent-focus, /subagent-kill.",
@@ -1119,17 +1119,17 @@
       "auto-seeded",
       "TASK-2026-0006-polish-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.498Z",
-    "updated_at": "2026-05-26T16:37:11.498Z",
+    "created_at": "2026-05-27T10:22:31.783Z",
+    "updated_at": "2026-05-27T10:22:31.784Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.498Z"
+    "last_accessed_at": "2026-05-27T10:22:31.783Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0006-polish-impl-step3-1779813431499",
+    "entry_id": "procedural-TASK-2026-0006-polish-impl-step3-1779877351785",
     "task_id": "TASK-2026-0006-polish-impl",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.499Z",
+    "timestamp": "2026-05-27T10:22:31.785Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Полировка — TUI, localization guard, verification matrix\", for step \"Интегрировать localization guard в review pipeline\": Executor автоматически запускает localization guard после worker commit. При fail — reject review с correction.",
@@ -1144,17 +1144,17 @@
       "auto-seeded",
       "TASK-2026-0006-polish-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.499Z",
-    "updated_at": "2026-05-26T16:37:11.499Z",
+    "created_at": "2026-05-27T10:22:31.785Z",
+    "updated_at": "2026-05-27T10:22:31.785Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.499Z"
+    "last_accessed_at": "2026-05-27T10:22:31.785Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0006-polish-impl-step4-1779813431500",
+    "entry_id": "procedural-TASK-2026-0006-polish-impl-step4-1779877351786",
     "task_id": "TASK-2026-0006-polish-impl",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.500Z",
+    "timestamp": "2026-05-27T10:22:31.786Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Полировка — TUI, localization guard, verification matrix\", for step \"Реализовать verification matrix\": Автоматическая проверка инвариантов после завершения всех шагов. Результат: artifacts/verification-matrix.json.",
@@ -1169,17 +1169,17 @@
       "auto-seeded",
       "TASK-2026-0006-polish-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.500Z",
-    "updated_at": "2026-05-26T16:37:11.501Z",
+    "created_at": "2026-05-27T10:22:31.786Z",
+    "updated_at": "2026-05-27T10:22:31.787Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.500Z"
+    "last_accessed_at": "2026-05-27T10:22:31.786Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0006-polish-impl-step5-1779813431501",
+    "entry_id": "procedural-TASK-2026-0006-polish-impl-step5-1779877351787",
     "task_id": "TASK-2026-0006-polish-impl",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.501Z",
+    "timestamp": "2026-05-27T10:22:31.787Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Полировка — TUI, localization guard, verification matrix\", for step \"Реализовать subagent config editor\": Команда /loom-config для редактирования execution-config.json и subagent-config.json через TUI.",
@@ -1194,17 +1194,17 @@
       "auto-seeded",
       "TASK-2026-0006-polish-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.501Z",
-    "updated_at": "2026-05-26T16:37:11.502Z",
+    "created_at": "2026-05-27T10:22:31.787Z",
+    "updated_at": "2026-05-27T10:22:31.788Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.501Z"
+    "last_accessed_at": "2026-05-27T10:22:31.787Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0006-polish-impl-step6-1779813431502",
+    "entry_id": "procedural-TASK-2026-0006-polish-impl-step6-1779877351789",
     "task_id": "TASK-2026-0006-polish-impl",
     "step_number": 6,
-    "timestamp": "2026-05-26T16:37:11.502Z",
+    "timestamp": "2026-05-27T10:22:31.789Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Полировка — TUI, localization guard, verification matrix\", for step \"Ревью и фиксация DU-4\": Провести review. Исправить замечания. Закоммитить. Обновить task.json status -> completed.",
@@ -1219,17 +1219,17 @@
       "auto-seeded",
       "TASK-2026-0006-polish-impl"
     ],
-    "created_at": "2026-05-26T16:37:11.502Z",
-    "updated_at": "2026-05-26T16:37:11.503Z",
+    "created_at": "2026-05-27T10:22:31.789Z",
+    "updated_at": "2026-05-27T10:22:31.789Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.502Z"
+    "last_accessed_at": "2026-05-27T10:22:31.789Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step1-1779813431504",
+    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step1-1779877351790",
     "task_id": "TASK-2026-0007-polish-fixes",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.504Z",
+    "timestamp": "2026-05-27T10:22:31.790Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Post-review tech-debt fixes (P1-P5)\", for step \"P4: loadPrompt выбрасывает ошибку вместо fallback-строки\": Изменить loadPrompt в shared/utils.ts: при отсутствии файла выбрасывать Error. Убрать возврат '[LOAD ERROR: ...]' строки, которая попадает в system prompt агента.",
@@ -1244,17 +1244,17 @@
       "auto-seeded",
       "TASK-2026-0007-polish-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.504Z",
-    "updated_at": "2026-05-26T16:37:11.504Z",
+    "created_at": "2026-05-27T10:22:31.790Z",
+    "updated_at": "2026-05-27T10:22:31.791Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.504Z"
+    "last_accessed_at": "2026-05-27T10:22:31.790Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step2-1779813431505",
+    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step2-1779877351791",
     "task_id": "TASK-2026-0007-polish-fixes",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.505Z",
+    "timestamp": "2026-05-27T10:22:31.791Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Post-review tech-debt fixes (P1-P5)\", for step \"P1: Rollback шага в pending при ошибке worker\": В loom_spawn_worker (agent-mode/tools.ts): при workerError откатить статус шага в 'pending' через writeJson. Предотвращает застревание шага в статусе in_progress без фактического выполнения.",
@@ -1269,17 +1269,17 @@
       "auto-seeded",
       "TASK-2026-0007-polish-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.505Z",
-    "updated_at": "2026-05-26T16:37:11.505Z",
+    "created_at": "2026-05-27T10:22:31.791Z",
+    "updated_at": "2026-05-27T10:22:31.792Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.505Z"
+    "last_accessed_at": "2026-05-27T10:22:31.791Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step3-1779813431506",
+    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step3-1779877351792",
     "task_id": "TASK-2026-0007-polish-fixes",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.506Z",
+    "timestamp": "2026-05-27T10:22:31.792Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Post-review tech-debt fixes (P1-P5)\", for step \"P2: Реальный kill субагента через AbortController\": Добавить AbortController tracking в SubagentRecord. В loom_spawn_worker создавать AbortController, регистрировать в subagent-state, передавать signal в spawnSubagent. В killSubagent вызывать controller.abort() для реального убийства процесса.",
@@ -1294,17 +1294,17 @@
       "auto-seeded",
       "TASK-2026-0007-polish-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.506Z",
-    "updated_at": "2026-05-26T16:37:11.507Z",
+    "created_at": "2026-05-27T10:22:31.792Z",
+    "updated_at": "2026-05-27T10:22:31.793Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.506Z"
+    "last_accessed_at": "2026-05-27T10:22:31.792Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step4-1779813431507",
+    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step4-1779877351794",
     "task_id": "TASK-2026-0007-polish-fixes",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.507Z",
+    "timestamp": "2026-05-27T10:22:31.794Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Post-review tech-debt fixes (P1-P5)\", for step \"P3: Авто-генерация verification matrix\": В loom_update_task при task_status === 'completed' автоматически вызывать generateVerificationMatrix. Устраняет расхождение с SDD, где заявлено 'Auto-check invariants after step completion'.",
@@ -1319,17 +1319,17 @@
       "auto-seeded",
       "TASK-2026-0007-polish-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.507Z",
-    "updated_at": "2026-05-26T16:37:11.508Z",
+    "created_at": "2026-05-27T10:22:31.794Z",
+    "updated_at": "2026-05-27T10:22:31.794Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.507Z"
+    "last_accessed_at": "2026-05-27T10:22:31.794Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step5-1779813431508",
+    "entry_id": "procedural-TASK-2026-0007-polish-fixes-step5-1779877351795",
     "task_id": "TASK-2026-0007-polish-fixes",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.508Z",
+    "timestamp": "2026-05-27T10:22:31.795Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-4: Post-review tech-debt fixes (P1-P5)\", for step \"P5: Документирование практик files-to-commit.json\": Обновить документацию: добавить в AGENTS.md рекомендацию обновлять files-to-commit.json перед каждым коммитом.",
@@ -1344,17 +1344,17 @@
       "auto-seeded",
       "TASK-2026-0007-polish-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.508Z",
-    "updated_at": "2026-05-26T16:37:11.509Z",
+    "created_at": "2026-05-27T10:22:31.795Z",
+    "updated_at": "2026-05-27T10:22:31.796Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.508Z"
+    "last_accessed_at": "2026-05-27T10:22:31.795Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step1-1779813431510",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step1-1779877351796",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.510Z",
+    "timestamp": "2026-05-27T10:22:31.796Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Спроектировать data model для 4 дорожек\": Определить форматы хранения для session, episodic, semantic, procedural. Создать JSON schema memory-entry.schema.json. Зафиксировать поля: task_id, timestamp, track_type, content, relevance_score, source_ref.",
@@ -1369,17 +1369,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.510Z",
-    "updated_at": "2026-05-26T16:37:11.510Z",
+    "created_at": "2026-05-27T10:22:31.796Z",
+    "updated_at": "2026-05-27T10:22:31.797Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.510Z"
+    "last_accessed_at": "2026-05-27T10:22:31.796Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step2-1779813431511",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step2-1779877351797",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.511Z",
+    "timestamp": "2026-05-27T10:22:31.797Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Реализовать Session Track\": Кратковременный контекст текущей сессии. In-memory хранилище. Очистка при закрытии. Не персистентен. API: append, get_context(budget), clear.",
@@ -1394,17 +1394,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.511Z",
-    "updated_at": "2026-05-26T16:37:11.512Z",
+    "created_at": "2026-05-27T10:22:31.797Z",
+    "updated_at": "2026-05-27T10:22:31.798Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.511Z"
+    "last_accessed_at": "2026-05-27T10:22:31.797Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step3-1779813431512",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step3-1779877351799",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.512Z",
+    "timestamp": "2026-05-27T10:22:31.799Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Реализовать Episodic Store\": Хранение событий и решений по задачам. Файловое хранилище: knowledge/tasks/{task_id}/artifacts/memory-episodic.json. Индексация по дате, task_id, step_number. API: record, query, summarize.",
@@ -1419,17 +1419,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.512Z",
-    "updated_at": "2026-05-26T16:37:11.513Z",
+    "created_at": "2026-05-27T10:22:31.799Z",
+    "updated_at": "2026-05-27T10:22:31.799Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.512Z"
+    "last_accessed_at": "2026-05-27T10:22:31.799Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step4-1779813431513",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step4-1779877351800",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.513Z",
+    "timestamp": "2026-05-27T10:22:31.800Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Реализовать Semantic Store\": Хранение фактов, правил, архитектурных компонентов. Источники: rules/, architecture/, task invariants. Файловое хранилище: knowledge/project/memory/semantic.json. API: index, query, update.",
@@ -1444,17 +1444,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.513Z",
-    "updated_at": "2026-05-26T16:37:11.514Z",
+    "created_at": "2026-05-27T10:22:31.800Z",
+    "updated_at": "2026-05-27T10:22:31.801Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.513Z"
+    "last_accessed_at": "2026-05-27T10:22:31.800Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step5-1779813431515",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step5-1779877351801",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.515Z",
+    "timestamp": "2026-05-27T10:22:31.801Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Реализовать Procedural Store\": Хранение проверенных практик и паттернов из closed tasks. Файловое хранилище: knowledge/project/memory/procedural.json. Ручное извлечение на старте (авто — deferred). API: learn, query, validate.",
@@ -1469,17 +1469,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.515Z",
-    "updated_at": "2026-05-26T16:37:11.515Z",
+    "created_at": "2026-05-27T10:22:31.801Z",
+    "updated_at": "2026-05-27T10:22:31.802Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.515Z"
+    "last_accessed_at": "2026-05-27T10:22:31.801Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step6-1779813431516",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step6-1779877351802",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 6,
-    "timestamp": "2026-05-26T16:37:11.516Z",
+    "timestamp": "2026-05-27T10:22:31.802Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Реализовать Memory Manager\": Оркестратор 4 дорожек. Retention policy: max_entries per track, max_age, min_relevance. Relevance scoring: комбинация freshness, frequency, explicit operator rating. Summarization: при превышении threshold — compact.",
@@ -1494,17 +1494,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.516Z",
-    "updated_at": "2026-05-26T16:37:11.517Z",
+    "created_at": "2026-05-27T10:22:31.802Z",
+    "updated_at": "2026-05-27T10:22:31.803Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.516Z"
+    "last_accessed_at": "2026-05-27T10:22:31.802Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step7-1779813431517",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step7-1779877351804",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 7,
-    "timestamp": "2026-05-26T16:37:11.517Z",
+    "timestamp": "2026-05-27T10:22:31.804Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Реализовать Context Assembler\": Сборка контекста для агента. Приоритет: semantic > episodic > procedural > session. Token budget: configurable в execution-config.json. Truncation: по приоритету, с lossy summarization для низкоприоритетных дорожек.",
@@ -1519,17 +1519,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.517Z",
-    "updated_at": "2026-05-26T16:37:11.518Z",
+    "created_at": "2026-05-27T10:22:31.804Z",
+    "updated_at": "2026-05-27T10:22:31.804Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.517Z"
+    "last_accessed_at": "2026-05-27T10:22:31.804Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step8-1779813431518",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step8-1779877351805",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 8,
-    "timestamp": "2026-05-26T16:37:11.518Z",
+    "timestamp": "2026-05-27T10:22:31.805Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Интеграция с Executor v1 (backward compat)\": Добавить opt-in флаг use_memory_v2 в execution-config.json. При false — executor работает как v1 без изменений. При true — ContextAssembler вызывается перед spawn_worker/spawn_reviewer.",
@@ -1544,17 +1544,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.518Z",
-    "updated_at": "2026-05-26T16:37:11.519Z",
+    "created_at": "2026-05-27T10:22:31.805Z",
+    "updated_at": "2026-05-27T10:22:31.806Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.518Z"
+    "last_accessed_at": "2026-05-27T10:22:31.805Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0008-memory-layer-step9-1779813431519",
+    "entry_id": "procedural-TASK-2026-0008-memory-layer-step9-1779877351806",
     "task_id": "TASK-2026-0008-memory-layer",
     "step_number": 9,
-    "timestamp": "2026-05-26T16:37:11.519Z",
+    "timestamp": "2026-05-27T10:22:31.806Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"DU-1: Memory Layer\", for step \"Тесты и verification matrix\": Прогнать автопроверки: JSON schema валидность, token budget respect, backward compatibility. Создать artifacts/verification-matrix.md и review.json.",
@@ -1569,17 +1569,17 @@
       "auto-seeded",
       "TASK-2026-0008-memory-layer"
     ],
-    "created_at": "2026-05-26T16:37:11.519Z",
-    "updated_at": "2026-05-26T16:37:11.520Z",
+    "created_at": "2026-05-27T10:22:31.806Z",
+    "updated_at": "2026-05-27T10:22:31.807Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.519Z"
+    "last_accessed_at": "2026-05-27T10:22:31.806Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step1-1779813431521",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step1-1779877351809",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 1,
-    "timestamp": "2026-05-26T16:37:11.521Z",
+    "timestamp": "2026-05-27T10:22:31.809Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"C4+C2+W5: Критические исправления конфигов и форматов\": undefined",
@@ -1594,17 +1594,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.521Z",
-    "updated_at": "2026-05-26T16:37:11.521Z",
+    "created_at": "2026-05-27T10:22:31.809Z",
+    "updated_at": "2026-05-27T10:22:31.809Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.521Z"
+    "last_accessed_at": "2026-05-27T10:22:31.809Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step2-1779813431522",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step2-1779877351810",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 2,
-    "timestamp": "2026-05-26T16:37:11.522Z",
+    "timestamp": "2026-05-27T10:22:31.810Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"W8+W9+W10+W12: Инфраструктурные файлы\": undefined",
@@ -1619,17 +1619,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.522Z",
-    "updated_at": "2026-05-26T16:37:11.523Z",
+    "created_at": "2026-05-27T10:22:31.810Z",
+    "updated_at": "2026-05-27T10:22:31.811Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.522Z"
+    "last_accessed_at": "2026-05-27T10:22:31.810Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step3-1779813431523",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step3-1779877351811",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 3,
-    "timestamp": "2026-05-26T16:37:11.523Z",
+    "timestamp": "2026-05-27T10:22:31.811Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"W1+W2+W11: Асинхронные вызовы + timeout из конфига\": undefined",
@@ -1644,17 +1644,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.523Z",
-    "updated_at": "2026-05-26T16:37:11.524Z",
+    "created_at": "2026-05-27T10:22:31.811Z",
+    "updated_at": "2026-05-27T10:22:31.812Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.523Z"
+    "last_accessed_at": "2026-05-27T10:22:31.811Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step4-1779813431524",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step4-1779877351812",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 4,
-    "timestamp": "2026-05-26T16:37:11.524Z",
+    "timestamp": "2026-05-27T10:22:31.812Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"W3+W4: DRY BaseStore + batch-write для memory store-ов\": undefined",
@@ -1669,17 +1669,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.524Z",
-    "updated_at": "2026-05-26T16:37:11.525Z",
+    "created_at": "2026-05-27T10:22:31.812Z",
+    "updated_at": "2026-05-27T10:22:31.813Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.524Z"
+    "last_accessed_at": "2026-05-27T10:22:31.812Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step5-1779813431525",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step5-1779877351814",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 5,
-    "timestamp": "2026-05-26T16:37:11.525Z",
+    "timestamp": "2026-05-27T10:22:31.814Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"DU-3: Архитектура тестирования + vitest + инфраструктура\": undefined",
@@ -1694,17 +1694,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.525Z",
-    "updated_at": "2026-05-26T16:37:11.526Z",
+    "created_at": "2026-05-27T10:22:31.814Z",
+    "updated_at": "2026-05-27T10:22:31.814Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.525Z"
+    "last_accessed_at": "2026-05-27T10:22:31.814Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step6-1779813431527",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step6-1779877351815",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 6,
-    "timestamp": "2026-05-26T16:37:11.527Z",
+    "timestamp": "2026-05-27T10:22:31.815Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"DU-3: Тесты — knowledge/ модуль (io, schemas, onboarding)\": undefined",
@@ -1719,17 +1719,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.527Z",
-    "updated_at": "2026-05-26T16:37:11.527Z",
+    "created_at": "2026-05-27T10:22:31.815Z",
+    "updated_at": "2026-05-27T10:22:31.816Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.527Z"
+    "last_accessed_at": "2026-05-27T10:22:31.815Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step7-1779813431528",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step7-1779877351816",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 7,
-    "timestamp": "2026-05-26T16:37:11.528Z",
+    "timestamp": "2026-05-27T10:22:31.816Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"DU-3: Тесты — memory/ модуль (все store-ы + manager + assembler)\": undefined",
@@ -1744,17 +1744,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.528Z",
-    "updated_at": "2026-05-26T16:37:11.528Z",
+    "created_at": "2026-05-27T10:22:31.816Z",
+    "updated_at": "2026-05-27T10:22:31.817Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.528Z"
+    "last_accessed_at": "2026-05-27T10:22:31.816Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step8-1779813431529",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step8-1779877351818",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 8,
-    "timestamp": "2026-05-26T16:37:11.529Z",
+    "timestamp": "2026-05-27T10:22:31.818Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"DU-3: Тесты — retrieval, agent-mode, subagent, shared\": undefined",
@@ -1769,17 +1769,17 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.529Z",
-    "updated_at": "2026-05-26T16:37:11.530Z",
+    "created_at": "2026-05-27T10:22:31.818Z",
+    "updated_at": "2026-05-27T10:22:31.818Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.529Z"
+    "last_accessed_at": "2026-05-27T10:22:31.818Z"
   },
   {
-    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step9-1779813431530",
+    "entry_id": "procedural-TASK-2026-0010-post-review-fixes-step9-1779877351819",
     "task_id": "TASK-2026-0010-post-review-fixes",
     "step_number": 9,
-    "timestamp": "2026-05-26T16:37:11.530Z",
+    "timestamp": "2026-05-27T10:22:31.819Z",
     "track_type": "procedural",
     "content": {
       "pattern": "When working on \"Постревью-исправления: критические замечания + тестовое покрытие\", for step \"W6+W7: Обновление статусов + финальная верификация\": undefined",
@@ -1794,10 +1794,135 @@
       "auto-seeded",
       "TASK-2026-0010-post-review-fixes"
     ],
-    "created_at": "2026-05-26T16:37:11.530Z",
-    "updated_at": "2026-05-26T16:37:11.531Z",
+    "created_at": "2026-05-27T10:22:31.819Z",
+    "updated_at": "2026-05-27T10:22:31.819Z",
     "expires_at": null,
     "access_count": 0,
-    "last_accessed_at": "2026-05-26T16:37:11.530Z"
+    "last_accessed_at": "2026-05-27T10:22:31.819Z"
+  },
+  {
+    "entry_id": "procedural-TASK-2026-0013-step1-1779877351820",
+    "task_id": "TASK-2026-0013",
+    "step_number": 1,
+    "timestamp": "2026-05-27T10:22:31.820Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "When working on \"Переносимый бэкап pi-окружения для другой машины\", for step \"Инвентаризация pi-окружения\": Точный список включаемых/исключаемых артефактов: конфиги, навыки, расширения, npm-пакеты. Особые случаи: pi-search-hub (сохранить из node_modules, npm-версия битая), models.json (ключи как есть).",
+      "context": "Task TASK-2026-0013: Переносимый бэкап pi-окружения для другой машины. Expected output: backup-inventory.json",
+      "validation_status": "draft",
+      "origin_task_id": "TASK-2026-0013",
+      "usage_count": 0
+    },
+    "relevance_score": 0.6,
+    "source_ref": "procedural:when working on \"переносимый бэкап pi-окружения для другой машины\", for step \"инвентаризация pi-окружения\": точный список включаемых/исключаемых артефактов: конфиги, навыки, расширения, npm-пакеты. особые случаи: pi-search-hub (сохранить из node_modules, npm-версия битая), models.json (ключи как есть).",
+    "tags": [
+      "auto-seeded",
+      "TASK-2026-0013"
+    ],
+    "created_at": "2026-05-27T10:22:31.820Z",
+    "updated_at": "2026-05-27T10:22:31.821Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-27T10:22:31.820Z"
+  },
+  {
+    "entry_id": "procedural-TASK-2026-0013-step2-1779877351821",
+    "task_id": "TASK-2026-0013",
+    "step_number": 2,
+    "timestamp": "2026-05-27T10:22:31.821Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "When working on \"Переносимый бэкап pi-окружения для другой машины\", for step \"Создать backup.sh\": Bash-скрипт упаковки. Включает: AGENTS.md, models.json (с ключами), settings, auth, themes, bin, extensions (без context7/cache), npm package.json, pi-search-hub из node_modules, навыки (~/.agents/skills), agent-context.toml, AGENTS.md home. Исключает: sessions, остальные node_modules, cache.",
+      "context": "Task TASK-2026-0013: Переносимый бэкап pi-окружения для другой машины. Expected output: scripts/pi-backup.sh",
+      "validation_status": "draft",
+      "origin_task_id": "TASK-2026-0013",
+      "usage_count": 0
+    },
+    "relevance_score": 0.6,
+    "source_ref": "procedural:when working on \"переносимый бэкап pi-окружения для другой машины\", for step \"создать backup.sh\": bash-скрипт упаковки. включает: agents.md, models.json (с ключами), settings, auth, themes, bin, extensions (без context7/cache), npm package.json, pi-search-hub из node_modules, навыки (~/.agents/skills), agent-context.toml, agents.md home. исключает: sessions, остальные node_modules, cache.",
+    "tags": [
+      "auto-seeded",
+      "TASK-2026-0013"
+    ],
+    "created_at": "2026-05-27T10:22:31.821Z",
+    "updated_at": "2026-05-27T10:22:31.822Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-27T10:22:31.821Z"
+  },
+  {
+    "entry_id": "procedural-TASK-2026-0013-step3-1779877351823",
+    "task_id": "TASK-2026-0013",
+    "step_number": 3,
+    "timestamp": "2026-05-27T10:22:31.823Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "When working on \"Переносимый бэкап pi-окружения для другой машины\", for step \"Создать restore.sh\": Скрипт восстановления: проверка pi, распаковка архива, npm install (восстановит node_modules), pi install loom. Предупреждение о наличии ключей в архиве.",
+      "context": "Task TASK-2026-0013: Переносимый бэкап pi-окружения для другой машины. Expected output: scripts/pi-restore.sh",
+      "validation_status": "draft",
+      "origin_task_id": "TASK-2026-0013",
+      "usage_count": 0
+    },
+    "relevance_score": 0.6,
+    "source_ref": "procedural:when working on \"переносимый бэкап pi-окружения для другой машины\", for step \"создать restore.sh\": скрипт восстановления: проверка pi, распаковка архива, npm install (восстановит node_modules), pi install loom. предупреждение о наличии ключей в архиве.",
+    "tags": [
+      "auto-seeded",
+      "TASK-2026-0013"
+    ],
+    "created_at": "2026-05-27T10:22:31.823Z",
+    "updated_at": "2026-05-27T10:22:31.823Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-27T10:22:31.823Z"
+  },
+  {
+    "entry_id": "procedural-TASK-2026-0013-step4-1779877351824",
+    "task_id": "TASK-2026-0013",
+    "step_number": 4,
+    "timestamp": "2026-05-27T10:22:31.824Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "When working on \"Переносимый бэкап pi-окружения для другой машины\", for step \"Создать README с инструкцией\": Инструкция на русском: бэкап на старой машине, перенос, восстановление. Важно: архив содержит API-ключи — обращаться осторожно.",
+      "context": "Task TASK-2026-0013: Переносимый бэкап pi-окружения для другой машины. Expected output: backup-README.md",
+      "validation_status": "draft",
+      "origin_task_id": "TASK-2026-0013",
+      "usage_count": 0
+    },
+    "relevance_score": 0.6,
+    "source_ref": "procedural:when working on \"переносимый бэкап pi-окружения для другой машины\", for step \"создать readme с инструкцией\": инструкция на русском: бэкап на старой машине, перенос, восстановление. важно: архив содержит api-ключи — обращаться осторожно.",
+    "tags": [
+      "auto-seeded",
+      "TASK-2026-0013"
+    ],
+    "created_at": "2026-05-27T10:22:31.824Z",
+    "updated_at": "2026-05-27T10:22:31.825Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-27T10:22:31.824Z"
+  },
+  {
+    "entry_id": "procedural-TASK-2026-0013-step5-1779877351825",
+    "task_id": "TASK-2026-0013",
+    "step_number": 5,
+    "timestamp": "2026-05-27T10:22:31.825Z",
+    "track_type": "procedural",
+    "content": {
+      "pattern": "When working on \"Переносимый бэкап pi-окружения для другой машины\", for step \"Тестовый прогон и валидация\": Выполнить backup.sh, проверить архив: полнота, отсутствие sessions/node_modules, наличие pi-search-hub и ключей.",
+      "context": "Task TASK-2026-0013: Переносимый бэкап pi-окружения для другой машины. Expected output: pi-backup-YYYY-MM-DD.tar.gz + отчёт",
+      "validation_status": "draft",
+      "origin_task_id": "TASK-2026-0013",
+      "usage_count": 0
+    },
+    "relevance_score": 0.6,
+    "source_ref": "procedural:when working on \"переносимый бэкап pi-окружения для другой машины\", for step \"тестовый прогон и валидация\": выполнить backup.sh, проверить архив: полнота, отсутствие sessions/node_modules, наличие pi-search-hub и ключей.",
+    "tags": [
+      "auto-seeded",
+      "TASK-2026-0013"
+    ],
+    "created_at": "2026-05-27T10:22:31.825Z",
+    "updated_at": "2026-05-27T10:22:31.826Z",
+    "expires_at": null,
+    "access_count": 0,
+    "last_accessed_at": "2026-05-27T10:22:31.825Z"
   }
 ]

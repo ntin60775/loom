@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/ntin60775/loom#readme",
   "files": [
-    "index.ts",
+    "index.dev.ts",
     "agent-mode",
     "knowledge",
     "memory",
@@ -37,7 +37,7 @@
     "@vitest/coverage-v8": "^4.1.7"
   },
   "pi": {
-    "extensions": ["./index.ts"]
+    "extensions": ["./index.dev.ts"]
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "^0.75.0",

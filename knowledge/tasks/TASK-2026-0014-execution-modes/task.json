@@ -1,0 +1,42 @@
+{
+  "task_id": "TASK-2026-0014-execution-modes",
+  "slug": "execution-modes",
+  "title": "DU-1: Dual execution mode — agent-direct (≤3 шага) + subagent×2 (≥4 шага)",
+  "description": "Два режима исполнения плана:\n1. Agent-direct: ≤3 шага — агент делает всё сам, без спавна worker/reviewer. Использует свои тулы (read, write, edit, bash). Коммитит по files-to-commit.json. Человек ревьюит итог.\n2. Subagent×2: ≥4 шага — текущий флоу worker → reviewer → executor loop.\n\nВыбор режима — автоматический по количеству шагов в плане. Опционально: ручное переопределение в task.json.",
+  "status": "completed",
+  "priority": "high",
+  "branch": "task/TASK-2026-0014-execution-modes",
+  "invariants": [
+    {
+      "id": "INV-9",
+      "text": "Executor не пишет код в subagent-режиме; в direct-режиме агент пишет код сам",
+      "marker": "INVARIANT: Executor spawns worker+reviewer in subagent mode; implements directly in agent-direct mode. Mode determined by plan step count (≤3 → direct, ≥4 → subagent).",
+      "status": "defined",
+      "verification_method": "executor-loop проверяет execution_mode перед spawn. В direct-режиме spawn методов нет, агент использует write/edit/bash."
+    },
+    {
+      "id": "INV-11",
+      "text": "Строгая последовательность: в subagent-режиме mutex, в direct-режиме — естественная последовательность шагов",
+      "marker": "INVARIANT: In subagent mode, mutex ensures single active worker. In direct mode, sequential steps are enforced by plan step order.",
+      "status": "defined",
+      "verification_method": "workerLock активен только в subagent-режиме. Direct-режим идёт по plan.steps последовательно."
+    }
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-1",
+      "status": "draft",
+      "purpose": "Agent-direct execution: агент делает шаги сам, без worker/reviewer spawn",
+      "base_branch": "main"
+    },
+    {
+      "id": "DU-2",
+      "status": "draft",
+      "purpose": "Subagent×2 hardening: structured output, persistent registry, retry+backoff, configurable toolsets",
+      "base_branch": "main"
+    }
+  ],
+  "created_at": "2026-05-27",
+  "updated_at": "2026-05-27",
+  "schema_version": "1.0.0"
+}

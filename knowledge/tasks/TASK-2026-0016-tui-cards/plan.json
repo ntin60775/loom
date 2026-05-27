@@ -1,0 +1,73 @@
+{
+  "task_id": "TASK-2026-0016-tui-cards",
+  "title": "TUI-карточки: заимствование лучших UX-паттернов omp для loom",
+  "status": "draft",
+  "delivery_units": [
+    {
+      "id": "DU-1",
+      "title": "Карточки субагентов с деревом и статистикой",
+      "status": "pending",
+      "files": [
+        ".pi/extensions/loom/ui/subagent-widget.ts",
+        ".pi/extensions/loom/agent-mode/tools.ts",
+        ".pi/extensions/loom/subagent/spawner.ts"
+      ]
+    },
+    {
+      "id": "DU-2",
+      "title": "Expand/Collapse (Ctrl+O)",
+      "status": "pending",
+      "files": [
+        ".pi/extensions/loom/ui/expand-collapse.ts",
+        ".pi/extensions/loom/index.dev.ts"
+      ]
+    },
+    {
+      "id": "DU-3",
+      "title": "Единый renderStatusLine для всех инструментов",
+      "status": "pending",
+      "files": [
+        ".pi/extensions/loom/ui/render-utils.ts",
+        ".pi/extensions/loom/agent-mode/tools.ts",
+        ".pi/extensions/loom/plan-mode/tools.ts"
+      ]
+    },
+    {
+      "id": "DU-4",
+      "title": "Review findings [P0-P3] в дереве",
+      "status": "pending",
+      "files": [
+        ".pi/extensions/loom/ui/review-widget.ts",
+        ".pi/extensions/loom/agent-mode/tools.ts"
+      ]
+    },
+    {
+      "id": "DU-5",
+      "title": "Streaming diff preview для edit-инструментов",
+      "status": "pending",
+      "files": [
+        ".pi/extensions/loom/ui/edit-preview.ts",
+        ".pi/extensions/loom/index.dev.ts"
+      ]
+    },
+    {
+      "id": "DU-6",
+      "title": "Сквозные E2E-тесты цепочки Plan→Worker→Reviewer→Commit",
+      "status": "pending",
+      "files": [
+        ".pi/extensions/loom/tests/e2e-full-cycle.test.ts",
+        ".pi/extensions/loom/tests/e2e-subagent-rendering.test.ts"
+      ]
+    }
+  ],
+  "sequence": [
+    "DU-3 (renderStatusLine — базовая утилита для всех)",
+    "DU-1 (SubagentCard — ядро)",
+    "DU-4 (Review findings — надстройка над SubagentCard)",
+    "DU-2 (Expand/Collapse — после карточек)",
+    "DU-5 (Streaming diff — опциональное улучшение)",
+    "DU-6 (E2E-тесты — параллельно, финал после всех DU)"
+  ],
+  "created_at": "2026-05-27",
+  "updated_at": "2026-05-27"
+}

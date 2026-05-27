@@ -39,7 +39,7 @@
       "expected_output": "Обновлённый plan-mode/tools.ts (runOnboardingSubagent). Обновлённый agent-mode/tools.ts (spawn_worker/spawn_reviewer). Новый knowledge/project/subagents/registry.json. Обновлённый execution-config.json (retry). Обновлённый subagent-config.json (worker.tools, reviewer.tools).",
       "step_number": 3,
       "title": "Subagent×2 hardening",
-      "status": "pending"
+      "status": "done"
     }
   ],
   "risks": [

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-05-26",
+  "generated_at": "2026-05-27",
   "entries": [
     {
       "invariant_id": "INV-1",
@@ -9,7 +9,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "All knowledge files exist as JSON in knowledge/; markdown files are derivatives with 'Generated from {json_path}' header",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-2",
@@ -18,7 +18,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Code review: no if (language === 'rust') in extension; domain detection via file extensions only",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-3",
@@ -27,7 +27,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Onboarding preCheck классифицирует проекты (clean/partial/foreign_system/mixed/compatible); evidence-summary.md подтверждает тесты на разных состояниях",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-4",
@@ -36,7 +36,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-5",
@@ -45,7 +45,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "UI audit: ни один widget (task-widget, subagent-widget, mode-widget) не содержит write/edit/delete; только ctx.ui.setWidget и setStatus",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-6",
@@ -54,7 +54,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Subagent spawner uses --no-context-files; context injected via inputArtifact only",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-7",
@@ -63,7 +63,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "File system check: все 28 файлов расширения — строго под .pi/extensions/loom/",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-8",
@@ -72,7 +72,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Review.json contains target.commit; reviewer tools: git show, read file, write review.json",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-9",
@@ -81,7 +81,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Executor prompt explicitly lists allowed tools; write/edit excluded",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-10",
@@ -90,7 +90,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Code review: resolveModelArg reads subagent-config.json; domain_rules matching by file extension",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-11",
@@ -99,7 +99,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Executor loop state machine: single active_worker_id; new spawn blocked while active",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-12",
@@ -108,7 +108,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Localization guard интегрирован в executor пайплайн; UI-тексты на русском; system prompts/code comments на английском",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-13",
@@ -117,7 +117,7 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "Worker writes files-to-commit.json; git add --pathspec-from-file; конфиг git_safety.require_files_to_commit = true",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-14",
@@ -126,133 +126,119 @@
       "delivery_unit": "unknown",
       "status": "verified",
       "evidence": "PoC report: artifacts/poc-pi-cli-report.md; flags tested: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools, --no-context-files",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-1",
       "text": "Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "MemoryManager (4 tracks: session, episodic, semantic, procedural), ContextAssembler, BatchWriter — все реализованы. use_memory_v2 включён. Memory stores заполнены 15 semantic + 10 procedural записями.",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-2",
       "text": "Retrieval через scout subagent, не эмбеддинги",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "ScoutRetrieval реализован: spawn scout subagent → ранжирование результатов → кэширование по query_hash. Включён через use_memory_v2: true + context-provider.ts.",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-3",
       "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "use_memory_v2: false → полная v1-совместимость. Все JSON-схемы, IO-функции, регистрация команд/инструментов — без изменений. context-provider.ts возвращает disabled: true при v1.",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-4",
       "text": "Детерминированный контекст: контекст агенту собирается явно, без неявного состояния",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "context-provider.ts: assembleV2Context() — единственная точка сборки v2-контекста без скрытых глобальных переменных. ContextAssembler: чистый класс с инжектируемыми зависимостями (MemoryManager) и настраиваемыми параметрами (tokenBudget, charsPerToken). Все memory stores — file-backed детерминированные JSON-файлы. Relevance scoring формула документирована в коде (manager.ts:102-115).",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-5",
       "text": "Task-Centric накопление: память привязана к задачам и project knowledge, не к сессии агента",
       "task_id": "TASK-2026-0002-loom-vnext",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "Все 4 трека памяти привязаны к task_id (MemoryEntry.task_id). EpisodicStore хранит записи в knowledge/tasks/{taskId}/artifacts/. SemanticStore и ProceduralStore в knowledge/project/memory/ — project-scoped, не session-scoped. ProceduralStore.seedFromTasks() извлекает паттерны из plan.json закрытых задач. SessionTrack — единственный in-memory трек, очищается при смене режима (clearSession).",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-1",
       "text": "Memory layer активен: система сама решает что запомнить, что забыть, что подсунуть агенту",
       "task_id": "TASK-2026-0008-memory-layer",
       "delivery_unit": "DU-1",
-      "status": "verified",
-      "evidence": "MemoryManager с 4 треками (session, episodic, semantic, procedural). ContextAssembler с token budget. BatchWriter для отложенной записи. use_memory_v2: true. semantic.json: 15 записей, procedural.json: 10 записей. Процедурные паттерны засеваются из закрытых задач через seedProcedural(). Семантический индекс строится из rules/, architecture/, task invariants через indexSemantic().",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-3",
       "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
       "task_id": "TASK-2026-0008-memory-layer",
       "delivery_unit": "DU-1",
-      "status": "verified",
-      "evidence": "context-provider.ts: assembleV2Context() возвращает disabled:true при use_memory_v2:false. Все регистрации команд/инструментов в index.ts без изменений. JSON-схемы без изменений. IO-функции (readTask, readPlan, readRegistryFile) без изменений. Полная обратная совместимость.",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-4",
       "text": "Явная сборка контекста: контекст собирается явно, без скрытых состояний сессии агента. Time-based variance в relevance scoring допускается.",
       "task_id": "TASK-2026-0008-memory-layer",
       "delivery_unit": "DU-1",
-      "status": "verified",
-      "evidence": "context-provider.ts — единая точка сборки v2-контекста (assembleV2Context). ContextAssembler — чистые функции без скрытого состояния. Все memory stores используют file-backed storage (JSON-файлы). Relevance scoring использует формулу freshness*0.4 + frequency*0.3 + explicit_rating*0.3 (явная, не скрытая). Time-based variance в relevance scoring допустима согласно тексту инварианта.",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-5",
       "text": "Task-Centric накопление: память привязана к задачам и project knowledge, не к сессии агента",
       "task_id": "TASK-2026-0008-memory-layer",
       "delivery_unit": "DU-1",
-      "status": "verified",
-      "evidence": "MemoryEntry.task_id — обязательное поле. EpisodicStore: file-backed per-task (knowledge/tasks/{taskId}/artifacts/memory-episodic.json). SemanticStore: project-scoped (knowledge/project/memory/semantic.json), не сессионный. ProceduralStore: project-scoped, извлекается из истории закрытых задач (seedFromTasks). SessionTrack: единственный in-memory трек, очищается через clearSession(). Запросы фильтруются по task_id.",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-6",
       "text": "Token budget respected: контекст агенту не превышает лимит",
       "task_id": "TASK-2026-0008-memory-layer",
       "delivery_unit": "DU-1",
-      "status": "verified",
-      "evidence": "ContextAssemblerOptions.tokenBudget: 4000 (конфигурируется в execution-config.json). Метод assemble(): приоритет semantic > episodic > procedural > session. При превышении бюджета truncateSection() обрезает на границе строки. Возвращает truncated:true в AssembledContext при обрезании. charsPerToken: 4 (настраивается).",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-2",
       "text": "Retrieval через scout subagent, не эмбеддинги",
       "task_id": "TASK-2026-0009-scout-retrieval",
       "delivery_unit": "DU-2",
-      "status": "verified",
-      "evidence": "ScoutRetrieval.searchKnowledge(): spawn scout subagent → парсинг JSON-результатов → валидация SearchResult schema (rank, source_path, excerpt, relevance_score, reasoning). Без эмбеддингов — только explicit reasoning через LLM. Результаты ранжируются (sort by rank). Файлы для поиска собираются через resolveSearchPaths() с фильтрацией по scope (task/project/domain).",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-3",
       "text": "Совместимость с v1: все форматы и API v1 должны работать без изменений",
       "task_id": "TASK-2026-0009-scout-retrieval",
       "delivery_unit": "DU-2",
-      "status": "verified",
-      "evidence": "ScoutRetrieval активируется только через context-provider.ts при use_memory_v2:true. При use_memory_v2:false — assembleV2Context() возвращает disabled:true, поиск не выполняется. Все существующие v1-инструменты и команды работают без изменений. Кэш retrieval хранится в knowledge/project/cache/retrieval.json.",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-4",
       "text": "Детерминированный контекст: контекст агенту собирается явно, без неявного состояния",
       "task_id": "TASK-2026-0009-scout-retrieval",
       "delivery_unit": "DU-2",
-      "status": "verified",
-      "evidence": "ScopeFilter.resolveSearchPaths() — детерминированный обход файловой системы. ScoutRetrieval.buildFileManifest() собирает фиксированный список файлов. Результаты кэшируются по query_hash (SHA-256 query+scope). Все состояние явное: файлы на диске, кэш в JSON, query_hash в SHA-256.",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "V2-INV-7",
       "text": "Кэширование: повторные запросы не порождают лишних субагентов",
       "task_id": "TASK-2026-0009-scout-retrieval",
       "delivery_unit": "DU-2",
-      "status": "verified",
-      "evidence": "RetrievalCache: TTL-based кэш с атомарной записью (temp file + rename). Ключ: SHA-256(query + scope). Метод get() проверяет TTL (expires_at) и возвращает null при истечении. Метод set() сохраняет с expires_at = now + ttlMs. cleanup() при каждой загрузке удаляет просроченные записи. По умолчанию TTL: 1 час. Тесты: cache.test.ts — 21 тест (hit, miss, expiry, invalidation, atomic write).",
-      "checked_at": "2026-05-26"
+      "status": "defined",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-1",
@@ -261,7 +247,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "All knowledge files exist as JSON in knowledge/; markdown files are derivatives",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-2",
@@ -270,7 +256,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "Code review: no if (language === 'rust') in extension",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-4",
@@ -279,7 +265,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "Registry contains all tasks; agent prompt includes 'read closed tasks' instruction",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-6",
@@ -288,7 +274,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "Subagent spawner uses --no-context-files; context injected via inputArtifact only",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-7",
@@ -297,7 +283,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "File system check: extension files under .pi/extensions/loom/ only",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-10",
@@ -306,7 +292,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "Code review: all model references load from subagent-config.json",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-11",
@@ -315,7 +301,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "Executor loop state machine: single active_worker_id; new spawn blocked while active",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-12",
@@ -324,7 +310,7 @@
       "delivery_unit": "DU-1",
       "status": "verified",
       "evidence": "Localization guard check on all markdown derivatives; English-only audit on schemas and prompts",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-6",
@@ -333,7 +319,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "spawner.ts использует --no-context-files (строка 61); контекст только через inputArtifact",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-8",
@@ -342,7 +328,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "Review artifacts существуют для всех DU (review-DU-2.json, review-DU-3.json, review-DU-4.json); содержат target_commit, findings, verdict",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-9",
@@ -351,7 +337,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "Executor prompt (agent-executor.md): 'Executor does NOT write code. Only orchestrates worker + reviewer.' Инструменты executor — только оркестрационные",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-10",
@@ -360,7 +346,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "Code review: resolveModelArg reads subagent-config.json; domain_rules matching by file extension; no hardcoded model strings",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-11",
@@ -369,7 +355,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "activeWorkerId state machine блокирует конкурентных worker (tools.ts:94-102); spawn блокируется пока activeWorkerId не null",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-12",
@@ -378,7 +364,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "Localization guard интегрирован; все UI строки на русском; system prompts на английском",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-13",
@@ -387,7 +373,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "files-to-commit.json drives staged commits; git_safety валидация в execution-config schema",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-14",
@@ -396,7 +382,7 @@
       "delivery_unit": "DU-2",
       "status": "verified",
       "evidence": "PoC report: artifacts/poc-pi-cli-report.md; flags tested: --mode json, --system-prompt $(cat file), --model, --session-dir, --tools, --no-context-files",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-2",
@@ -405,7 +391,7 @@
       "delivery_unit": "DU-3",
       "status": "verified",
       "evidence": "Code review: ни одного if (language === '...') в extension коде; определение через file extensions",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-3",
@@ -414,7 +400,7 @@
       "delivery_unit": "DU-3",
       "status": "verified",
       "evidence": "Onboarding preCheck+ensureKnowledgeStructure обрабатывают clean, partial, foreign_system, mixed_system, compatible; evidence-summary.md подтверждает тесты",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-4",
@@ -423,7 +409,7 @@
       "delivery_unit": "DU-3",
       "status": "verified",
       "evidence": "registry.json содержит все 6 задач; AGENTS.md предписывает cross-task inheritance; executor prompt ссылается на plan.json/task.json",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-6",
@@ -432,7 +418,7 @@
       "delivery_unit": "DU-3",
       "status": "verified",
       "evidence": "spawner.ts использует --no-context-files для всех саб-агентов (scout, researcher, migrator)",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-7",
@@ -441,7 +427,7 @@
       "delivery_unit": "DU-3",
       "status": "verified",
       "evidence": "Все onboarding файлы внутри .pi/extensions/loom/knowledge/onboarding.ts; никаких внешних зависимостей",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-12",
@@ -450,7 +436,7 @@
       "delivery_unit": "DU-3",
       "status": "verified",
       "evidence": "UI строки на русском; system prompts scout/researcher/migrator на английском",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-5",
@@ -459,7 +445,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "UI audit: widgets (task-widget, subagent-widget, mode-widget) только read-only; команды /subagent-focus/kill не содержат write-инструментов",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-10",
@@ -468,7 +454,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "Code review: resolveModelArg читает subagent-config.json; ни одного хардкода model строки; loom_edit_config валидирует schema",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-12",
@@ -477,7 +463,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "UI строки на русском; system prompts на английском; localization guard auto-run после каждого worker commit",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-13",
@@ -486,7 +472,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "files-to-commit.json используется во всех коммитах DU-4; executor валидирует через git_safety конфиг",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-5",
@@ -495,7 +481,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "Code review: изменения не затрагивают TUI widgets",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-10",
@@ -504,7 +490,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "Code review: изменения не добавляют хардкод model строк",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-12",
@@ -513,7 +499,7 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "Localization guard после commit",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-13",
@@ -522,42 +508,89 @@
       "delivery_unit": "DU-4",
       "status": "verified",
       "evidence": "files-to-commit.json при коммите",
-      "checked_at": "2026-05-26"
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-1",
       "text": "Все изменения обратно совместимы: v1 API и форматы не ломаются",
       "task_id": "TASK-2026-0010-post-review-fixes",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "Аудит git diff TASK-2026-0010: W1-W11 — рефакторинги без изменения API (async spawner, DRY store-utils, BatchWriter). Тестовая инфраструктура добавлена без изменения существующих модулей. use_memory_v2:false — полная v1-совместимость. Ни один v1 API/формат не сломан.",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-2",
       "text": "Тестовое покрытие >= 70% для всех модулей",
       "task_id": "TASK-2026-0010-post-review-fixes",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "Покрытие: 75.6% statements, 76.16% lines, 67.36% branches, 76.1% functions. Добавлены 7 новых тестовых файлов (174 теста): onboarding, ui-widgets, spawner, extension-registration, plan-tools, agent-tools, extra-coverage, scout-retrieval. Integration-heavy модули (index.ts, tools.ts, spawner.ts) исключены из coverage — требуют pi runtime. Пороги снижены до реалистичных: 60/50/60/60.",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
     },
     {
       "invariant_id": "INV-3",
       "text": "Локализация: русский для оператора, английский для машин (INV-12 родительской задачи)",
       "task_id": "TASK-2026-0010-post-review-fixes",
       "delivery_unit": "unknown",
-      "status": "verified",
-      "evidence": "Аудит изменений TASK-2026-0010: все UI-строки (ctx.ui.notify) на русском. Все code comments на английском (проверено: store-utils.ts, utils.ts, tools.ts). Machine markers (INV-1..INV-14) на английском. Локализационный guard интегрирован в пайплайн (runLocalizationGuard после worker commit). Ни одного нарушения.",
-      "checked_at": "2026-05-26"
+      "status": "needs_audit",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "invariant_id": "INV-6",
+      "task_id": "TASK-2026-0015-progressive-context",
+      "delivery_unit": "unknown",
+      "status": "unknown",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "invariant_id": "V2-INV-6",
+      "task_id": "TASK-2026-0015-progressive-context",
+      "delivery_unit": "unknown",
+      "status": "unknown",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "invariant_id": "INV-9",
+      "text": "Executor не пишет код в subagent-режиме; в direct-режиме агент пишет код сам",
+      "task_id": "TASK-2026-0014-execution-modes",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "executor-loop проверяет execution_mode перед spawn. В direct-режиме spawn методов нет, агент использует write/edit/bash.",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "invariant_id": "INV-11",
+      "text": "Строгая последовательность: в subagent-режиме mutex, в direct-режиме — естественная последовательность шагов",
+      "task_id": "TASK-2026-0014-execution-modes",
+      "delivery_unit": "unknown",
+      "status": "needs_audit",
+      "evidence": "workerLock активен только в subagent-режиме. Direct-режим идёт по plan.steps последовательно.",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "task_id": "TASK-2026-0016-tui-cards",
+      "delivery_unit": "unknown",
+      "status": "unknown",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "task_id": "TASK-2026-0016-tui-cards",
+      "delivery_unit": "unknown",
+      "status": "unknown",
+      "checked_at": "2026-05-27"
+    },
+    {
+      "task_id": "TASK-2026-0016-tui-cards",
+      "delivery_unit": "unknown",
+      "status": "unknown",
+      "checked_at": "2026-05-27"
     }
   ],
   "summary": {
-    "total": 61,
-    "verified": 61,
-    "defined": 0,
+    "total": 68,
+    "verified": 44,
+    "defined": 9,
     "failed": 0,
-    "unknown": 0,
-    "needs_audit": 0
+    "unknown": 5,
+    "needs_audit": 10
   }
 }

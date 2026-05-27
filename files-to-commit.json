@@ -1,14 +1,5 @@
 {
-  "task_id": "TASK-2026-0014-execution-modes",
-  "step": 1,
   "files": [
-    "knowledge/project/schemas/task.schema.json",
-    ".pi/extensions/loom/knowledge/schemas.ts",
-    ".pi/extensions/loom/knowledge/types.ts",
-    ".pi/extensions/loom/agent-mode/executor-loop.ts",
-    ".pi/extensions/loom/agent-mode/executor.ts",
-    ".pi/extensions/loom/tests/fixtures.ts",
-    ".pi/extensions/loom/tests/executor-loop.test.ts",
-    "files-to-commit.json"
+    ".pi/extensions/loom/agent-mode/tools.ts"
   ]
 }

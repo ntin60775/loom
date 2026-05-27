@@ -1,0 +1,40 @@
+{
+  "task_id": "TASK-2026-0015-progressive-context",
+  "slug": "progressive-context",
+  "title": "DU-2: Progressive Context Assembly — контекст предыдущих шагов для worker'а",
+  "description": "Каждый следующий worker получает контекст предыдущих шагов: итоги предыдущих worker'ов + вердикты reviewer'а. Реализуется через ContextAssembler из v2 memory layer.\n\nНе зависит от TASK-2026-0014 (A), работает без hardening'а.\n\nDelivery units:\n  DU-1: ContextAssembler-step — сборка контекста предыдущих шагов\n  DU-2: Executor integration — передача контекста при spawn_worker",
+  "status": "draft",
+  "priority": "medium",
+  "branch": "task/TASK-2026-0015-progressive-context",
+  "invariants": [
+    {
+      "id": "INV-6",
+      "marker": "INVARIANT: Subagents use clean sessions; context is assembled from explicit files, not implicit state",
+      "task_ref": "Ядро loom — bootstrap"
+    },
+    {
+      "id": "V2-INV-6",
+      "marker": "INVARIANT: ContextAssembler must truncate output to fit within configured token budget",
+      "task_ref": "DU-1: Memory Layer"
+    }
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-1",
+      "title": "ContextAssembler-step — сборка контекста предыдущих шагов",
+      "description": "Новый метод в ContextAssembler (или отдельный модуль), который собирает:\n- Итоги (summary.json) всех completed шагов\n- Вердикты reviewer'а по completed шагам\n- Незакрытые замечания\nС учётом token budget (V2-INV-6): старые шаги summarize'ятся.",
+      "depends_on": [],
+      "expected_output": "Новый файл: memory/step-context-assembler.ts (или метод в context-assembler.ts)"
+    },
+    {
+      "id": "DU-2",
+      "title": "Executor integration",
+      "description": "При spawn_worker — вызов step-context-assembler, передача результата в task контекст worker'а. Контекст вставляется между описанием шага и v2-контекстом.",
+      "depends_on": ["DU-1"],
+      "expected_output": "Обновлённый agent-mode/tools.ts (spawn_worker) с вызовом step-context-assembler"
+    }
+  ],
+  "created_at": "2026-05-27",
+  "updated_at": "2026-05-27",
+  "schema_version": "1.0.0"
+}

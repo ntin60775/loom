@@ -124,6 +124,36 @@
       "branch": "task/TASK-2026-0013",
       "created_at": "2026-05-26",
       "updated_at": "2026-05-26"
+    },
+    {
+      "task_id": "TASK-2026-0015-progressive-context",
+      "slug": "progressive-context",
+      "title": "DU-2: Progressive Context Assembly — контекст предыдущих шагов для worker'а",
+      "status": "draft",
+      "priority": "medium",
+      "branch": "task/TASK-2026-0015-progressive-context",
+      "created_at": "2026-05-27",
+      "updated_at": "2026-05-27"
+    },
+    {
+      "task_id": "TASK-2026-0014-execution-modes",
+      "slug": "execution-modes",
+      "title": "DU-1: Dual execution mode — agent-direct (≤3 шага) + subagent×2 (≥4 шага)",
+      "status": "completed",
+      "priority": "high",
+      "branch": "task/TASK-2026-0014-execution-modes",
+      "created_at": "2026-05-27",
+      "updated_at": "2026-05-27"
+    },
+    {
+      "task_id": "TASK-2026-0016-tui-cards",
+      "slug": "tui-cards",
+      "title": "TUI-карточки: заимствование лучших UX-паттернов omp для loom",
+      "status": "draft",
+      "priority": "high",
+      "branch": "task/TASK-2026-0016-tui-cards",
+      "created_at": "2026-05-27",
+      "updated_at": "2026-05-27"
     }
   ]
 }

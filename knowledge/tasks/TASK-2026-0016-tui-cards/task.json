@@ -1,0 +1,47 @@
+{
+  "task_id": "TASK-2026-0016-tui-cards",
+  "slug": "tui-cards",
+  "title": "TUI-карточки: заимствование лучших UX-паттернов omp для loom",
+  "status": "draft",
+  "priority": "high",
+  "branch": "task/TASK-2026-0016-tui-cards",
+  "created_at": "2026-05-27",
+  "updated_at": "2026-05-27",
+  "invariants": [
+    "INV-5: TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
+    "INV-9: Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. NO write/edit/commit in executor tools",
+    "INV-12: UI and user-facing artifacts — Russian; AI documentation — English; machine markers — English"
+  ],
+  "delivery_units": [
+    {
+      "id": "DU-1",
+      "title": "Карточки субагентов с деревом и статистикой",
+      "description": "Реализовать TUI-рендеринг субагентов в виде цветных карточек с tree-коннекторами, статус-иконками, строкой статистики (tools, ctx, Σtokens, cost, duration), текущим инструментом и retry-состоянием. Замена текстовых onUpdate на компонентный рендеринг."
+    },
+    {
+      "id": "DU-2",
+      "title": "Expand/Collapse (Ctrl+O)",
+      "description": "Добавить механизм свёрнутого/развёрнутого отображения для всех tool-карточек. Свёрнуто: 3 строки вывода, 8 ханков диффа, hint «(Ctrl+O для подробностей)». Развёрнуто: полный вывод. Hint авто-скрывается когда уже развёрнуто."
+    },
+    {
+      "id": "DU-3",
+      "title": "Единый renderStatusLine для всех инструментов",
+      "description": "Внедрить паттерн «иконка + тип операции + описание» для всех loom-инструментов. Единая строка статуса с цветовой индикацией (success/error/pending/running)."
+    },
+    {
+      "id": "DU-4",
+      "title": "Review findings [P0-P3] в дереве",
+      "description": "Встроить в карточку reviewer'а цветные приоритеты P0-P3 с file:line, раскрытием описания и вердиктом (correct/incorrect с confidence %)."
+    },
+    {
+      "id": "DU-5",
+      "title": "Streaming diff preview для edit-инструментов",
+      "description": "Показывать дифф в реальном времени пока модель стримит аргументы. Стабилизировать превью (без «сначала удаления, потом догоняют»)."
+    },
+    {
+      "id": "DU-6",
+      "title": "Сквозные E2E-тесты цепочки Plan→Worker→Reviewer→Commit",
+      "description": "Тесты полного цикла решения задачи, с особым вниманием к спавну субагентов (worker + reviewer), рендерингу их прогресса и корректной обработке всех статусов (success/failure/abort/timeout)."
+    }
+  ]
+}
