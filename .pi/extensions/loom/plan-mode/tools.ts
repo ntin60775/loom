@@ -36,7 +36,6 @@ import {
   listArchitectureComponents,
   generateAgentsMd,
 } from "../knowledge/onboarding";
-import { renderStatusLine } from "../ui/render-utils";
 
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);

@@ -149,7 +149,7 @@
       "task_id": "TASK-2026-0016-tui-cards",
       "slug": "tui-cards",
       "title": "TUI-карточки: заимствование лучших UX-паттернов omp для loom",
-      "status": "active",
+      "status": "completed",
       "priority": "high",
       "branch": "task/TASK-2026-0016-tui-cards",
       "created_at": "2026-05-27",

@@ -10,7 +10,7 @@
 
 import * as path from "node:path";
 import { spawn } from "node:child_process";
-import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
 import { readJson, writeJson, readTask, readPlan, readRegistryFile, findKnowledgeRoot, readSubagentConfig, readExecutionConfig } from "../knowledge/io";
 import { spawnSubagent } from "../subagent/spawner";
@@ -26,8 +26,6 @@ import { validateExecutionConfigShape, validateSubagentConfigShape } from "../kn
 import { buildMemoryContext } from "../memory";
 import { assembleV2Context } from "../shared/context-provider";
 
-import { renderStatusLine } from "../ui/render-utils";
-import { subagentCallRender, subagentResultRender } from "../ui/subagent-widget";
 function taskDir(cwd: string, taskId: string): string {
   return path.join(cwd, "knowledge", "tasks", taskId);
 }
@@ -227,15 +225,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
     },
 
-    renderCall(args: Record<string, unknown>, theme: Theme) {
-      const state = { id: `step${args.step_number}`, type: "worker" as const, step: args.step_number as number, treePrefix: "├──", childIndent: "│   " };
-      return subagentCallRender(state, theme);
-    },
 
-    renderResult(result: { isError?: boolean; details?: { guardResult?: { passed?: boolean }; result?: { exitCode?: number } } }, options: { expanded?: boolean }, theme: Theme) {
-      const state = { id: `worker`, type: "worker" as const, treePrefix: "├──", childIndent: "│   " };
-      return subagentResultRender(state, result, theme, { expanded: options.expanded });
-    },
   });
 
   pi.registerTool({
@@ -353,15 +343,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         });
       }
 
-    renderCall(args: Record<string, unknown>, theme: Theme) {
-      const state = { id: `commit ${args.commit_hash}`, type: "reviewer" as const, step: args.step_number as number, treePrefix: "├──", childIndent: "│   " };
-      return subagentCallRender(state, theme);
-    },
 
-    renderResult(result: { isError?: boolean; details?: { reviewJson?: { verdict?: string; findings?: Array<{ priority: string; file: string; line?: number; description: string; correct?: boolean; confidence?: number }> } } }, options: { expanded?: boolean }, theme: Theme) {
-      const state = { id: "reviewer", type: "reviewer" as const, treePrefix: "├──", childIndent: "│   " };
-      return subagentResultRender(state, result, theme, { expanded: options.expanded });
-    },
     },
   });
 
@@ -436,17 +418,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       };
     },
 
-    renderCall(args: Record<string, unknown>, theme: Theme) {
-      const descParts: string[] = [];
-      if (args.task_status) descParts.push(`task: ${args.task_status}`);
-      if (args.step_status) descParts.push(`step ${args.step_number}: ${args.step_status}`);
-      return renderStatusLine({ icon: "pending", title: "Update task", description: descParts.join(", ") || undefined }, theme);
-    },
 
-    renderResult(result: { isError?: boolean }, _options: unknown, theme: Theme) {
-      const icon = result.isError ? "error" : "success";
-      return renderStatusLine({ icon, title: "Update task" }, theme);
-    },
   });
 
   pi.registerTool({
@@ -469,14 +441,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
         details: { artifact_path: params.artifact_path },
       };
 
-    renderCall(args: Record<string, unknown>, theme: Theme) {
-      return renderStatusLine({ icon: "pending", title: "Read artifact", description: args.artifact_path as string }, theme);
-    },
 
-    renderResult(result: { isError?: boolean }, _options: unknown, theme: Theme) {
-      const icon = result.isError ? "error" : "success";
-      return renderStatusLine({ icon, title: "Read artifact" }, theme);
-    },
     },
   });
 
@@ -517,15 +482,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       };
     },
 
-    renderCall(_args: unknown, theme: Theme) {
-      return renderStatusLine({ icon: "pending", title: "Localization guard" }, theme);
-    },
 
-    renderResult(result: { isError?: boolean; details?: { passed?: boolean } }, _options: unknown, theme: Theme) {
-      const passed = result.details?.passed;
-      const icon = passed ? "success" : (result.isError ? "error" : "warning");
-      return renderStatusLine({ icon, title: "Localization guard", description: passed ? "passed" : "failed" }, theme);
-    },
   });
 
   // Tool: Generate verification matrix
@@ -553,16 +510,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       };
     },
 
-    renderCall(_args: unknown, theme: Theme) {
-      return renderStatusLine({ icon: "pending", title: "Verify invariants" }, theme);
-    },
 
-    renderResult(result: { isError?: boolean; details?: { summary?: { verified?: number; total?: number } } }, _options: unknown, theme: Theme) {
-      const s = result.details?.summary;
-      const desc = s ? `${s.verified}/${s.total} verified` : undefined;
-      const icon = result.isError ? "error" : "success";
-      return renderStatusLine({ icon, title: "Verify invariants", description: desc }, theme);
-    },
   });
 
   // Tool: Edit execution-config or subagent-config
@@ -617,14 +565,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       };
     },
 
-    renderCall(args: Record<string, unknown>, theme: Theme) {
-      return renderStatusLine({ icon: "pending", title: "Edit config", description: args.config_type as string }, theme);
-    },
 
-    renderResult(result: { isError?: boolean }, _options: unknown, theme: Theme) {
-      const icon = result.isError ? "error" : "success";
-      return renderStatusLine({ icon, title: "Edit config" }, theme);
-    },
   });
 
   // Tool: Search knowledge via scout retrieval (v2 only)
@@ -666,16 +607,7 @@ export function registerAgentTools(pi: ExtensionAPI): void {
       }
     },
 
-    renderCall(args: Record<string, unknown>, theme: Theme) {
-      return renderStatusLine({ icon: "pending", title: "Search knowledge", description: args.query as string }, theme);
-    },
 
-    renderResult(result: { isError?: boolean; details?: { resultCount?: number } }, _options: unknown, theme: Theme) {
-      const count = result.details?.resultCount;
-      const desc = count !== undefined ? `${count} results` : undefined;
-      const icon = result.isError ? "error" : "success";
-      return renderStatusLine({ icon, title: "Search knowledge", description: desc }, theme);
-    },
   });
 }
 

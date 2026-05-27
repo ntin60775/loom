@@ -567,21 +567,30 @@
       "checked_at": "2026-05-27"
     },
     {
+      "invariant_id": "INV-5",
+      "text": "TUI widgets do not allow code editing; operator interacts via commands and read-only reports",
       "task_id": "TASK-2026-0016-tui-cards",
       "delivery_unit": "unknown",
-      "status": "unknown",
+      "status": "needs_audit",
+      "evidence": "Visual inspection: all widgets use renderCall/renderResult which are read-only by design",
       "checked_at": "2026-05-27"
     },
     {
+      "invariant_id": "INV-9",
+      "text": "Executor tools: spawn_worker, spawn_reviewer, update_task_status, read_artifact. NO write/edit/commit in executor tools",
       "task_id": "TASK-2026-0016-tui-cards",
       "delivery_unit": "unknown",
-      "status": "unknown",
+      "status": "needs_audit",
+      "evidence": "Code review: verify no write/edit/commit in renderCall/renderResult; they only consume existing data",
       "checked_at": "2026-05-27"
     },
     {
+      "invariant_id": "INV-12",
+      "text": "UI and user-facing artifacts — Russian; AI documentation — English; machine markers — English",
       "task_id": "TASK-2026-0016-tui-cards",
       "delivery_unit": "unknown",
-      "status": "unknown",
+      "status": "needs_audit",
+      "evidence": "Localization guard: UI-тексты на русском, код и маркеры на английском",
       "checked_at": "2026-05-27"
     }
   ],
@@ -590,7 +599,7 @@
     "verified": 44,
     "defined": 9,
     "failed": 0,
-    "unknown": 5,
-    "needs_audit": 10
+    "unknown": 2,
+    "needs_audit": 13
   }
 }
